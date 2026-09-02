@@ -1,45 +1,49 @@
-# Hikvision
+# Hikvision SDK v3 for Homey Pro
 
-Homey SDK v3-app voor lokale Hikvision IP-camera's en NVR's via ISAPI en RTSP.
+[English](README.md) | [Nederlands](README.nl.md)
 
-## Functies
+A Homey SDK v3 app for connecting compatible Hikvision IP cameras, video doorbells
+and network video recorders over the local network using ISAPI and RTSP.
 
-- Hikvision-camera's, videodeurbellen en NVR's toevoegen via HTTP of HTTPS
-- Native Homey Live-video met voorkeur voor een compatibele H.264-substream en handmatige hoofd-/substreamkeuze
-- Blijvende RTSP-only-modus voor deurstations zonder werkende ISAPI
-- Dashboardwidget met digitale zoom, verschuiven, knijpgebaren en automatisch verversen
-- Live alarmgebeurtenissen voor beweging, lokale ingang, videoverlies, sabotage,
-  lijnoverschrijding, indringerdetectie en het betreden of verlaten van een gebied
-- Aparte Flow-trigger wanneer een compatibele Hikvision-videodeurbel wordt ingedrukt
-- Officiële ISAPI-oproepstatus als fallback voor video-intercoms die geen
-  `CallButtonPress`-event versturen
-- Afbeeldingstag met een actuele momentopname bij beweging, lijnoverschrijding,
-  indringerdetectie en een deurbeloproep
-- Advanced Flow-actie om een momentopname van een gekozen camera- of NVR-kanaal te maken
-- Zichtbare Homey-alarmstatussen en Insights voor elk ondersteund alarmtype; bij
-  een NVR blijft een status actief zolang minimaal één kanaal het alarm meldt
-- Automatisch beëindigen van alarmstatussen wanneer een NVR geen stopmelding verstuurt
-- Momentopnamen voor maximaal zestien online kanalen, met behoud van het laatste
-  geldige beeld bij een tijdelijke camerafout
-- Relatieve PTZ-bediening vanuit Advanced Flow
-- Naar een opgeslagen PTZ-preset gaan vanuit Advanced Flow
-- Een compatibel deurrelais bedienen via Hikvision AccessControl
-- Een overgaande video-intercomoproep veilig beëindigen vanuit Advanced Flow
-- Gebeurtenisbewaking in Homey blijvend in- en uitschakelen zonder Live-video of momentopnamen te stoppen
-- Meertalige pairing en apparaatinstellingen
-- Privacyveilig diagnose-/bugrapport via **Apparaat repareren**, zonder
-  inloggegevens, netwerkadres, beelden of video
+## Features
 
-Schakel op het Hikvision-apparaat bij de gewenste gebeurtenis **Notify Surveillance
-Center** in. De Homey Pro en het Hikvision-apparaat moeten elkaar op het lokale
-netwerk kunnen bereiken. Live-video vereist een H.264-RTSP-stream; de app probeert
-standaard eerst de substream. Alarmgebeurtenissen zijn optioneel en
-kunnen ontbreken wanneer het camera-account of de firmware de eventstream blokkeert.
-Deurbelondersteuning is afhankelijk van het model. De app gebruikt een
-`CallButtonPress`-melding via de ISAPI-eventstream en controleert bij ondersteunde
-video-intercoms daarnaast de officiële ISAPI-oproepstatus.
+- Add Hikvision cameras, video doorbells and NVRs over HTTP or HTTPS
+- Native Homey Live video, preferring a compatible H.264 substream, with manual
+  main-stream and substream selection
+- Persistent RTSP-only mode for door stations without working ISAPI support
+- Dashboard widget with digital zoom, panning, pinch gestures and automatic refresh
+- Live alarm events for motion, local input, video loss, tampering, line crossing,
+  intrusion detection, region entrance and region exiting
+- Dedicated Flow trigger when a compatible Hikvision video doorbell is pressed
+- Official ISAPI call status as a fallback for video intercoms that do not send a
+  `CallButtonPress` event
+- Image tags containing a recent snapshot for motion, line crossing, intrusion and
+  doorbell events
+- Advanced Flow action for taking a snapshot from a selected camera or NVR channel
+- Visible Homey alarm states and Insights for every supported alarm type; an NVR
+  alarm remains active while at least one channel still reports it
+- Automatic alarm-state reset for NVRs that do not send a stop event
+- Snapshots for up to sixteen online channels, retaining the last valid image during
+  temporary camera errors
+- Relative PTZ control from Advanced Flow
+- Recall saved PTZ presets from Advanced Flow
+- Operate a compatible door relay through Hikvision AccessControl
+- Safely end a ringing video-intercom call from Advanced Flow
+- Persistently enable or disable Homey event monitoring without stopping Live video
+  or snapshots
+- Multilingual pairing and device settings
+- Privacy-safe diagnostics and bug reports through **Repair device**, without login
+  credentials, network addresses, images or video
 
-## Ontwikkeling
+Enable **Notify Surveillance Center** for the required events on the Hikvision
+device. Homey Pro and the Hikvision device must be able to reach each other on the
+local network. Live video requires an H.264 RTSP stream; by default, the app tries
+the substream first. Alarm events are optional and may be unavailable when the
+camera account or firmware blocks the event stream. Doorbell support depends on the
+model. The app processes `CallButtonPress` notifications from the ISAPI event stream
+and also checks the official ISAPI call status on supported video intercoms.
+
+## Development
 
 ```sh
 npm install
@@ -47,8 +51,8 @@ npm test
 npm run validate
 ```
 
-Versies volgen `jaar.maand.volgnummer`, bijvoorbeeld `2026.7.1`.
+Versions use `year.month.sequence`, for example `2026.7.1`.
 
-Deze migratie is afgeleid van de GPL-3.0-app
+This migration is derived from the GPL-3.0 licensed
 [`com.hikvision`](https://github.com/JohanBendz/com.hikvision).
-Zie ook `NOTICE` en `LICENSE` voor herkomst en licentievoorwaarden.
+See `NOTICE` and `LICENSE` for attribution and licensing details.
