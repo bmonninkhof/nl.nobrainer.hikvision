@@ -1,4 +1,9 @@
 {
+  "2026.9.4": {
+    "en": "Add a safe Flow action to end a ringing Hikvision intercom call after verifying device support and the current call status.",
+    "nl": "Voeg een veilige Flow-actie toe om een overgaande Hikvision-intercomoproep te beëindigen na controle van apparaatondersteuning en de actuele oproepstatus.",
+    "de": "Sichere Flow-Aktion zum Beenden eines klingelnden Hikvision-Intercom-Anrufs nach Prüfung der Geräteunterstützung und des aktuellen Anrufstatus hinzugefügt."
+  },
   "2026.9.3": {
     "en": "Detect available camera channels, PTZ presets and door relays automatically, protect door commands against rapid repeats and expose event-monitoring status and Flows.",
     "nl": "Detecteer beschikbare camerakanalen, PTZ-presets en deurrelais automatisch, beveilig deuropdrachten tegen snelle herhaling en voeg status en Flows voor gebeurtenisbewaking toe.",

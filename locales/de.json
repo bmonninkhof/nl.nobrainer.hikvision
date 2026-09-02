@@ -82,6 +82,8 @@
     "preset_not_available": "Diese PTZ-Voreinstellung ist auf dem ausgewählten Kamerakanal nicht gespeichert.",
     "relay_not_supported": "Die Türsteuerung wird von diesem Hikvision-Gerät oder Konto nicht unterstützt.",
     "relay_cooldown": "Gerade wurde ein Türbefehl gesendet. Warte einige Sekunden, bevor du es erneut versuchst.",
+    "call_control_not_supported": "Das Beenden eines Intercom-Anrufs wird von diesem Hikvision-Gerät oder Konto nicht unterstützt.",
+    "no_ringing_call": "Es gibt keinen klingelnden Intercom-Anruf, der beendet werden kann.",
     "isapi_required": "Diese Funktion erfordert eine aktive ISAPI-Verbindung. Deaktiviere den Nur-RTSP-Modus und prüfe die Geräteberechtigungen.",
     "not_connected": "Das Hikvision-Gerät ist nicht verbunden.",
     "unsupported_digest": "Nicht unterstützter Digest-Algorithmus: __algorithm__",

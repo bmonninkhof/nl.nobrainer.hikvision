@@ -113,6 +113,10 @@ class HikvisionDriver extends Homey.Driver {
       return args.device.triggerRelay(selectedNumber(args.relay));
     });
     registerAutocomplete(relayCard, 'relay', (query, args) => args.device.getRelayOptions(query));
+    this.homey.flow.getActionCard('end_intercom_call').registerRunListener(async args => {
+      if (!args.device) throw new Error(this.homey.__('errors.device_missing'));
+      return args.device.endIntercomCall();
+    });
     this.homey.flow.getActionCard('enable_event_monitoring').registerRunListener(async args => {
       if (!args.device) throw new Error(this.homey.__('errors.device_missing'));
       return args.device.setEventMonitoring(true);

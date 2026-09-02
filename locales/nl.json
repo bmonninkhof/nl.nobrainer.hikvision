@@ -82,6 +82,8 @@
     "preset_not_available": "Deze PTZ-preset is niet opgeslagen op het geselecteerde camerakanaal.",
     "relay_not_supported": "Deurbediening wordt niet ondersteund door dit Hikvision-apparaat of account.",
     "relay_cooldown": "Er is zojuist een deuropdracht verstuurd. Wacht enkele seconden voordat je het opnieuw probeert.",
+    "call_control_not_supported": "Het beëindigen van een intercomoproep wordt niet ondersteund door dit Hikvision-apparaat of account.",
+    "no_ringing_call": "Er is geen overgaande intercomoproep om te beëindigen.",
     "isapi_required": "Deze functie vereist een actieve ISAPI-verbinding. Schakel RTSP-only-modus uit en controleer de apparaatrechten.",
     "not_connected": "Het Hikvision-apparaat is niet verbonden.",
     "unsupported_digest": "Niet-ondersteund Digest-algoritme: __algorithm__",

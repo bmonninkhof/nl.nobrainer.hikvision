@@ -82,6 +82,8 @@
     "preset_not_available": "This PTZ preset is not stored on the selected camera channel.",
     "relay_not_supported": "Door control is not supported by this Hikvision device or account.",
     "relay_cooldown": "A door command was just sent. Wait a few seconds before trying again.",
+    "call_control_not_supported": "Ending an intercom call is not supported by this Hikvision device or account.",
+    "no_ringing_call": "There is no ringing intercom call to end.",
     "isapi_required": "This function requires an active ISAPI connection. Disable RTSP-only mode and check the device permissions.",
     "not_connected": "The Hikvision device is not connected.",
     "unsupported_digest": "Unsupported Digest algorithm: __algorithm__",

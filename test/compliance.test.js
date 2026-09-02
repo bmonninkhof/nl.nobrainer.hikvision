@@ -29,7 +29,7 @@ test('manifest gebruikt de winkelnaam en complete beeldformaten', () => {
   const manifest = JSON.parse(fs.readFileSync(path.join(root, '.homeycompose/app.json')));
   assert.equal(manifest.name.en, 'Hikvision');
   assert.equal(manifest.id, 'nl.nobrainer.hikvision');
-  assert.equal(manifest.version, '2026.9.3');
+  assert.equal(manifest.version, '2026.9.4');
   assert.equal(manifest.sdk, 3);
   assert.deepEqual(manifest.platforms, ['local']);
   assert.deepEqual(manifest.permissions, []);

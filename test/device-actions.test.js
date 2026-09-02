@@ -218,3 +218,32 @@ test('een nieuwe PTZ-opdracht vervangt de lopende timer voor hetzelfde kanaal', 
   assert.equal(device.ptzDelayTimers.size, 0);
   assert.deepEqual(commands.map(command => command.pan), [10, 20, 0]);
 });
+
+test('intercomoproep wordt uitsluitend tijdens de ringstatus beëindigd', async () => {
+  const commands = [];
+  const device = {
+    client: {
+      getCallSignalCapabilities: async () => ({ commands: ['request', 'hangUp'] }),
+      getCallStatus: async () => 'ring',
+      hangUpIntercomCall: async options => { commands.push(options); return true; },
+    },
+    isapiAvailable: true,
+    homey: { __: translate },
+    getCapabilityValue: () => 'VIS',
+    callControlDiagnostics: { checkedAt: null, supported: null, commands: [], recentAttempts: [] },
+    recordCallControlAttempt: methods.recordCallControlAttempt,
+  };
+
+  assert.equal(await methods.endIntercomCall.call(device), true);
+  assert.deepEqual(commands, [{ capabilitiesChecked: true }]);
+  assert.equal(device.callControlDiagnostics.supported, true);
+  assert.equal(device.callControlDiagnostics.recentAttempts[0].result, 'success');
+
+  device.client.getCallStatus = async () => 'idle';
+  await assert.rejects(
+    methods.endIntercomCall.call(device),
+    error => error.code === 'ENORINGINGCALL',
+  );
+  assert.equal(commands.length, 1);
+  assert.equal(device.callControlDiagnostics.recentAttempts.at(-1).result, 'blocked-not-ringing');
+});

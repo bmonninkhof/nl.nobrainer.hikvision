@@ -24,6 +24,7 @@ Homey SDK v3-app voor lokale Hikvision IP-camera's en NVR's via ISAPI en RTSP.
 - Relatieve PTZ-bediening vanuit Advanced Flow
 - Naar een opgeslagen PTZ-preset gaan vanuit Advanced Flow
 - Een compatibel deurrelais bedienen via Hikvision AccessControl
+- Een overgaande video-intercomoproep veilig beëindigen vanuit Advanced Flow
 - Gebeurtenisbewaking in Homey blijvend in- en uitschakelen zonder Live-video of momentopnamen te stoppen
 - Meertalige pairing en apparaatinstellingen
 - Privacyveilig diagnose-/bugrapport via **Apparaat repareren**, zonder

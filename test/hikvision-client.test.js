@@ -884,3 +884,22 @@ test('alarmstream start niet dubbel en kan afzonderlijk worden gepauzeerd', () =
   client.stop();
   assert.equal(client.clientStopped, true);
 });
+
+test('intercomoproep wordt alleen beëindigd als hangUp als capability is gemeld', async () => {
+  const client = new HikvisionClient({ host: 'doorbell', port: 80, username: 'admin', password: '' });
+  let request;
+  client.getJson = async () => ({ CallSignal: { cmdType: { '@opt': ['request', 'hangUp'] } } });
+  client.request = async (path, options) => {
+    request = { path, options };
+    return { body: Buffer.from('{"ResponseStatus":{"statusCode":1,"statusString":"OK"}}') };
+  };
+
+  assert.deepEqual(await client.getCallSignalCapabilities(), { commands: ['request', 'hangUp'] });
+  assert.equal(await client.hangUpIntercomCall(), true);
+  assert.equal(request.path, '/ISAPI/VideoIntercom/callSignal?format=json');
+  assert.equal(request.options.method, 'PUT');
+  assert.deepEqual(JSON.parse(request.options.body), { CallSignal: { cmdType: 'hangUp' } });
+
+  client.getJson = async () => ({ CallSignal: { cmdType: { '@opt': ['request', 'reject'] } } });
+  await assert.rejects(client.hangUpIntercomCall(), error => error.code === 'ECALLCONTROLUNSUPPORTED');
+});

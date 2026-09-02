@@ -37,6 +37,7 @@ const MAX_DIAGNOSTIC_EVENTS = 20;
 const CONNECTION_FAILURE_THRESHOLD = 3;
 const RELAY_COMMAND_COOLDOWN = 3000;
 const MAX_RELAY_DIAGNOSTICS = 20;
+const MAX_CALL_CONTROL_DIAGNOSTICS = 20;
 const RINGING_CALL_STATUSES = new Set(['ring', 'ringing', 'calling']);
 const EVENT_CAPABILITIES = {
   VideoMotion: 'alarm_motion',
@@ -88,6 +89,12 @@ class HikvisionDevice extends Homey.Device {
     };
     this.lastRelayCommandAt = 0;
     this.relayDiagnostics = [];
+    this.callControlDiagnostics = {
+      checkedAt: null,
+      supported: null,
+      commands: [],
+      recentAttempts: [],
+    };
     this.callStatusPollTimer = null;
     this.callStatusPollRunning = false;
     this.callStatusPollFailureCount = 0;
@@ -730,6 +737,11 @@ class HikvisionDevice extends Homey.Device {
       },
       videoProfiles: Object.fromEntries(this.videoProfiles),
       doorbell: doorbellDiagnostics,
+      callControl: {
+        ...this.callControlDiagnostics,
+        commands: [...this.callControlDiagnostics.commands],
+        recentAttempts: [...this.callControlDiagnostics.recentAttempts],
+      },
       authentication: this.client?.getAuthenticationDiagnostics?.() || null,
       features: {
         ...this.featureDetection,
@@ -970,6 +982,60 @@ class HikvisionDevice extends Homey.Device {
       errorCode,
     });
     this.relayDiagnostics = this.relayDiagnostics.slice(-MAX_RELAY_DIAGNOSTICS);
+  }
+
+  async endIntercomCall() {
+    if (!this.client || this.isapiAvailable !== true) {
+      throw new Error(this.homey.__('errors.isapi_required'));
+    }
+    if (!isVideoIntercomDevice(this.getCapabilityValue('hik_type'))) {
+      this.recordCallControlAttempt('unsupported-device');
+      throw new Error(this.homey.__('errors.call_control_not_supported'));
+    }
+
+    try {
+      const capabilities = await this.client.getCallSignalCapabilities();
+      const commands = capabilities.commands.map(value => String(value));
+      const supported = commands.some(value => value.toLowerCase() === 'hangup');
+      this.callControlDiagnostics.checkedAt = new Date().toISOString();
+      this.callControlDiagnostics.supported = supported;
+      this.callControlDiagnostics.commands = commands;
+      if (!supported) {
+        this.recordCallControlAttempt('unsupported-command');
+        throw Object.assign(new Error(this.homey.__('errors.call_control_not_supported')), {
+          code: 'ECALLCONTROLUNSUPPORTED',
+        });
+      }
+
+      const status = String(await this.client.getCallStatus()).trim().toLowerCase();
+      if (!RINGING_CALL_STATUSES.has(status)) {
+        this.recordCallControlAttempt('blocked-not-ringing', null, status);
+        throw Object.assign(new Error(this.homey.__('errors.no_ringing_call')), {
+          code: 'ENORINGINGCALL',
+        });
+      }
+
+      const result = await this.client.hangUpIntercomCall({ capabilitiesChecked: true });
+      this.recordCallControlAttempt('success', null, status);
+      return result;
+    } catch (error) {
+      if (!['ECALLCONTROLUNSUPPORTED', 'ENORINGINGCALL'].includes(error.code)) {
+        this.recordCallControlAttempt('failed', getDiagnosticErrorCode(error));
+      }
+      throw error;
+    }
+  }
+
+  recordCallControlAttempt(result, errorCode = null, callStatus = null) {
+    this.callControlDiagnostics.recentAttempts.push({
+      timestamp: new Date().toISOString(),
+      command: 'hangUp',
+      callStatus,
+      result,
+      errorCode,
+    });
+    this.callControlDiagnostics.recentAttempts = this.callControlDiagnostics.recentAttempts
+      .slice(-MAX_CALL_CONTROL_DIAGNOSTICS);
   }
 
   async setEventMonitoring(enabled) {
