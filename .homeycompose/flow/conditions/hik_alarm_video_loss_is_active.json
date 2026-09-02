@@ -1,0 +1,4 @@
+{
+  "title": { "en": "Video signal !{{is|isn't}} lost", "nl": "Videosignaal !{{is|is niet}} weggevallen", "de": "Videosignal !{{ist|ist nicht}} ausgefallen" },
+  "args": [{ "name": "device", "type": "device", "filter": "driver_id=hikvision-camnvr" }]
+}

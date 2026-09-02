@@ -1,0 +1,22 @@
+{
+  "type": "boolean",
+  "title": {
+    "en": "Region exiting",
+    "nl": "Gebied verlaten",
+    "de": "Bereich verlassen"
+  },
+  "getable": true,
+  "setable": false,
+  "insights": true,
+  "insightsTitleTrue": {
+    "en": "Region exiting detected",
+    "nl": "Verlaten van gebied gedetecteerd",
+    "de": "Verlassen des Bereichs erkannt"
+  },
+  "insightsTitleFalse": {
+    "en": "No region exiting",
+    "nl": "Gebied wordt niet verlaten",
+    "de": "Kein Verlassen des Bereichs"
+  },
+  "icon": "/assets/info.svg"
+}

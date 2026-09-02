@@ -1,0 +1,7 @@
+{
+  "type": "string",
+  "title": { "en": "Type", "nl": "Type", "de": "Typ" },
+  "getable": true,
+  "setable": false,
+  "icon": "/assets/info.svg"
+}

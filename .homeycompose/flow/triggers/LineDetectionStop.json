@@ -1,0 +1,5 @@
+{
+  "title": { "en": "Line crossing ended", "nl": "Lijnoverschrijding is beëindigd", "de": "Linienüberschreitung ist beendet" },
+  "tokens": [{ "name": "channelID", "type": "number", "title": { "en": "Channel number", "nl": "Kanaalnummer", "de": "Kanalnummer" }, "example": 2 }],
+  "args": [{ "name": "device", "type": "device", "filter": "driver_id=hikvision-camnvr" }]
+}

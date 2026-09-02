@@ -1,0 +1,10 @@
+{
+  "type": "boolean",
+  "title": { "en": "Local alarm", "nl": "Lokaal alarm", "de": "Lokaler Alarm" },
+  "getable": true,
+  "setable": false,
+  "insights": true,
+  "insightsTitleTrue": { "en": "Local alarm active", "nl": "Lokaal alarm actief", "de": "Lokaler Alarm aktiv" },
+  "insightsTitleFalse": { "en": "Local alarm inactive", "nl": "Lokaal alarm inactief", "de": "Lokaler Alarm inaktiv" },
+  "icon": "/assets/info.svg"
+}

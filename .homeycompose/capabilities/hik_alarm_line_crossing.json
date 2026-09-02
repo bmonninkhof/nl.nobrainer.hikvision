@@ -1,0 +1,10 @@
+{
+  "type": "boolean",
+  "title": { "en": "Line crossing", "nl": "Lijnoverschrijding", "de": "Linienüberschreitung" },
+  "getable": true,
+  "setable": false,
+  "insights": true,
+  "insightsTitleTrue": { "en": "Line crossing detected", "nl": "Lijnoverschrijding gedetecteerd", "de": "Linienüberschreitung erkannt" },
+  "insightsTitleFalse": { "en": "No line crossing", "nl": "Geen lijnoverschrijding", "de": "Keine Linienüberschreitung" },
+  "icon": "/assets/info.svg"
+}

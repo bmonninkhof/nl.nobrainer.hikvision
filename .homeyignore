@@ -1,0 +1,7 @@
+.git/
+.github/
+.homeybuild/
+test/
+node_modules/.cache/
+eslint.config.js
+README.md

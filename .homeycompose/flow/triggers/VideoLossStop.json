@@ -1,0 +1,5 @@
+{
+  "title": { "en": "Video signal was restored", "nl": "Videosignaal is hersteld", "de": "Videosignal wurde wiederhergestellt" },
+  "tokens": [{ "name": "channelID", "type": "number", "title": { "en": "Channel number", "nl": "Kanaalnummer", "de": "Kanalnummer" }, "example": 2 }],
+  "args": [{ "name": "device", "type": "device", "filter": "driver_id=hikvision-camnvr" }]
+}

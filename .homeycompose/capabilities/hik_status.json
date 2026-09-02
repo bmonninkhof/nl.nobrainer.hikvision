@@ -1,0 +1,10 @@
+{
+  "type": "boolean",
+  "title": { "en": "Connected", "nl": "Verbonden", "de": "Verbunden" },
+  "getable": true,
+  "setable": false,
+  "insights": true,
+  "insightsTitleTrue": { "en": "Connected", "nl": "Verbonden", "de": "Verbunden" },
+  "insightsTitleFalse": { "en": "Disconnected", "nl": "Niet verbonden", "de": "Getrennt" },
+  "icon": "/assets/info.svg"
+}

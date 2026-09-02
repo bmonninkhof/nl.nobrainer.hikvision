@@ -1,0 +1,4 @@
+{
+  "title": { "en": "!{{Is|Isn't}} connected", "nl": "!{{Is|Is niet}} verbonden", "de": "!{{Ist|Ist nicht}} verbunden" },
+  "args": [{ "name": "device", "type": "device", "filter": "driver_id=hikvision-camnvr" }]
+}

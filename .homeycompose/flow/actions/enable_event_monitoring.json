@@ -1,0 +1,24 @@
+{
+  "title": {
+    "en": "Enable event monitoring",
+    "nl": "Gebeurtenisbewaking inschakelen",
+    "de": "Ereignisüberwachung aktivieren"
+  },
+  "titleFormatted": {
+    "en": "Enable event monitoring for [[device]]",
+    "nl": "Schakel gebeurtenisbewaking in voor [[device]]",
+    "de": "Ereignisüberwachung für [[device]] aktivieren"
+  },
+  "hint": {
+    "en": "Starts ISAPI alarm events and compatible doorbell polling in Homey. This does not change the camera configuration.",
+    "nl": "Start ISAPI-alarmgebeurtenissen en compatibele deurbelcontrole in Homey. Dit wijzigt de cameraconfiguratie niet.",
+    "de": "Startet ISAPI-Alarmereignisse und kompatible Türklingel-Abfragen in Homey. Die Kamerakonfiguration wird nicht geändert."
+  },
+  "args": [
+    {
+      "name": "device",
+      "type": "device",
+      "filter": "driver_id=hikvision-camnvr"
+    }
+  ]
+}

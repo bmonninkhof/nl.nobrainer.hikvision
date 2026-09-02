@@ -1,0 +1,3 @@
+Bring compatible Hikvision cameras, video doorbells and network video recorders into Homey Pro over your local network. Check snapshots and Live video, keep an eye on multiple recorder channels and use the dashboard widget when you want a closer look.
+
+Use camera and doorbell events to automate lighting, notifications and security routines. Compatible PTZ controls, presets and door relays can be used from Advanced Flow. Event monitoring can be paused without disabling Live video or snapshots. Support depends on the model, firmware and account permissions; enable Notify Surveillance Center for the events you want to receive.

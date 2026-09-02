@@ -1,0 +1,3 @@
+Integriere kompatible Hikvision-Kameras, Video-Türklingeln und Netzwerkvideorekorder über dein lokales Netzwerk in Homey Pro. Sieh dir Schnappschüsse und Live-Video an, behalte mehrere Rekorderkanäle im Blick und nutze das Dashboard-Widget für eine genauere Ansicht.
+
+Verwende Kamera- und Türklingelereignisse, um Beleuchtung, Benachrichtigungen und Sicherheitsabläufe zu automatisieren. Kompatible PTZ-Steuerung, Voreinstellungen und Türrelais stehen in Advanced Flow bereit. Die Ereignisüberwachung kann pausiert werden, ohne Live-Video oder Schnappschüsse zu deaktivieren. Die Unterstützung hängt von Modell, Firmware und Kontoberechtigungen ab; aktiviere Notify Surveillance Center für die gewünschten Ereignisse.

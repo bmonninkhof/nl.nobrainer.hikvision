@@ -1,0 +1,13 @@
+Hikvision Homey app
+
+This project is derived from the GPL-3.0-licensed com.hikvision Homey app:
+https://github.com/JohanBendz/com.hikvision
+
+Original app developer: Martin P
+Upstream repository maintainer: Johan Bendz
+Additional contributors retain copyright in their respective contributions.
+
+This distribution is licensed under GPL-3.0-only; see LICENSE.
+
+Hikvision and related marks belong to their respective owners. This project does
+not claim ownership of those marks or imply endorsement by the trademark owner.

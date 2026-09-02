@@ -1,0 +1,21 @@
+{
+  "title": { "en": "Set relative PTZ", "nl": "Relatieve PTZ instellen", "de": "Relative PTZ einstellen" },
+  "titleFormatted": {
+    "en": "Move camera [[channel]] for [[duration]] seconds: pan [[pannumber]], tilt [[tiltnumber]], zoom [[zoomnumber]]",
+    "nl": "Beweeg camera [[channel]] [[duration]] seconden: pan [[pannumber]], tilt [[tiltnumber]], zoom [[zoomnumber]]",
+    "de": "Kamera [[channel]] für [[duration]] Sekunden bewegen: Pan [[pannumber]], Tilt [[tiltnumber]], Zoom [[zoomnumber]]"
+  },
+  "hint": {
+    "en": "Relative values range from -100 to 100.",
+    "nl": "Relatieve waarden lopen van -100 tot 100.",
+    "de": "Relative Werte reichen von -100 bis 100."
+  },
+  "args": [
+    { "name": "device", "type": "device", "filter": "driver_id=hikvision-camnvr" },
+    { "name": "pannumber", "type": "number", "min": -100, "max": 100, "step": 0.1, "placeholder": { "en": "Pan", "nl": "Pan", "de": "Pan" } },
+    { "name": "tiltnumber", "type": "number", "min": -100, "max": 100, "step": 0.1, "placeholder": { "en": "Tilt", "nl": "Tilt", "de": "Tilt" } },
+    { "name": "zoomnumber", "type": "number", "min": -100, "max": 100, "step": 0.1, "placeholder": { "en": "Zoom", "nl": "Zoom", "de": "Zoom" } },
+    { "name": "duration", "type": "number", "min": 0.1, "max": 10, "step": 0.1, "placeholder": { "en": "Duration in seconds", "nl": "Duur in seconden", "de": "Dauer in Sekunden" } },
+    { "name": "channel", "type": "autocomplete", "title": { "en": "Camera channel", "nl": "Camerakanaal", "de": "Kamerakanal" }, "placeholder": { "en": "Select a PTZ channel", "nl": "Selecteer een PTZ-kanaal", "de": "PTZ-Kanal auswählen" } }
+  ]
+}

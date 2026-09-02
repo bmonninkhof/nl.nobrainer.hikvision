@@ -1,0 +1,5 @@
+{
+  "title": { "en": "Local alarm started", "nl": "Lokaal alarm is gestart", "de": "Lokaler Alarm hat begonnen" },
+  "tokens": [{ "name": "channelID", "type": "number", "title": { "en": "Channel number", "nl": "Kanaalnummer", "de": "Kanalnummer" }, "example": 2 }],
+  "args": [{ "name": "device", "type": "device", "filter": "driver_id=hikvision-camnvr" }]
+}

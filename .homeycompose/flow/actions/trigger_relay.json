@@ -1,0 +1,34 @@
+{
+  "title": {
+    "en": "Trigger door relay",
+    "nl": "Schakel deurrelais",
+    "de": "Türrelais auslösen"
+  },
+  "titleFormatted": {
+    "en": "Trigger door relay [[relay]]",
+    "nl": "Schakel deurrelais [[relay]]",
+    "de": "Türrelais [[relay]] auslösen"
+  },
+  "hint": {
+    "en": "Opens the selected relay using Hikvision access control. The device account must have permission to control the door.",
+    "nl": "Opent het gekozen relais via Hikvision-toegangscontrole. Het apparaataccount moet toestemming hebben om de deur te bedienen.",
+    "de": "Öffnet das ausgewählte Relais über die Hikvision-Zutrittskontrolle. Das Gerätekonto benötigt die Berechtigung zur Türsteuerung."
+  },
+  "args": [
+    {
+      "name": "device",
+      "type": "device",
+      "filter": "driver_id=hikvision-camnvr"
+    },
+    {
+      "name": "relay",
+      "type": "autocomplete",
+      "title": { "en": "Door relay", "nl": "Deurrelais", "de": "Türrelais" },
+      "placeholder": {
+        "en": "Select an available relay",
+        "nl": "Selecteer een beschikbaar relais",
+        "de": "Verfügbares Relais auswählen"
+      }
+    }
+  ]
+}

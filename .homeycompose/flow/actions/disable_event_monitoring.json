@@ -1,0 +1,24 @@
+{
+  "title": {
+    "en": "Disable event monitoring",
+    "nl": "Gebeurtenisbewaking uitschakelen",
+    "de": "Ereignisüberwachung deaktivieren"
+  },
+  "titleFormatted": {
+    "en": "Disable event monitoring for [[device]]",
+    "nl": "Schakel gebeurtenisbewaking uit voor [[device]]",
+    "de": "Ereignisüberwachung für [[device]] deaktivieren"
+  },
+  "hint": {
+    "en": "Stops ISAPI alarm events and doorbell polling in Homey while Live video and snapshots remain available.",
+    "nl": "Stopt ISAPI-alarmgebeurtenissen en deurbelcontrole in Homey; Live-video en momentopnamen blijven beschikbaar.",
+    "de": "Stoppt ISAPI-Alarmereignisse und Türklingel-Abfragen in Homey; Live-Video und Schnappschüsse bleiben verfügbar."
+  },
+  "args": [
+    {
+      "name": "device",
+      "type": "device",
+      "filter": "driver_id=hikvision-camnvr"
+    }
+  ]
+}

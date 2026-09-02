@@ -1,0 +1,8 @@
+{
+  "title": { "en": "Intrusion detected", "nl": "Indringing is gedetecteerd", "de": "Eindringen wurde erkannt" },
+  "tokens": [
+    { "name": "channelID", "type": "number", "title": { "en": "Channel number", "nl": "Kanaalnummer", "de": "Kanalnummer" }, "example": 2 },
+    { "name": "snapshot", "type": "image", "title": { "en": "Snapshot", "nl": "Momentopname", "de": "Schnappschuss" } }
+  ],
+  "args": [{ "name": "device", "type": "device", "filter": "driver_id=hikvision-camnvr" }]
+}

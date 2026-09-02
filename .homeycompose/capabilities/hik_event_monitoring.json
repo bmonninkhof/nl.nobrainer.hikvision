@@ -1,0 +1,22 @@
+{
+  "type": "boolean",
+  "title": {
+    "en": "Event monitoring",
+    "nl": "Gebeurtenisbewaking",
+    "de": "Ereignisüberwachung"
+  },
+  "getable": true,
+  "setable": false,
+  "insights": true,
+  "insightsTitleTrue": {
+    "en": "Event monitoring enabled",
+    "nl": "Gebeurtenisbewaking ingeschakeld",
+    "de": "Ereignisüberwachung aktiviert"
+  },
+  "insightsTitleFalse": {
+    "en": "Event monitoring disabled",
+    "nl": "Gebeurtenisbewaking uitgeschakeld",
+    "de": "Ereignisüberwachung deaktiviert"
+  },
+  "icon": "/assets/info.svg"
+}

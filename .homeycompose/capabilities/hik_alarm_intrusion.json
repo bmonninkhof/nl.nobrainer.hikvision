@@ -1,0 +1,10 @@
+{
+  "type": "boolean",
+  "title": { "en": "Intrusion", "nl": "Indringing", "de": "Eindringen" },
+  "getable": true,
+  "setable": false,
+  "insights": true,
+  "insightsTitleTrue": { "en": "Intrusion detected", "nl": "Indringing gedetecteerd", "de": "Eindringen erkannt" },
+  "insightsTitleFalse": { "en": "No intrusion", "nl": "Geen indringing", "de": "Kein Eindringen" },
+  "icon": "/assets/info.svg"
+}

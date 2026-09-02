@@ -1,0 +1,10 @@
+{
+  "type": "boolean",
+  "title": { "en": "Video signal lost", "nl": "Videosignaal verloren", "de": "Videosignal verloren" },
+  "getable": true,
+  "setable": false,
+  "insights": true,
+  "insightsTitleTrue": { "en": "Video signal lost", "nl": "Videosignaal verloren", "de": "Videosignal verloren" },
+  "insightsTitleFalse": { "en": "Video signal available", "nl": "Videosignaal beschikbaar", "de": "Videosignal verfügbar" },
+  "icon": "/assets/info.svg"
+}

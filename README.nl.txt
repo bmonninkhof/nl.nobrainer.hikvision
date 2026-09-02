@@ -1,0 +1,3 @@
+Breng compatibele Hikvision-camera's, videodeurbellen en netwerkvideorecorders via je lokale netwerk naar Homey Pro. Bekijk momentopnamen en Live-video, houd meerdere recorderkanalen in de gaten en gebruik de dashboardwidget als je het beeld van dichterbij wilt bekijken.
+
+Gebruik camera- en deurbelgebeurtenissen om verlichting, meldingen en beveiligingsroutines te automatiseren. Compatibele PTZ-bediening, presets en deurrelais zijn beschikbaar in Advanced Flow. Gebeurtenisbewaking kan worden gepauzeerd zonder Live-video of momentopnamen uit te schakelen. Ondersteuning hangt af van model, firmware en accountrechten; schakel Notify Surveillance Center in voor de gebeurtenissen die je wilt ontvangen.

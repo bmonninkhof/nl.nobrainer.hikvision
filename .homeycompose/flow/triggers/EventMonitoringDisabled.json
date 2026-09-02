@@ -1,0 +1,19 @@
+{
+  "title": {
+    "en": "Event monitoring was disabled",
+    "nl": "Gebeurtenisbewaking is uitgeschakeld",
+    "de": "Ereignisüberwachung wurde deaktiviert"
+  },
+  "titleFormatted": {
+    "en": "Event monitoring was disabled",
+    "nl": "Gebeurtenisbewaking is uitgeschakeld",
+    "de": "Ereignisüberwachung wurde deaktiviert"
+  },
+  "args": [
+    {
+      "name": "device",
+      "type": "device",
+      "filter": "driver_id=hikvision-camnvr"
+    }
+  ]
+}

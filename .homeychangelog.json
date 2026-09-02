@@ -1,0 +1,147 @@
+{
+  "2026.9.3": {
+    "en": "Detect available camera channels, PTZ presets and door relays automatically, protect door commands against rapid repeats and expose event-monitoring status and Flows.",
+    "nl": "Detecteer beschikbare camerakanalen, PTZ-presets en deurrelais automatisch, beveilig deuropdrachten tegen snelle herhaling en voeg status en Flows voor gebeurtenisbewaking toe.",
+    "de": "Verfügbare Kamerakanäle, PTZ-Voreinstellungen und Türrelais werden automatisch erkannt, Türbefehle gegen schnelle Wiederholungen geschützt und Status sowie Flows für die Ereignisüberwachung ergänzt."
+  },
+  "2026.9.2": {
+    "en": "Reduce memory usage and improve long-running stability with bounded snapshot resources, adaptive retries, safer event-stream recovery and PTZ timer cleanup.",
+    "nl": "Verminder geheugengebruik en verbeter langdurige stabiliteit met begrensde momentopnamen, adaptieve herhaalpogingen, veiliger herstel van de gebeurtenisstream en opschoning van PTZ-timers.",
+    "de": "Speichernutzung reduziert und Langzeitstabilität durch begrenzte Schnappschuss-Ressourcen, adaptive Wiederholungen, sicherere Wiederherstellung des Ereignisstreams und PTZ-Timer-Bereinigung verbessert."
+  },
+  "2026.9.1": {
+    "en": "Add door-relay control, persistent event-monitoring controls and PTZ preset selection to Advanced Flow.",
+    "nl": "Voeg bediening van deurrelais, blijvende gebeurtenisbewaking en PTZ-presetkeuze toe aan Advanced Flow.",
+    "de": "Türrelais-Steuerung, dauerhafte Ereignisüberwachung und PTZ-Voreinstellungsauswahl zu Advanced Flow hinzugefügt."
+  },
+  "2026.8.20": {
+    "en": "Add a secure Hikvision web-session fallback for door stations that reject Digest and Basic ISAPI authentication, plus safer retry limits and language-independent diagnostics.",
+    "nl": "Voeg een veilige Hikvision-websessiefallback toe voor deurstations die Digest- en Basic-ISAPI-authenticatie weigeren, plus veiligere herhaallimieten en taalonafhankelijke diagnostiek.",
+    "de": "Sicheren Hikvision-Websitzungs-Fallback für Türstationen hinzugefügt, die Digest- und Basic-ISAPI-Authentifizierung ablehnen, einschließlich sicherer Wiederholungslimits und sprachunabhängiger Diagnosen."
+  },
+  "2026.8.19": {
+    "en": "Add selectable Automatic, Digest and forced Basic authentication for door stations, plus privacy-safe authentication details in bug reports.",
+    "nl": "Voeg instelbare automatische, Digest- en geforceerde Basic-authenticatie voor deurstations toe, plus privacyveilige authenticatiedetails in bugrapporten.",
+    "de": "Auswählbare automatische, Digest- und erzwungene Basic-Authentifizierung für Türstationen sowie datenschutzsichere Authentifizierungsdetails in Fehlerberichten hinzugefügt."
+  },
+  "2026.8.18": {
+    "en": "Improve ISAPI authentication for Hikvision door stations by retrying renewed Digest challenges and falling back to Basic when the device advertises both methods.",
+    "nl": "Verbeter ISAPI-authenticatie voor Hikvision-deurstations door vernieuwde Digest-challenges opnieuw te proberen en terug te vallen op Basic wanneer het apparaat beide methoden aanbiedt.",
+    "de": "ISAPI-Authentifizierung für Hikvision-Türstationen verbessert: erneuerte Digest-Challenges werden erneut versucht und bei Geräten mit beiden Methoden wird auf Basic zurückgegriffen."
+  },
+  "2026.8.17": {
+    "en": "Fix authentication on Hikvision devices that advertise Digest and Basic together, and add an explicit Basic fallback for devices that only offer Basic authentication.",
+    "nl": "Herstel authenticatie op Hikvision-apparaten die Digest en Basic samen aanbieden en voeg een expliciete Basic-fallback toe voor apparaten die uitsluitend Basic-authenticatie aanbieden.",
+    "de": "Authentifizierung bei Hikvision-Geräten korrigiert, die Digest und Basic gemeinsam anbieten; zusätzlich wurde ein ausdrücklicher Basic-Fallback für Geräte ergänzt, die ausschließlich Basic-Authentifizierung anbieten."
+  },
+  "2026.8.15": {
+    "en": "Automatically retry ISAPI on VIS door stations after a temporary RTSP fallback and enable snapshots, events and doorbell polling as soon as call status recovers.",
+    "nl": "Probeer ISAPI op VIS-deurstations automatisch opnieuw na een tijdelijke RTSP-fallback en schakel momentopnamen, gebeurtenissen en deurbelpolling in zodra de oproepstatus herstelt.",
+    "de": "ISAPI wird bei VIS-Türstationen nach einem vorübergehenden RTSP-Fallback automatisch erneut geprüft; Schnappschüsse, Ereignisse und Türklingel-Abfragen werden aktiviert, sobald der Anrufstatus wieder verfügbar ist."
+  },
+  "2026.8.14": {
+    "en": "Improve DS-KV6113 and DS-KV8113 door-station support by detecting the official call-status endpoint directly and using it as a safe ISAPI health fallback.",
+    "nl": "Verbeter ondersteuning voor DS-KV6113- en DS-KV8113-deurstations door het officiële oproepstatusadres rechtstreeks te detecteren en als veilige ISAPI-verbindingscontrole te gebruiken.",
+    "de": "Unterstützung für DS-KV6113- und DS-KV8113-Türstationen verbessert, indem der offizielle Anrufstatus-Endpunkt direkt erkannt und als sicherer ISAPI-Verbindungsfallback verwendet wird."
+  },
+  "2026.8.13": {
+    "en": "Prefer the H.264 substream for more reliable Live video, add manual main/substream selection and add a persistent RTSP-only mode for door stations with broken ISAPI.",
+    "nl": "Geef voor betrouwbaardere Live-video de voorkeur aan de H.264-substream, voeg handmatige hoofd-/substreamkeuze toe en voeg een blijvende RTSP-only-modus toe voor deurstations met defecte ISAPI.",
+    "de": "Für zuverlässigeres Live-Video wird der H.264-Substream bevorzugt; außerdem wurden eine manuelle Haupt-/Substream-Auswahl und ein dauerhafter Nur-RTSP-Modus für Türstationen mit defektem ISAPI hinzugefügt."
+  },
+  "2026.8.12": {
+    "en": "Keep affected Hikvision VIS door stations in stable RTSP-only mode by recognising ISAPI XML error responses, preserving recovered device types and preventing unnecessary ISAPI retries.",
+    "nl": "Houd getroffen Hikvision VIS-deurstations stabiel in RTSP-only-modus door ISAPI XML-foutantwoorden te herkennen, herstelde apparaattypen te behouden en onnodige ISAPI-herhaalpogingen te voorkomen.",
+    "de": "Betroffene Hikvision-VIS-Türstationen bleiben stabil im reinen RTSP-Modus, indem ISAPI-XML-Fehlerantworten erkannt, wiederhergestellte Gerätetypen beibehalten und unnötige ISAPI-Wiederholungen verhindert werden."
+  },
+  "2026.8.11": {
+    "en": "Restore RTSP Live video for Hikvision VIS door stations whose firmware does not provide working ISAPI, and hide unsupported region-detection statuses on VIS devices.",
+    "nl": "Herstel RTSP Live-video voor Hikvision VIS-deurstations waarvan de firmware geen werkende ISAPI biedt en verberg niet-ondersteunde gebiedsdetectiestatussen op VIS-apparaten.",
+    "de": "RTSP-Live-Video für Hikvision-VIS-Türstationen wiederhergestellt, deren Firmware kein funktionierendes ISAPI bereitstellt; nicht unterstützte Bereichserkennungsstatus werden auf VIS-Geräten ausgeblendet."
+  },
+  "2026.8.10": {
+    "en": "Add Region Exiting Detection with Flow triggers, snapshots, live status, Insights and a Flow condition.",
+    "nl": "Voeg detectie van het verlaten van een gebied toe met Flow-triggers, momentopnamen, live-status, Insights en een Flow-conditie.",
+    "de": "Erkennung beim Verlassen eines Bereichs mit Flow-Auslösern, Schnappschüssen, Live-Status, Insights und einer Flow-Bedingung hinzugefügt."
+  },
+  "2026.8.9": {
+    "en": "Add Region Entrance Detection with Flow triggers, snapshots, live status, Insights and a Flow condition.",
+    "nl": "Voeg detectie van het betreden van een gebied toe met Flow-triggers, momentopnamen, live-status, Insights en een Flow-conditie.",
+    "de": "Erkennung beim Betreten eines Bereichs mit Flow-Auslösern, Schnappschüssen, Live-Status, Insights und einer Flow-Bedingung hinzugefügt."
+  },
+  "2026.8.8": {
+    "en": "Improve reliability and privacy with safer connection handling, complete cleanup, useful status conditions, clearer guidance and refreshed camera imagery.",
+    "nl": "Verbeter betrouwbaarheid en privacy met veiligere verbindingsafhandeling, volledige opschoning, nuttige statuscondities, duidelijkere uitleg en vernieuwde camerabeelden.",
+    "de": "Zuverlässigkeit und Datenschutz durch sicherere Verbindungsbehandlung, vollständige Bereinigung, nützliche Statusbedingungen, klarere Hinweise und aktualisierte Kamerabilder verbessert."
+  },
+  "2026.8.7": {
+    "en": "Improve video-doorbell support with an official ISAPI call-status fallback and add a privacy-safe diagnostic bug report to device repair.",
+    "nl": "Verbeter videodeurbelondersteuning met een officiële ISAPI-oproepstatusfallback en voeg een privacyveilig diagnostisch bugrapport toe aan apparaat repareren.",
+    "de": "Video-Türklingel-Unterstützung durch einen offiziellen ISAPI-Anrufstatus-Fallback verbessert und einen datenschutzsicheren Diagnosebericht zur Gerätereparatur hinzugefügt."
+  },
+  "2026.8.6": {
+    "en": "Add camera snapshots to motion, line-crossing, intrusion and doorbell Flow triggers, plus an Advanced Flow action to take a snapshot from a selected NVR channel.",
+    "nl": "Voeg cameramomentopnamen toe aan Flow-triggers voor beweging, lijnoverschrijding, indringing en de deurbel, plus een Advanced Flow-actie om een momentopname van een gekozen NVR-kanaal te maken.",
+    "de": "Kameraschnappschüsse zu Flow-Auslösern für Bewegung, Linienüberschreitung, Eindringen und Türklingel hinzugefügt sowie eine Advanced-Flow-Aktion für einen ausgewählten NVR-Kanal."
+  },
+  "2026.8.5": {
+    "en": "Translate all device, pairing and alarm-stream errors, clarify Flow channel descriptions, allow compatible doorbells without a JPEG snapshot endpoint to pass the connection test, and add an adjustable minimum active time for the Homey motion status.",
+    "nl": "Vertaal alle apparaat-, koppel- en alarmstreamfouten, verduidelijk Flow-kanaalomschrijvingen, laat compatibele deurbellen zonder JPEG-momentopnameadres slagen voor de verbindingstest en voeg een instelbare minimale actieve tijd voor de Homey-bewegingsstatus toe.",
+    "de": "Alle Geräte-, Kopplungs- und Alarmstreamfehler übersetzt, Flow-Kanalbeschreibungen verdeutlicht, kompatible Türklingeln ohne JPEG-Schnappschuss-Endpunkt bestehen den Verbindungstest und eine einstellbare minimale Aktivzeit für den Homey-Bewegungsstatus wurde hinzugefügt."
+  },
+  "2026.8.4": {
+    "en": "Make the Homey camera tile and zone active for motion, line-crossing and intrusion detection events.",
+    "nl": "Maak de Homey-camerategel en zone actief bij beweging, lijnoverschrijding en indringdetectie.",
+    "de": "Homey-Kamerakachel und Zone werden bei Bewegung, Linienüberschreitung und Eindringenerkennung aktiv."
+  },
+  "2026.8.3": {
+    "en": "Add initial Hikvision video doorbell support with a dedicated call-button Flow trigger, and automatically end NVR alarms when a device omits the stop event.",
+    "nl": "Voeg eerste ondersteuning voor Hikvision-videodeurbellen toe met een aparte belknop-Flow-trigger en beëindig NVR-alarmen automatisch wanneer een apparaat geen stopmelding verstuurt.",
+    "de": "Erste Unterstützung für Hikvision-Video-Türklingeln mit einem eigenen Klingeltasten-Flow-Trigger hinzugefügt; NVR-Alarme werden automatisch beendet, wenn ein Gerät kein Stoppereignis sendet."
+  },
+  "2026.8.2": {
+    "en": "Add live Homey status indicators and Insights for tampering, local alarms, video loss, line crossing and intrusion events from the original Hikvision integration.",
+    "nl": "Voeg live Homey-statussen en Insights toe voor sabotage, lokale alarmen, videoverlies, lijnoverschrijding en indringingsgebeurtenissen uit de oorspronkelijke Hikvision-integratie.",
+    "de": "Live-Homey-Statusanzeigen und Insights für Manipulation, lokale Alarme, Videoverlust, Linienüberschreitung und Eindringereignisse aus der ursprünglichen Hikvision-Integration hinzugefügt."
+  },
+  "2026.8.1": {
+    "en": "Show motion as an active Homey device status and keep NVR motion active while any camera channel is detecting movement.",
+    "nl": "Toon beweging als actieve Homey-apparaatstatus en houd NVR-beweging actief zolang een camerakanaal beweging detecteert.",
+    "de": "Bewegung als aktiven Homey-Gerätestatus anzeigen und den NVR-Bewegungsalarm aktiv halten, solange ein Kamerakanal Bewegung erkennt."
+  },
+  "2026.7.12": {
+    "en": "Automatically select a Homey WebRTC-compatible H.264 Hikvision substream for Live video.",
+    "nl": "Selecteer automatisch een met Homey WebRTC compatibele H.264-substream van Hikvision voor Live-video.",
+    "de": "Automatische Auswahl eines mit Homey WebRTC kompatiblen H.264-Hikvision-Substreams für Live-Video."
+  },
+  "2026.7.11": {
+    "en": "Add native Homey Live camera tiles through secure RTSP video registration.",
+    "nl": "Voeg native Homey Live-camerategels toe via beveiligde RTSP-videoregistratie.",
+    "de": "Native Homey-Live-Kamerakacheln über eine sichere RTSP-Videoregistrierung hinzugefügt."
+  },
+  "2026.7.10": {
+    "en": "Add an accessible camera dashboard widget with digital zoom, pan, pinch gestures and automatic refresh.",
+    "nl": "Voeg een toegankelijke camerawidget toe met digitale zoom, verschuiven, knijpgebaren en automatisch verversen.",
+    "de": "Barrierefreies Kamera-Widget mit Digitalzoom, Verschieben, Zwei-Finger-Gesten und automatischer Aktualisierung hinzugefügt."
+  },
+  "2026.7.9": {
+    "en": "Migrate Hikvision devices to Homey's camera class for reliable camera-image presentation.",
+    "nl": "Migreer Hikvision-apparaten naar Homey's cameraklasse voor een betrouwbare beeldweergave.",
+    "de": "Hikvision-Geräte für eine zuverlässige Bildanzeige auf Homeys Kameraklasse umgestellt."
+  },
+  "2026.7.8": {
+    "en": "Refresh camera images automatically and retain the last valid frame during temporary camera errors.",
+    "nl": "Ververs camerabeelden automatisch en behoud het laatste geldige beeld bij tijdelijke camerafouten.",
+    "de": "Kamerabilder werden automatisch aktualisiert; bei vorübergehenden Kamerafehlern bleibt das letzte gültige Bild erhalten."
+  },
+  "2026.7.7": {
+    "en": "Keep camera images visible when the optional Hikvision alarm stream is unavailable.",
+    "nl": "Houd camerabeelden zichtbaar wanneer de optionele Hikvision-alarmstream niet beschikbaar is.",
+    "de": "Kamerabilder bleiben sichtbar, wenn der optionale Hikvision-Alarmstream nicht verfügbar ist."
+  },
+  "2026.7.2": {
+    "en": "Initial SDK v3 release with Hikvision camera and NVR support, alarm Flows, snapshots, secure Digest authentication and safe PTZ controls.",
+    "nl": "Eerste SDK v3-versie met ondersteuning voor Hikvision-camera's en NVR's, alarmflows, momentopnamen, veilige Digest-authenticatie en veilige PTZ-bediening.",
+    "de": "Erste SDK-v3-Version mit Unterstützung für Hikvision-Kameras und NVRs, Alarm-Flows, Schnappschüssen, sicherer Digest-Authentifizierung und sicherer PTZ-Steuerung."
+  }
+}

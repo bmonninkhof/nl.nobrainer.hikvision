@@ -1,0 +1,1655 @@
+{
+  "_comment": "This file is generated. Please edit .homeycompose/app.json instead.",
+  "id": "nl.nobrainer.hikvision",
+  "version": "2026.9.3",
+  "compatibility": ">=12.3.0",
+  "sdk": 3,
+  "runtime": "nodejs",
+  "platforms": [
+    "local"
+  ],
+  "name": {
+    "en": "Hikvision",
+    "nl": "Hikvision",
+    "de": "Hikvision"
+  },
+  "description": {
+    "en": "Keep an eye on what matters, live and locally.",
+    "nl": "Houd lokaal en live in de gaten wat belangrijk is.",
+    "de": "Behalte lokal und live im Blick, was wichtig ist."
+  },
+  "category": "security",
+  "tags": {
+    "en": [
+      "Hikvision",
+      "camera",
+      "doorbell",
+      "NVR",
+      "live video",
+      "security"
+    ],
+    "nl": [
+      "Hikvision",
+      "camera",
+      "deurbel",
+      "NVR",
+      "live-video",
+      "beveiliging"
+    ],
+    "de": [
+      "Hikvision",
+      "Kamera",
+      "Türklingel",
+      "NVR",
+      "Live-Video",
+      "Sicherheit"
+    ]
+  },
+  "permissions": [],
+  "images": {
+    "large": "/assets/images/large.png",
+    "small": "/assets/images/small.png",
+    "xlarge": "/assets/images/xlarge.png"
+  },
+  "author": {
+    "name": "Brian Monninkhof",
+    "email": "nobrainerhomey@gmail.com"
+  },
+  "brandColor": "#d71820",
+  "contributors": {
+    "developers": [
+      {
+        "name": "Martin P"
+      },
+      {
+        "name": "Johan Bendz"
+      }
+    ]
+  },
+  "homeyCommunityTopicId": 157226,
+  "source": "https://github.com/bmonninkhof/nl.nobrainer.hikvision",
+  "support": "mailto:nobrainerhomey@gmail.com",
+  "bugs": {
+    "url": "https://community.homey.app/t/app-pro-test-hikvision-sdk-v3/157226"
+  },
+  "flow": {
+    "triggers": [
+      {
+        "title": {
+          "en": "Local alarm started",
+          "nl": "Lokaal alarm is gestart",
+          "de": "Lokaler Alarm hat begonnen"
+        },
+        "tokens": [
+          {
+            "name": "channelID",
+            "type": "number",
+            "title": {
+              "en": "Channel number",
+              "nl": "Kanaalnummer",
+              "de": "Kanalnummer"
+            },
+            "example": 2
+          }
+        ],
+        "args": [
+          {
+            "name": "device",
+            "type": "device",
+            "filter": "driver_id=hikvision-camnvr"
+          }
+        ],
+        "id": "AlarmLocalStart"
+      },
+      {
+        "title": {
+          "en": "Local alarm stopped",
+          "nl": "Lokaal alarm is gestopt",
+          "de": "Lokaler Alarm ist beendet"
+        },
+        "tokens": [
+          {
+            "name": "channelID",
+            "type": "number",
+            "title": {
+              "en": "Channel number",
+              "nl": "Kanaalnummer",
+              "de": "Kanalnummer"
+            },
+            "example": 2
+          }
+        ],
+        "args": [
+          {
+            "name": "device",
+            "type": "device",
+            "filter": "driver_id=hikvision-camnvr"
+          }
+        ],
+        "id": "AlarmLocalStop"
+      },
+      {
+        "title": {
+          "en": "The doorbell was pressed",
+          "nl": "De deurbel is ingedrukt",
+          "de": "Die Türklingel wurde gedrückt"
+        },
+        "tokens": [
+          {
+            "name": "channelID",
+            "type": "number",
+            "title": {
+              "en": "Channel number",
+              "nl": "Kanaalnummer",
+              "de": "Kanalnummer"
+            },
+            "example": 1
+          },
+          {
+            "name": "snapshot",
+            "type": "image",
+            "title": {
+              "en": "Snapshot",
+              "nl": "Momentopname",
+              "de": "Schnappschuss"
+            }
+          }
+        ],
+        "args": [
+          {
+            "name": "device",
+            "type": "device",
+            "filter": "driver_id=hikvision-camnvr"
+          }
+        ],
+        "id": "DoorbellPressed"
+      },
+      {
+        "title": {
+          "en": "Event monitoring was disabled",
+          "nl": "Gebeurtenisbewaking is uitgeschakeld",
+          "de": "Ereignisüberwachung wurde deaktiviert"
+        },
+        "titleFormatted": {
+          "en": "Event monitoring was disabled",
+          "nl": "Gebeurtenisbewaking is uitgeschakeld",
+          "de": "Ereignisüberwachung wurde deaktiviert"
+        },
+        "args": [
+          {
+            "name": "device",
+            "type": "device",
+            "filter": "driver_id=hikvision-camnvr"
+          }
+        ],
+        "id": "EventMonitoringDisabled"
+      },
+      {
+        "title": {
+          "en": "Event monitoring was enabled",
+          "nl": "Gebeurtenisbewaking is ingeschakeld",
+          "de": "Ereignisüberwachung wurde aktiviert"
+        },
+        "titleFormatted": {
+          "en": "Event monitoring was enabled",
+          "nl": "Gebeurtenisbewaking is ingeschakeld",
+          "de": "Ereignisüberwachung wurde aktiviert"
+        },
+        "args": [
+          {
+            "name": "device",
+            "type": "device",
+            "filter": "driver_id=hikvision-camnvr"
+          }
+        ],
+        "id": "EventMonitoringEnabled"
+      },
+      {
+        "title": {
+          "en": "Intrusion detected",
+          "nl": "Indringing is gedetecteerd",
+          "de": "Eindringen wurde erkannt"
+        },
+        "tokens": [
+          {
+            "name": "channelID",
+            "type": "number",
+            "title": {
+              "en": "Channel number",
+              "nl": "Kanaalnummer",
+              "de": "Kanalnummer"
+            },
+            "example": 2
+          },
+          {
+            "name": "snapshot",
+            "type": "image",
+            "title": {
+              "en": "Snapshot",
+              "nl": "Momentopname",
+              "de": "Schnappschuss"
+            }
+          }
+        ],
+        "args": [
+          {
+            "name": "device",
+            "type": "device",
+            "filter": "driver_id=hikvision-camnvr"
+          }
+        ],
+        "id": "IntrusionDetectionStart"
+      },
+      {
+        "title": {
+          "en": "Intrusion ended",
+          "nl": "Indringing is beëindigd",
+          "de": "Eindringen ist beendet"
+        },
+        "tokens": [
+          {
+            "name": "channelID",
+            "type": "number",
+            "title": {
+              "en": "Channel number",
+              "nl": "Kanaalnummer",
+              "de": "Kanalnummer"
+            },
+            "example": 2
+          }
+        ],
+        "args": [
+          {
+            "name": "device",
+            "type": "device",
+            "filter": "driver_id=hikvision-camnvr"
+          }
+        ],
+        "id": "IntrusionDetectionStop"
+      },
+      {
+        "title": {
+          "en": "Line crossing detected",
+          "nl": "Lijnoverschrijding is gedetecteerd",
+          "de": "Linienüberschreitung wurde erkannt"
+        },
+        "tokens": [
+          {
+            "name": "channelID",
+            "type": "number",
+            "title": {
+              "en": "Channel number",
+              "nl": "Kanaalnummer",
+              "de": "Kanalnummer"
+            },
+            "example": 2
+          },
+          {
+            "name": "snapshot",
+            "type": "image",
+            "title": {
+              "en": "Snapshot",
+              "nl": "Momentopname",
+              "de": "Schnappschuss"
+            }
+          }
+        ],
+        "args": [
+          {
+            "name": "device",
+            "type": "device",
+            "filter": "driver_id=hikvision-camnvr"
+          }
+        ],
+        "id": "LineDetectionStart"
+      },
+      {
+        "title": {
+          "en": "Line crossing ended",
+          "nl": "Lijnoverschrijding is beëindigd",
+          "de": "Linienüberschreitung ist beendet"
+        },
+        "tokens": [
+          {
+            "name": "channelID",
+            "type": "number",
+            "title": {
+              "en": "Channel number",
+              "nl": "Kanaalnummer",
+              "de": "Kanalnummer"
+            },
+            "example": 2
+          }
+        ],
+        "args": [
+          {
+            "name": "device",
+            "type": "device",
+            "filter": "driver_id=hikvision-camnvr"
+          }
+        ],
+        "id": "LineDetectionStop"
+      },
+      {
+        "title": {
+          "en": "Connected",
+          "nl": "Verbonden",
+          "de": "Verbunden"
+        },
+        "args": [
+          {
+            "name": "device",
+            "type": "device",
+            "filter": "driver_id=hikvision-camnvr"
+          }
+        ],
+        "id": "OnConnected"
+      },
+      {
+        "title": {
+          "en": "Disconnected",
+          "nl": "Verbinding verbroken",
+          "de": "Verbindung getrennt"
+        },
+        "args": [
+          {
+            "name": "device",
+            "type": "device",
+            "filter": "driver_id=hikvision-camnvr"
+          }
+        ],
+        "id": "OnDisconnected"
+      },
+      {
+        "title": {
+          "en": "A connection error occurred",
+          "nl": "Er is een verbindingsfout opgetreden",
+          "de": "Ein Verbindungsfehler ist aufgetreten"
+        },
+        "args": [
+          {
+            "name": "device",
+            "type": "device",
+            "filter": "driver_id=hikvision-camnvr"
+          }
+        ],
+        "id": "OnError"
+      },
+      {
+        "title": {
+          "en": "Region entrance detected",
+          "nl": "Betreden van gebied gedetecteerd",
+          "de": "Betreten des Bereichs erkannt"
+        },
+        "tokens": [
+          {
+            "name": "channelID",
+            "type": "number",
+            "title": {
+              "en": "Channel number",
+              "nl": "Kanaalnummer",
+              "de": "Kanalnummer"
+            },
+            "example": 2
+          },
+          {
+            "name": "snapshot",
+            "type": "image",
+            "title": {
+              "en": "Snapshot",
+              "nl": "Momentopname",
+              "de": "Schnappschuss"
+            }
+          }
+        ],
+        "args": [
+          {
+            "name": "device",
+            "type": "device",
+            "filter": "driver_id=hikvision-camnvr"
+          }
+        ],
+        "id": "RegionEntranceDetectionStart"
+      },
+      {
+        "title": {
+          "en": "Region entrance ended",
+          "nl": "Betreden van gebied beëindigd",
+          "de": "Betreten des Bereichs beendet"
+        },
+        "tokens": [
+          {
+            "name": "channelID",
+            "type": "number",
+            "title": {
+              "en": "Channel number",
+              "nl": "Kanaalnummer",
+              "de": "Kanalnummer"
+            },
+            "example": 2
+          }
+        ],
+        "args": [
+          {
+            "name": "device",
+            "type": "device",
+            "filter": "driver_id=hikvision-camnvr"
+          }
+        ],
+        "id": "RegionEntranceDetectionStop"
+      },
+      {
+        "title": {
+          "en": "Region exiting detected",
+          "nl": "Verlaten van gebied gedetecteerd",
+          "de": "Verlassen des Bereichs erkannt"
+        },
+        "tokens": [
+          {
+            "name": "channelID",
+            "type": "number",
+            "title": {
+              "en": "Channel number",
+              "nl": "Kanaalnummer",
+              "de": "Kanalnummer"
+            },
+            "example": 2
+          },
+          {
+            "name": "snapshot",
+            "type": "image",
+            "title": {
+              "en": "Snapshot",
+              "nl": "Momentopname",
+              "de": "Schnappschuss"
+            }
+          }
+        ],
+        "args": [
+          {
+            "name": "device",
+            "type": "device",
+            "filter": "driver_id=hikvision-camnvr"
+          }
+        ],
+        "id": "RegionExitingDetectionStart"
+      },
+      {
+        "title": {
+          "en": "Region exiting ended",
+          "nl": "Verlaten van gebied beëindigd",
+          "de": "Verlassen des Bereichs beendet"
+        },
+        "tokens": [
+          {
+            "name": "channelID",
+            "type": "number",
+            "title": {
+              "en": "Channel number",
+              "nl": "Kanaalnummer",
+              "de": "Kanalnummer"
+            },
+            "example": 2
+          }
+        ],
+        "args": [
+          {
+            "name": "device",
+            "type": "device",
+            "filter": "driver_id=hikvision-camnvr"
+          }
+        ],
+        "id": "RegionExitingDetectionStop"
+      },
+      {
+        "title": {
+          "en": "Camera tampering started",
+          "nl": "Camerasabotage is gestart",
+          "de": "Kamerasabotage hat begonnen"
+        },
+        "tokens": [
+          {
+            "name": "channelID",
+            "type": "number",
+            "title": {
+              "en": "Channel number",
+              "nl": "Kanaalnummer",
+              "de": "Kanalnummer"
+            },
+            "example": 2
+          }
+        ],
+        "args": [
+          {
+            "name": "device",
+            "type": "device",
+            "filter": "driver_id=hikvision-camnvr"
+          }
+        ],
+        "id": "VideoBlindStart"
+      },
+      {
+        "title": {
+          "en": "Camera tampering stopped",
+          "nl": "Camerasabotage is gestopt",
+          "de": "Kamerasabotage ist beendet"
+        },
+        "tokens": [
+          {
+            "name": "channelID",
+            "type": "number",
+            "title": {
+              "en": "Channel number",
+              "nl": "Kanaalnummer",
+              "de": "Kanalnummer"
+            },
+            "example": 2
+          }
+        ],
+        "args": [
+          {
+            "name": "device",
+            "type": "device",
+            "filter": "driver_id=hikvision-camnvr"
+          }
+        ],
+        "id": "VideoBlindStop"
+      },
+      {
+        "title": {
+          "en": "Video signal was lost",
+          "nl": "Videosignaal is weggevallen",
+          "de": "Videosignal ist ausgefallen"
+        },
+        "tokens": [
+          {
+            "name": "channelID",
+            "type": "number",
+            "title": {
+              "en": "Channel number",
+              "nl": "Kanaalnummer",
+              "de": "Kanalnummer"
+            },
+            "example": 2
+          }
+        ],
+        "args": [
+          {
+            "name": "device",
+            "type": "device",
+            "filter": "driver_id=hikvision-camnvr"
+          }
+        ],
+        "id": "VideoLossStart"
+      },
+      {
+        "title": {
+          "en": "Video signal was restored",
+          "nl": "Videosignaal is hersteld",
+          "de": "Videosignal wurde wiederhergestellt"
+        },
+        "tokens": [
+          {
+            "name": "channelID",
+            "type": "number",
+            "title": {
+              "en": "Channel number",
+              "nl": "Kanaalnummer",
+              "de": "Kanalnummer"
+            },
+            "example": 2
+          }
+        ],
+        "args": [
+          {
+            "name": "device",
+            "type": "device",
+            "filter": "driver_id=hikvision-camnvr"
+          }
+        ],
+        "id": "VideoLossStop"
+      },
+      {
+        "title": {
+          "en": "Video motion started",
+          "nl": "Videobeweging is gestart",
+          "de": "Videobewegung hat begonnen"
+        },
+        "tokens": [
+          {
+            "name": "channelID",
+            "type": "number",
+            "title": {
+              "en": "Channel number",
+              "nl": "Kanaalnummer",
+              "de": "Kanalnummer"
+            },
+            "example": 2
+          },
+          {
+            "name": "snapshot",
+            "type": "image",
+            "title": {
+              "en": "Snapshot",
+              "nl": "Momentopname",
+              "de": "Schnappschuss"
+            }
+          }
+        ],
+        "args": [
+          {
+            "name": "device",
+            "type": "device",
+            "filter": "driver_id=hikvision-camnvr"
+          }
+        ],
+        "id": "VideoMotionStart"
+      },
+      {
+        "title": {
+          "en": "Video motion stopped",
+          "nl": "Videobeweging is gestopt",
+          "de": "Videobewegung ist beendet"
+        },
+        "tokens": [
+          {
+            "name": "channelID",
+            "type": "number",
+            "title": {
+              "en": "Channel number",
+              "nl": "Kanaalnummer",
+              "de": "Kanalnummer"
+            },
+            "example": 2
+          }
+        ],
+        "args": [
+          {
+            "name": "device",
+            "type": "device",
+            "filter": "driver_id=hikvision-camnvr"
+          }
+        ],
+        "id": "VideoMotionStop"
+      }
+    ],
+    "conditions": [
+      {
+        "title": {
+          "en": "Intrusion !{{is|isn't}} active",
+          "nl": "Indringing !{{is|is niet}} actief",
+          "de": "Eindringen !{{ist|ist nicht}} aktiv"
+        },
+        "args": [
+          {
+            "name": "device",
+            "type": "device",
+            "filter": "driver_id=hikvision-camnvr"
+          }
+        ],
+        "id": "hik_alarm_intrusion_is_active"
+      },
+      {
+        "title": {
+          "en": "Line crossing !{{is|isn't}} active",
+          "nl": "Lijnoverschrijding !{{is|is niet}} actief",
+          "de": "Linienüberschreitung !{{ist|ist nicht}} aktiv"
+        },
+        "args": [
+          {
+            "name": "device",
+            "type": "device",
+            "filter": "driver_id=hikvision-camnvr"
+          }
+        ],
+        "id": "hik_alarm_line_crossing_is_active"
+      },
+      {
+        "title": {
+          "en": "Local alarm !{{is|isn't}} active",
+          "nl": "Lokaal alarm !{{is|is niet}} actief",
+          "de": "Lokaler Alarm !{{ist|ist nicht}} aktiv"
+        },
+        "args": [
+          {
+            "name": "device",
+            "type": "device",
+            "filter": "driver_id=hikvision-camnvr"
+          }
+        ],
+        "id": "hik_alarm_local_is_active"
+      },
+      {
+        "title": {
+          "en": "Region entrance !{{is|isn't}} active",
+          "nl": "Gebied betreden !{{is|is niet}} actief",
+          "de": "Bereich betreten !{{ist|ist nicht}} aktiv"
+        },
+        "args": [
+          {
+            "name": "device",
+            "type": "device",
+            "filter": "driver_id=hikvision-camnvr"
+          }
+        ],
+        "id": "hik_alarm_region_entrance_is_active"
+      },
+      {
+        "title": {
+          "en": "Region exiting !{{is|isn't}} active",
+          "nl": "Gebied verlaten !{{is|is niet}} actief",
+          "de": "Bereich verlassen !{{ist|ist nicht}} aktiv"
+        },
+        "args": [
+          {
+            "name": "device",
+            "type": "device",
+            "filter": "driver_id=hikvision-camnvr"
+          }
+        ],
+        "id": "hik_alarm_region_exiting_is_active"
+      },
+      {
+        "title": {
+          "en": "Video signal !{{is|isn't}} lost",
+          "nl": "Videosignaal !{{is|is niet}} weggevallen",
+          "de": "Videosignal !{{ist|ist nicht}} ausgefallen"
+        },
+        "args": [
+          {
+            "name": "device",
+            "type": "device",
+            "filter": "driver_id=hikvision-camnvr"
+          }
+        ],
+        "id": "hik_alarm_video_loss_is_active"
+      },
+      {
+        "title": {
+          "en": "Event monitoring is enabled",
+          "nl": "Gebeurtenisbewaking is ingeschakeld",
+          "de": "Ereignisüberwachung ist aktiviert"
+        },
+        "titleFormatted": {
+          "en": "Event monitoring is !{{enabled|disabled}}",
+          "nl": "Gebeurtenisbewaking is !{{ingeschakeld|uitgeschakeld}}",
+          "de": "Ereignisüberwachung ist !{{aktiviert|deaktiviert}}"
+        },
+        "args": [
+          {
+            "name": "device",
+            "type": "device",
+            "filter": "driver_id=hikvision-camnvr"
+          }
+        ],
+        "id": "hik_event_monitoring_is_active"
+      },
+      {
+        "title": {
+          "en": "!{{Is|Isn't}} connected",
+          "nl": "!{{Is|Is niet}} verbonden",
+          "de": "!{{Ist|Ist nicht}} verbunden"
+        },
+        "args": [
+          {
+            "name": "device",
+            "type": "device",
+            "filter": "driver_id=hikvision-camnvr"
+          }
+        ],
+        "id": "hik_status_is_connected"
+      }
+    ],
+    "actions": [
+      {
+        "title": {
+          "en": "Disable event monitoring",
+          "nl": "Gebeurtenisbewaking uitschakelen",
+          "de": "Ereignisüberwachung deaktivieren"
+        },
+        "titleFormatted": {
+          "en": "Disable event monitoring for [[device]]",
+          "nl": "Schakel gebeurtenisbewaking uit voor [[device]]",
+          "de": "Ereignisüberwachung für [[device]] deaktivieren"
+        },
+        "hint": {
+          "en": "Stops ISAPI alarm events and doorbell polling in Homey while Live video and snapshots remain available.",
+          "nl": "Stopt ISAPI-alarmgebeurtenissen en deurbelcontrole in Homey; Live-video en momentopnamen blijven beschikbaar.",
+          "de": "Stoppt ISAPI-Alarmereignisse und Türklingel-Abfragen in Homey; Live-Video und Schnappschüsse bleiben verfügbar."
+        },
+        "args": [
+          {
+            "name": "device",
+            "type": "device",
+            "filter": "driver_id=hikvision-camnvr"
+          }
+        ],
+        "id": "disable_event_monitoring"
+      },
+      {
+        "title": {
+          "en": "Enable event monitoring",
+          "nl": "Gebeurtenisbewaking inschakelen",
+          "de": "Ereignisüberwachung aktivieren"
+        },
+        "titleFormatted": {
+          "en": "Enable event monitoring for [[device]]",
+          "nl": "Schakel gebeurtenisbewaking in voor [[device]]",
+          "de": "Ereignisüberwachung für [[device]] aktivieren"
+        },
+        "hint": {
+          "en": "Starts ISAPI alarm events and compatible doorbell polling in Homey. This does not change the camera configuration.",
+          "nl": "Start ISAPI-alarmgebeurtenissen en compatibele deurbelcontrole in Homey. Dit wijzigt de cameraconfiguratie niet.",
+          "de": "Startet ISAPI-Alarmereignisse und kompatible Türklingel-Abfragen in Homey. Die Kamerakonfiguration wird nicht geändert."
+        },
+        "args": [
+          {
+            "name": "device",
+            "type": "device",
+            "filter": "driver_id=hikvision-camnvr"
+          }
+        ],
+        "id": "enable_event_monitoring"
+      },
+      {
+        "title": {
+          "en": "Go to PTZ preset",
+          "nl": "Ga naar PTZ-preset",
+          "de": "PTZ-Voreinstellung aufrufen"
+        },
+        "titleFormatted": {
+          "en": "Move camera [[channel]] to PTZ preset [[preset]]",
+          "nl": "Beweeg camera [[channel]] naar PTZ-preset [[preset]]",
+          "de": "Kamera [[channel]] zur PTZ-Voreinstellung [[preset]] bewegen"
+        },
+        "hint": {
+          "en": "The preset must already be stored in the camera or NVR.",
+          "nl": "De preset moet al in de camera of NVR zijn opgeslagen.",
+          "de": "Die Voreinstellung muss bereits in der Kamera oder im NVR gespeichert sein."
+        },
+        "args": [
+          {
+            "name": "device",
+            "type": "device",
+            "filter": "driver_id=hikvision-camnvr"
+          },
+          {
+            "name": "channel",
+            "type": "autocomplete",
+            "title": {
+              "en": "Camera channel",
+              "nl": "Camerakanaal",
+              "de": "Kamerakanal"
+            },
+            "placeholder": {
+              "en": "Select a PTZ channel",
+              "nl": "Selecteer een PTZ-kanaal",
+              "de": "PTZ-Kanal auswählen"
+            }
+          },
+          {
+            "name": "preset",
+            "type": "autocomplete",
+            "title": {
+              "en": "Stored preset",
+              "nl": "Opgeslagen preset",
+              "de": "Gespeicherte Voreinstellung"
+            },
+            "placeholder": {
+              "en": "Select a stored preset",
+              "nl": "Selecteer een opgeslagen preset",
+              "de": "Gespeicherte Voreinstellung auswählen"
+            }
+          }
+        ],
+        "id": "ptz_preset"
+      },
+      {
+        "title": {
+          "en": "Set relative PTZ",
+          "nl": "Relatieve PTZ instellen",
+          "de": "Relative PTZ einstellen"
+        },
+        "titleFormatted": {
+          "en": "Move camera [[channel]] for [[duration]] seconds: pan [[pannumber]], tilt [[tiltnumber]], zoom [[zoomnumber]]",
+          "nl": "Beweeg camera [[channel]] [[duration]] seconden: pan [[pannumber]], tilt [[tiltnumber]], zoom [[zoomnumber]]",
+          "de": "Kamera [[channel]] für [[duration]] Sekunden bewegen: Pan [[pannumber]], Tilt [[tiltnumber]], Zoom [[zoomnumber]]"
+        },
+        "hint": {
+          "en": "Relative values range from -100 to 100.",
+          "nl": "Relatieve waarden lopen van -100 tot 100.",
+          "de": "Relative Werte reichen von -100 bis 100."
+        },
+        "args": [
+          {
+            "name": "device",
+            "type": "device",
+            "filter": "driver_id=hikvision-camnvr"
+          },
+          {
+            "name": "pannumber",
+            "type": "number",
+            "min": -100,
+            "max": 100,
+            "step": 0.1,
+            "placeholder": {
+              "en": "Pan",
+              "nl": "Pan",
+              "de": "Pan"
+            }
+          },
+          {
+            "name": "tiltnumber",
+            "type": "number",
+            "min": -100,
+            "max": 100,
+            "step": 0.1,
+            "placeholder": {
+              "en": "Tilt",
+              "nl": "Tilt",
+              "de": "Tilt"
+            }
+          },
+          {
+            "name": "zoomnumber",
+            "type": "number",
+            "min": -100,
+            "max": 100,
+            "step": 0.1,
+            "placeholder": {
+              "en": "Zoom",
+              "nl": "Zoom",
+              "de": "Zoom"
+            }
+          },
+          {
+            "name": "duration",
+            "type": "number",
+            "min": 0.1,
+            "max": 10,
+            "step": 0.1,
+            "placeholder": {
+              "en": "Duration in seconds",
+              "nl": "Duur in seconden",
+              "de": "Dauer in Sekunden"
+            }
+          },
+          {
+            "name": "channel",
+            "type": "autocomplete",
+            "title": {
+              "en": "Camera channel",
+              "nl": "Camerakanaal",
+              "de": "Kamerakanal"
+            },
+            "placeholder": {
+              "en": "Select a PTZ channel",
+              "nl": "Selecteer een PTZ-kanaal",
+              "de": "PTZ-Kanal auswählen"
+            }
+          }
+        ],
+        "id": "ptzcontinuous"
+      },
+      {
+        "title": {
+          "en": "Stop PTZ",
+          "nl": "PTZ stoppen",
+          "de": "PTZ stoppen"
+        },
+        "titleFormatted": {
+          "en": "Stop PTZ for camera [[channel]]",
+          "nl": "Stop PTZ van camera [[channel]]",
+          "de": "PTZ von Kamera [[channel]] stoppen"
+        },
+        "hint": {
+          "en": "Stops an ongoing pan, tilt or zoom movement on the selected channel.",
+          "nl": "Stopt een actieve draai-, kantel- of zoombeweging op het gekozen kanaal.",
+          "de": "Stoppt eine laufende Schwenk-, Neige- oder Zoombewegung auf dem gewählten Kanal."
+        },
+        "args": [
+          {
+            "name": "device",
+            "type": "device",
+            "filter": "driver_id=hikvision-camnvr"
+          },
+          {
+            "name": "channel",
+            "type": "autocomplete",
+            "title": {
+              "en": "Camera channel",
+              "nl": "Camerakanaal",
+              "de": "Kamerakanal"
+            },
+            "placeholder": {
+              "en": "Select a PTZ channel",
+              "nl": "Selecteer een PTZ-kanaal",
+              "de": "PTZ-Kanal auswählen"
+            }
+          }
+        ],
+        "id": "ptzstop"
+      },
+      {
+        "title": {
+          "en": "Take a snapshot",
+          "nl": "Maak een momentopname",
+          "de": "Schnappschuss aufnehmen"
+        },
+        "titleFormatted": {
+          "en": "Take a snapshot from camera [[channel]]",
+          "nl": "Maak een momentopname van camera [[channel]]",
+          "de": "Schnappschuss von Kamera [[channel]] aufnehmen"
+        },
+        "hint": {
+          "en": "Returns the current JPEG image as a Snapshot tag in Advanced Flow.",
+          "nl": "Geeft het actuele JPEG-beeld als Momentopname-tag terug in Advanced Flow.",
+          "de": "Gibt das aktuelle JPEG-Bild in Advanced Flow als Schnappschuss-Tag zurück."
+        },
+        "tokens": [
+          {
+            "name": "snapshot",
+            "type": "image",
+            "title": {
+              "en": "Snapshot",
+              "nl": "Momentopname",
+              "de": "Schnappschuss"
+            }
+          }
+        ],
+        "args": [
+          {
+            "name": "device",
+            "type": "device",
+            "filter": "driver_id=hikvision-camnvr"
+          },
+          {
+            "name": "channel",
+            "type": "autocomplete",
+            "title": {
+              "en": "Camera channel",
+              "nl": "Camerakanaal",
+              "de": "Kamerakanal"
+            },
+            "placeholder": {
+              "en": "Select a camera channel",
+              "nl": "Selecteer een camerakanaal",
+              "de": "Kamerakanal auswählen"
+            }
+          }
+        ],
+        "id": "take_snapshot"
+      },
+      {
+        "title": {
+          "en": "Trigger door relay",
+          "nl": "Schakel deurrelais",
+          "de": "Türrelais auslösen"
+        },
+        "titleFormatted": {
+          "en": "Trigger door relay [[relay]]",
+          "nl": "Schakel deurrelais [[relay]]",
+          "de": "Türrelais [[relay]] auslösen"
+        },
+        "hint": {
+          "en": "Opens the selected relay using Hikvision access control. The device account must have permission to control the door.",
+          "nl": "Opent het gekozen relais via Hikvision-toegangscontrole. Het apparaataccount moet toestemming hebben om de deur te bedienen.",
+          "de": "Öffnet das ausgewählte Relais über die Hikvision-Zutrittskontrolle. Das Gerätekonto benötigt die Berechtigung zur Türsteuerung."
+        },
+        "args": [
+          {
+            "name": "device",
+            "type": "device",
+            "filter": "driver_id=hikvision-camnvr"
+          },
+          {
+            "name": "relay",
+            "type": "autocomplete",
+            "title": {
+              "en": "Door relay",
+              "nl": "Deurrelais",
+              "de": "Türrelais"
+            },
+            "placeholder": {
+              "en": "Select an available relay",
+              "nl": "Selecteer een beschikbaar relais",
+              "de": "Verfügbares Relais auswählen"
+            }
+          }
+        ],
+        "id": "trigger_relay"
+      }
+    ]
+  },
+  "drivers": [
+    {
+      "name": {
+        "en": "Hikvision camera, doorbell or NVR",
+        "nl": "Hikvision-camera, deurbel of NVR",
+        "de": "Hikvision-Kamera, Türklingel oder NVR"
+      },
+      "class": "camera",
+      "platforms": [
+        "local"
+      ],
+      "connectivity": [
+        "lan"
+      ],
+      "capabilities": [
+        "alarm_motion",
+        "alarm_tamper",
+        "hik_alarm_local",
+        "hik_alarm_video_loss",
+        "hik_alarm_line_crossing",
+        "hik_alarm_intrusion",
+        "hik_alarm_region_entrance",
+        "hik_alarm_region_exiting",
+        "hik_type",
+        "hik_version",
+        "hik_status",
+        "hik_event_monitoring"
+      ],
+      "images": {
+        "large": "/drivers/hikvision-camnvr/assets/images/large.png",
+        "small": "/drivers/hikvision-camnvr/assets/images/small.png",
+        "xlarge": "/drivers/hikvision-camnvr/assets/images/xlarge.png"
+      },
+      "pair": [
+        {
+          "id": "start",
+          "navigation": {
+            "next": "done"
+          }
+        },
+        {
+          "id": "done",
+          "template": "done"
+        }
+      ],
+      "repair": [
+        {
+          "id": "bug_report"
+        }
+      ],
+      "settings": [
+        {
+          "type": "group",
+          "label": {
+            "en": "Live video",
+            "nl": "Live-video",
+            "de": "Live-Video"
+          },
+          "children": [
+            {
+              "id": "live_stream",
+              "type": "dropdown",
+              "value": "automatic",
+              "label": {
+                "en": "RTSP stream",
+                "nl": "RTSP-stream",
+                "de": "RTSP-Stream"
+              },
+              "hint": {
+                "en": "Automatic prefers the lower-resolution H.264 substream for reliable Homey Live video.",
+                "nl": "Automatisch geeft voor betrouwbare Homey Live-video de voorkeur aan de H.264-substream met lagere resolutie.",
+                "de": "Automatisch bevorzugt für zuverlässiges Homey-Live-Video den H.264-Substream mit niedrigerer Auflösung."
+              },
+              "values": [
+                {
+                  "id": "automatic",
+                  "label": {
+                    "en": "Automatic (recommended)",
+                    "nl": "Automatisch (aanbevolen)",
+                    "de": "Automatisch (empfohlen)"
+                  }
+                },
+                {
+                  "id": "substream",
+                  "label": {
+                    "en": "Substream",
+                    "nl": "Substream",
+                    "de": "Substream"
+                  }
+                },
+                {
+                  "id": "main",
+                  "label": {
+                    "en": "Main stream",
+                    "nl": "Hoofdstream",
+                    "de": "Hauptstream"
+                  }
+                }
+              ]
+            },
+            {
+              "id": "rtsp_only",
+              "type": "checkbox",
+              "value": false,
+              "label": {
+                "en": "RTSP-only mode",
+                "nl": "Alleen RTSP gebruiken",
+                "de": "Nur-RTSP-Modus"
+              },
+              "hint": {
+                "en": "Use this only when a door station has working Live video but broken ISAPI. Snapshots, events and connection checks are disabled.",
+                "nl": "Gebruik dit alleen wanneer een deurstation wel Live-video maar geen werkende ISAPI heeft. Momentopnamen, gebeurtenissen en verbindingscontroles worden uitgeschakeld.",
+                "de": "Nur verwenden, wenn eine Türstation Live-Video, aber kein funktionierendes ISAPI hat. Schnappschüsse, Ereignisse und Verbindungsprüfungen werden deaktiviert."
+              }
+            }
+          ]
+        },
+        {
+          "type": "group",
+          "label": {
+            "en": "Hikvision connection",
+            "nl": "Hikvision-verbinding",
+            "de": "Hikvision-Verbindung"
+          },
+          "children": [
+            {
+              "id": "address",
+              "type": "text",
+              "value": "0.0.0.0",
+              "label": {
+                "en": "IP address or hostname",
+                "nl": "IP-adres of hostnaam",
+                "de": "IP-Adresse oder Hostname"
+              },
+              "hint": {
+                "en": "Use the local address of the device.",
+                "nl": "Gebruik het lokale adres van het apparaat.",
+                "de": "Verwende die lokale Adresse des Geräts."
+              }
+            },
+            {
+              "id": "username",
+              "type": "text",
+              "value": "admin",
+              "label": {
+                "en": "Username",
+                "nl": "Gebruikersnaam",
+                "de": "Benutzername"
+              }
+            },
+            {
+              "id": "password",
+              "type": "password",
+              "value": "",
+              "label": {
+                "en": "Password",
+                "nl": "Wachtwoord",
+                "de": "Passwort"
+              },
+              "hint": {
+                "en": "Used only for the local connection and shown masked in Homey.",
+                "nl": "Wordt alleen voor de lokale verbinding gebruikt en afgeschermd weergegeven in Homey.",
+                "de": "Wird nur für die lokale Verbindung verwendet und in Homey maskiert angezeigt."
+              }
+            },
+            {
+              "id": "auth_method",
+              "type": "dropdown",
+              "value": "automatic",
+              "label": {
+                "en": "Authentication method",
+                "nl": "Authenticatiemethode",
+                "de": "Authentifizierungsmethode"
+              },
+              "hint": {
+                "en": "Use Automatic unless a door station requires forced Basic authentication. Basic over HTTP is not encrypted; prefer HTTPS when the device supports it.",
+                "nl": "Gebruik Automatisch tenzij een deurstation geforceerde Basic-authenticatie nodig heeft. Basic via HTTP is niet versleuteld; gebruik bij voorkeur HTTPS als het apparaat dit ondersteunt.",
+                "de": "Verwende Automatisch, sofern eine Türstation keine erzwungene Basic-Authentifizierung benötigt. Basic über HTTP ist unverschlüsselt; verwende nach Möglichkeit HTTPS."
+              },
+              "values": [
+                {
+                  "id": "automatic",
+                  "label": {
+                    "en": "Automatic (recommended)",
+                    "nl": "Automatisch (aanbevolen)",
+                    "de": "Automatisch (empfohlen)"
+                  }
+                },
+                {
+                  "id": "digest",
+                  "label": {
+                    "en": "Digest only",
+                    "nl": "Alleen Digest",
+                    "de": "Nur Digest"
+                  }
+                },
+                {
+                  "id": "basic",
+                  "label": {
+                    "en": "Basic (forced)",
+                    "nl": "Basic (geforceerd)",
+                    "de": "Basic (erzwungen)"
+                  }
+                }
+              ]
+            },
+            {
+              "id": "port",
+              "type": "number",
+              "value": 80,
+              "label": {
+                "en": "HTTP or HTTPS port",
+                "nl": "HTTP- of HTTPS-poort",
+                "de": "HTTP- oder HTTPS-Port"
+              },
+              "hint": {
+                "en": "Usually 80 for HTTP or 443 for HTTPS.",
+                "nl": "Meestal 80 voor HTTP of 443 voor HTTPS.",
+                "de": "Normalerweise 80 für HTTP oder 443 für HTTPS."
+              }
+            },
+            {
+              "id": "rtsp_port",
+              "type": "number",
+              "value": 554,
+              "label": {
+                "en": "RTSP port",
+                "nl": "RTSP-poort",
+                "de": "RTSP-Port"
+              },
+              "hint": {
+                "en": "Usually 554. This port is used for Live video.",
+                "nl": "Meestal 554. Deze poort wordt gebruikt voor Live-video.",
+                "de": "Normalerweise 554. Dieser Port wird für Live-Video verwendet."
+              }
+            },
+            {
+              "id": "ssl",
+              "type": "checkbox",
+              "value": false,
+              "label": {
+                "en": "Use HTTPS",
+                "nl": "HTTPS gebruiken",
+                "de": "HTTPS verwenden"
+              },
+              "hint": {
+                "en": "Recommended when HTTPS is enabled on the device.",
+                "nl": "Aanbevolen wanneer HTTPS op het apparaat is ingeschakeld.",
+                "de": "Empfohlen, wenn HTTPS auf dem Gerät aktiviert ist."
+              }
+            },
+            {
+              "id": "strict",
+              "type": "checkbox",
+              "value": false,
+              "label": {
+                "en": "Verify TLS certificate",
+                "nl": "TLS-certificaat controleren",
+                "de": "TLS-Zertifikat prüfen"
+              },
+              "hint": {
+                "en": "Enable this only when the device has a trusted certificate.",
+                "nl": "Schakel dit alleen in als het apparaat een vertrouwd certificaat heeft.",
+                "de": "Aktiviere dies nur, wenn das Gerät ein vertrauenswürdiges Zertifikat hat."
+              }
+            }
+          ]
+        },
+        {
+          "type": "group",
+          "label": {
+            "en": "Homey motion status",
+            "nl": "Homey-bewegingsstatus",
+            "de": "Homey-Bewegungsstatus"
+          },
+          "children": [
+            {
+              "id": "motion_hold_seconds",
+              "type": "number",
+              "value": 10,
+              "min": 1,
+              "max": 300,
+              "label": {
+                "en": "Minimum active time (seconds)",
+                "nl": "Minimale actieve tijd (seconden)",
+                "de": "Minimale Aktivzeit (Sekunden)"
+              },
+              "hint": {
+                "en": "Keeps the Homey camera tile and zone active long enough when the Hikvision device sends a short detection pulse.",
+                "nl": "Houdt de Homey-camerategel en zone lang genoeg actief wanneer het Hikvision-apparaat een korte detectiepuls verstuurt.",
+                "de": "Hält die Homey-Kamerakachel und Zone lange genug aktiv, wenn das Hikvision-Gerät einen kurzen Erkennungsimpuls sendet."
+              }
+            }
+          ]
+        }
+      ],
+      "id": "hikvision-camnvr"
+    }
+  ],
+  "widgets": {
+    "camera-zoom": {
+      "name": {
+        "en": "Hikvision camera zoom",
+        "nl": "Hikvision-camera met zoom",
+        "de": "Hikvision-Kamera mit Zoom"
+      },
+      "description": {
+        "en": "View, zoom and pan a Hikvision camera image.",
+        "nl": "Bekijk, vergroot en versleep een Hikvision-camerabeeld.",
+        "de": "Ein Hikvision-Kamerabild anzeigen, vergrößern und verschieben."
+      },
+      "height": "56.25%",
+      "transparent": true,
+      "devices": {
+        "type": "app",
+        "singular": true,
+        "filter": {
+          "class": "camera",
+          "capabilities": "hik_status"
+        }
+      },
+      "api": {
+        "getSnapshot": {
+          "method": "POST",
+          "path": "/snapshot"
+        }
+      },
+      "id": "camera-zoom",
+      "settings": []
+    }
+  },
+  "capabilities": {
+    "hik_alarm_intrusion": {
+      "type": "boolean",
+      "title": {
+        "en": "Intrusion",
+        "nl": "Indringing",
+        "de": "Eindringen"
+      },
+      "getable": true,
+      "setable": false,
+      "insights": true,
+      "insightsTitleTrue": {
+        "en": "Intrusion detected",
+        "nl": "Indringing gedetecteerd",
+        "de": "Eindringen erkannt"
+      },
+      "insightsTitleFalse": {
+        "en": "No intrusion",
+        "nl": "Geen indringing",
+        "de": "Kein Eindringen"
+      },
+      "icon": "/assets/info.svg"
+    },
+    "hik_alarm_line_crossing": {
+      "type": "boolean",
+      "title": {
+        "en": "Line crossing",
+        "nl": "Lijnoverschrijding",
+        "de": "Linienüberschreitung"
+      },
+      "getable": true,
+      "setable": false,
+      "insights": true,
+      "insightsTitleTrue": {
+        "en": "Line crossing detected",
+        "nl": "Lijnoverschrijding gedetecteerd",
+        "de": "Linienüberschreitung erkannt"
+      },
+      "insightsTitleFalse": {
+        "en": "No line crossing",
+        "nl": "Geen lijnoverschrijding",
+        "de": "Keine Linienüberschreitung"
+      },
+      "icon": "/assets/info.svg"
+    },
+    "hik_alarm_local": {
+      "type": "boolean",
+      "title": {
+        "en": "Local alarm",
+        "nl": "Lokaal alarm",
+        "de": "Lokaler Alarm"
+      },
+      "getable": true,
+      "setable": false,
+      "insights": true,
+      "insightsTitleTrue": {
+        "en": "Local alarm active",
+        "nl": "Lokaal alarm actief",
+        "de": "Lokaler Alarm aktiv"
+      },
+      "insightsTitleFalse": {
+        "en": "Local alarm inactive",
+        "nl": "Lokaal alarm inactief",
+        "de": "Lokaler Alarm inaktiv"
+      },
+      "icon": "/assets/info.svg"
+    },
+    "hik_alarm_region_entrance": {
+      "type": "boolean",
+      "title": {
+        "en": "Region entrance",
+        "nl": "Gebied betreden",
+        "de": "Bereich betreten"
+      },
+      "getable": true,
+      "setable": false,
+      "insights": true,
+      "insightsTitleTrue": {
+        "en": "Region entrance detected",
+        "nl": "Betreden van gebied gedetecteerd",
+        "de": "Betreten des Bereichs erkannt"
+      },
+      "insightsTitleFalse": {
+        "en": "No region entrance",
+        "nl": "Gebied wordt niet betreden",
+        "de": "Kein Betreten des Bereichs"
+      },
+      "icon": "/assets/info.svg"
+    },
+    "hik_alarm_region_exiting": {
+      "type": "boolean",
+      "title": {
+        "en": "Region exiting",
+        "nl": "Gebied verlaten",
+        "de": "Bereich verlassen"
+      },
+      "getable": true,
+      "setable": false,
+      "insights": true,
+      "insightsTitleTrue": {
+        "en": "Region exiting detected",
+        "nl": "Verlaten van gebied gedetecteerd",
+        "de": "Verlassen des Bereichs erkannt"
+      },
+      "insightsTitleFalse": {
+        "en": "No region exiting",
+        "nl": "Gebied wordt niet verlaten",
+        "de": "Kein Verlassen des Bereichs"
+      },
+      "icon": "/assets/info.svg"
+    },
+    "hik_alarm_video_loss": {
+      "type": "boolean",
+      "title": {
+        "en": "Video signal lost",
+        "nl": "Videosignaal verloren",
+        "de": "Videosignal verloren"
+      },
+      "getable": true,
+      "setable": false,
+      "insights": true,
+      "insightsTitleTrue": {
+        "en": "Video signal lost",
+        "nl": "Videosignaal verloren",
+        "de": "Videosignal verloren"
+      },
+      "insightsTitleFalse": {
+        "en": "Video signal available",
+        "nl": "Videosignaal beschikbaar",
+        "de": "Videosignal verfügbar"
+      },
+      "icon": "/assets/info.svg"
+    },
+    "hik_event_monitoring": {
+      "type": "boolean",
+      "title": {
+        "en": "Event monitoring",
+        "nl": "Gebeurtenisbewaking",
+        "de": "Ereignisüberwachung"
+      },
+      "getable": true,
+      "setable": false,
+      "insights": true,
+      "insightsTitleTrue": {
+        "en": "Event monitoring enabled",
+        "nl": "Gebeurtenisbewaking ingeschakeld",
+        "de": "Ereignisüberwachung aktiviert"
+      },
+      "insightsTitleFalse": {
+        "en": "Event monitoring disabled",
+        "nl": "Gebeurtenisbewaking uitgeschakeld",
+        "de": "Ereignisüberwachung deaktiviert"
+      },
+      "icon": "/assets/info.svg"
+    },
+    "hik_status": {
+      "type": "boolean",
+      "title": {
+        "en": "Connected",
+        "nl": "Verbonden",
+        "de": "Verbunden"
+      },
+      "getable": true,
+      "setable": false,
+      "insights": true,
+      "insightsTitleTrue": {
+        "en": "Connected",
+        "nl": "Verbonden",
+        "de": "Verbunden"
+      },
+      "insightsTitleFalse": {
+        "en": "Disconnected",
+        "nl": "Niet verbonden",
+        "de": "Getrennt"
+      },
+      "icon": "/assets/info.svg"
+    },
+    "hik_type": {
+      "type": "string",
+      "title": {
+        "en": "Type",
+        "nl": "Type",
+        "de": "Typ"
+      },
+      "getable": true,
+      "setable": false,
+      "icon": "/assets/info.svg"
+    },
+    "hik_version": {
+      "type": "string",
+      "title": {
+        "en": "Firmware version",
+        "nl": "Firmwareversie",
+        "de": "Firmwareversion"
+      },
+      "getable": true,
+      "setable": false,
+      "icon": "/assets/info.svg"
+    }
+  }
+}

@@ -1,0 +1,4 @@
+{
+  "title": { "en": "Disconnected", "nl": "Verbinding verbroken", "de": "Verbindung getrennt" },
+  "args": [{ "name": "device", "type": "device", "filter": "driver_id=hikvision-camnvr" }]
+}

@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" width="960" height="960" viewBox="0 0 960 960" role="img" aria-label="Turret security camera">
+  <rect x="300" y="125" width="360" height="150" rx="42" fill="#000"/>
+  <rect x="110" y="245" width="740" height="210" rx="82" fill="#000"/>
+  <path fill="#000" d="M210 425h540v145c0 196-121 320-270 320S210 766 210 570V425Z"/>
+  <circle cx="480" cy="620" r="158" fill="#fff"/>
+  <circle cx="480" cy="620" r="104" fill="#000"/>
+  <circle cx="440" cy="580" r="28" fill="#fff"/>
+</svg>

@@ -1,0 +1,176 @@
+{
+  "name": {
+    "en": "Hikvision camera, doorbell or NVR",
+    "nl": "Hikvision-camera, deurbel of NVR",
+    "de": "Hikvision-Kamera, Türklingel oder NVR"
+  },
+  "class": "camera",
+  "platforms": ["local"],
+  "connectivity": ["lan"],
+  "capabilities": [
+    "alarm_motion",
+    "alarm_tamper",
+    "hik_alarm_local",
+    "hik_alarm_video_loss",
+    "hik_alarm_line_crossing",
+    "hik_alarm_intrusion",
+    "hik_alarm_region_entrance",
+    "hik_alarm_region_exiting",
+    "hik_type",
+    "hik_version",
+    "hik_status",
+    "hik_event_monitoring"
+  ],
+  "images": {
+    "large": "/drivers/hikvision-camnvr/assets/images/large.png",
+    "small": "/drivers/hikvision-camnvr/assets/images/small.png",
+    "xlarge": "/drivers/hikvision-camnvr/assets/images/xlarge.png"
+  },
+  "pair": [
+    { "id": "start", "navigation": { "next": "done" } },
+    { "id": "done", "template": "done" }
+  ],
+  "repair": [
+    { "id": "bug_report" }
+  ],
+  "settings": [
+    {
+      "type": "group",
+      "label": {
+        "en": "Live video",
+        "nl": "Live-video",
+        "de": "Live-Video"
+      },
+      "children": [
+        {
+          "id": "live_stream",
+          "type": "dropdown",
+          "value": "automatic",
+          "label": { "en": "RTSP stream", "nl": "RTSP-stream", "de": "RTSP-Stream" },
+          "hint": {
+            "en": "Automatic prefers the lower-resolution H.264 substream for reliable Homey Live video.",
+            "nl": "Automatisch geeft voor betrouwbare Homey Live-video de voorkeur aan de H.264-substream met lagere resolutie.",
+            "de": "Automatisch bevorzugt für zuverlässiges Homey-Live-Video den H.264-Substream mit niedrigerer Auflösung."
+          },
+          "values": [
+            { "id": "automatic", "label": { "en": "Automatic (recommended)", "nl": "Automatisch (aanbevolen)", "de": "Automatisch (empfohlen)" } },
+            { "id": "substream", "label": { "en": "Substream", "nl": "Substream", "de": "Substream" } },
+            { "id": "main", "label": { "en": "Main stream", "nl": "Hoofdstream", "de": "Hauptstream" } }
+          ]
+        },
+        {
+          "id": "rtsp_only",
+          "type": "checkbox",
+          "value": false,
+          "label": { "en": "RTSP-only mode", "nl": "Alleen RTSP gebruiken", "de": "Nur-RTSP-Modus" },
+          "hint": {
+            "en": "Use this only when a door station has working Live video but broken ISAPI. Snapshots, events and connection checks are disabled.",
+            "nl": "Gebruik dit alleen wanneer een deurstation wel Live-video maar geen werkende ISAPI heeft. Momentopnamen, gebeurtenissen en verbindingscontroles worden uitgeschakeld.",
+            "de": "Nur verwenden, wenn eine Türstation Live-Video, aber kein funktionierendes ISAPI hat. Schnappschüsse, Ereignisse und Verbindungsprüfungen werden deaktiviert."
+          }
+        }
+      ]
+    },
+    {
+      "type": "group",
+      "label": {
+        "en": "Hikvision connection",
+        "nl": "Hikvision-verbinding",
+        "de": "Hikvision-Verbindung"
+      },
+      "children": [
+        {
+          "id": "address",
+          "type": "text",
+          "value": "0.0.0.0",
+          "label": { "en": "IP address or hostname", "nl": "IP-adres of hostnaam", "de": "IP-Adresse oder Hostname" },
+          "hint": { "en": "Use the local address of the device.", "nl": "Gebruik het lokale adres van het apparaat.", "de": "Verwende die lokale Adresse des Geräts." }
+        },
+        {
+          "id": "username",
+          "type": "text",
+          "value": "admin",
+          "label": { "en": "Username", "nl": "Gebruikersnaam", "de": "Benutzername" }
+        },
+        {
+          "id": "password",
+          "type": "password",
+          "value": "",
+          "label": { "en": "Password", "nl": "Wachtwoord", "de": "Passwort" },
+          "hint": { "en": "Used only for the local connection and shown masked in Homey.", "nl": "Wordt alleen voor de lokale verbinding gebruikt en afgeschermd weergegeven in Homey.", "de": "Wird nur für die lokale Verbindung verwendet und in Homey maskiert angezeigt." }
+        },
+        {
+          "id": "auth_method",
+          "type": "dropdown",
+          "value": "automatic",
+          "label": { "en": "Authentication method", "nl": "Authenticatiemethode", "de": "Authentifizierungsmethode" },
+          "hint": {
+            "en": "Use Automatic unless a door station requires forced Basic authentication. Basic over HTTP is not encrypted; prefer HTTPS when the device supports it.",
+            "nl": "Gebruik Automatisch tenzij een deurstation geforceerde Basic-authenticatie nodig heeft. Basic via HTTP is niet versleuteld; gebruik bij voorkeur HTTPS als het apparaat dit ondersteunt.",
+            "de": "Verwende Automatisch, sofern eine Türstation keine erzwungene Basic-Authentifizierung benötigt. Basic über HTTP ist unverschlüsselt; verwende nach Möglichkeit HTTPS."
+          },
+          "values": [
+            { "id": "automatic", "label": { "en": "Automatic (recommended)", "nl": "Automatisch (aanbevolen)", "de": "Automatisch (empfohlen)" } },
+            { "id": "digest", "label": { "en": "Digest only", "nl": "Alleen Digest", "de": "Nur Digest" } },
+            { "id": "basic", "label": { "en": "Basic (forced)", "nl": "Basic (geforceerd)", "de": "Basic (erzwungen)" } }
+          ]
+        },
+        {
+          "id": "port",
+          "type": "number",
+          "value": 80,
+          "label": { "en": "HTTP or HTTPS port", "nl": "HTTP- of HTTPS-poort", "de": "HTTP- oder HTTPS-Port" },
+          "hint": { "en": "Usually 80 for HTTP or 443 for HTTPS.", "nl": "Meestal 80 voor HTTP of 443 voor HTTPS.", "de": "Normalerweise 80 für HTTP oder 443 für HTTPS." }
+        },
+        {
+          "id": "rtsp_port",
+          "type": "number",
+          "value": 554,
+          "label": { "en": "RTSP port", "nl": "RTSP-poort", "de": "RTSP-Port" },
+          "hint": { "en": "Usually 554. This port is used for Live video.", "nl": "Meestal 554. Deze poort wordt gebruikt voor Live-video.", "de": "Normalerweise 554. Dieser Port wird für Live-Video verwendet." }
+        },
+        {
+          "id": "ssl",
+          "type": "checkbox",
+          "value": false,
+          "label": { "en": "Use HTTPS", "nl": "HTTPS gebruiken", "de": "HTTPS verwenden" },
+          "hint": { "en": "Recommended when HTTPS is enabled on the device.", "nl": "Aanbevolen wanneer HTTPS op het apparaat is ingeschakeld.", "de": "Empfohlen, wenn HTTPS auf dem Gerät aktiviert ist." }
+        },
+        {
+          "id": "strict",
+          "type": "checkbox",
+          "value": false,
+          "label": { "en": "Verify TLS certificate", "nl": "TLS-certificaat controleren", "de": "TLS-Zertifikat prüfen" },
+          "hint": { "en": "Enable this only when the device has a trusted certificate.", "nl": "Schakel dit alleen in als het apparaat een vertrouwd certificaat heeft.", "de": "Aktiviere dies nur, wenn das Gerät ein vertrauenswürdiges Zertifikat hat." }
+        }
+      ]
+    },
+    {
+      "type": "group",
+      "label": {
+        "en": "Homey motion status",
+        "nl": "Homey-bewegingsstatus",
+        "de": "Homey-Bewegungsstatus"
+      },
+      "children": [
+        {
+          "id": "motion_hold_seconds",
+          "type": "number",
+          "value": 10,
+          "min": 1,
+          "max": 300,
+          "label": {
+            "en": "Minimum active time (seconds)",
+            "nl": "Minimale actieve tijd (seconden)",
+            "de": "Minimale Aktivzeit (Sekunden)"
+          },
+          "hint": {
+            "en": "Keeps the Homey camera tile and zone active long enough when the Hikvision device sends a short detection pulse.",
+            "nl": "Houdt de Homey-camerategel en zone lang genoeg actief wanneer het Hikvision-apparaat een korte detectiepuls verstuurt.",
+            "de": "Hält die Homey-Kamerakachel und Zone lange genug aktiv, wenn das Hikvision-Gerät einen kurzen Erkennungsimpuls sendet."
+          }
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,352 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>Hikvision camera zoom</title>
+  <style>
+    :root {
+      color-scheme: light dark;
+      --panel: rgba(8, 12, 18, .84);
+      --panel-border: rgba(255, 255, 255, .18);
+      --text: #fff;
+      --muted: #d2d8e2;
+      --accent: #eb1a2c;
+      --focus: #8ec5ff;
+    }
+    * { box-sizing: border-box; }
+    html, body { width: 100%; height: 100%; margin: 0; overflow: hidden; }
+    body {
+      background: #111820;
+      color: var(--text);
+      font: 500 16px/1.4 -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    }
+    button { font: inherit; }
+    .camera-card {
+      position: relative;
+      width: 100%;
+      height: 100%;
+      min-height: 220px;
+      overflow: hidden;
+      border-radius: 18px;
+      background: linear-gradient(145deg, #17212c, #080b10);
+      isolation: isolate;
+    }
+    .viewport {
+      position: absolute;
+      inset: 0;
+      overflow: hidden;
+      touch-action: none;
+      cursor: grab;
+      outline: none;
+    }
+    .viewport:active { cursor: grabbing; }
+    .viewport:focus-visible { box-shadow: inset 0 0 0 3px var(--focus); }
+    .camera-image {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      width: 100%;
+      height: 100%;
+      object-fit: contain;
+      user-select: none;
+      -webkit-user-drag: none;
+      transform-origin: center;
+      transition: opacity 180ms ease, transform 180ms ease;
+      will-change: transform;
+    }
+    .viewport.dragging .camera-image { transition: opacity 180ms ease; }
+    .chrome {
+      position: absolute;
+      inset: 0;
+      pointer-events: none;
+      background: linear-gradient(180deg, rgba(0, 0, 0, .62), transparent 28%, transparent 62%, rgba(0, 0, 0, .72));
+    }
+    .header {
+      position: absolute;
+      z-index: 2;
+      top: 0;
+      left: 0;
+      right: 0;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      min-height: 52px;
+      padding: 10px 12px;
+      pointer-events: none;
+    }
+    .status-dot {
+      width: 9px;
+      height: 9px;
+      flex: 0 0 auto;
+      border-radius: 50%;
+      background: #22c55e;
+      box-shadow: 0 0 0 4px rgba(34, 197, 94, .2);
+    }
+    .status-dot.error { background: #ef4444; box-shadow: 0 0 0 4px rgba(239, 68, 68, .2); }
+    .title-wrap { min-width: 0; }
+    .camera-name, .status { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+    .camera-name { font-weight: 700; }
+    .status { color: var(--muted); font-size: 12px; }
+    .controls {
+      position: absolute;
+      z-index: 3;
+      right: 10px;
+      bottom: 10px;
+      display: flex;
+      gap: 7px;
+      padding: 6px;
+      border: 1px solid var(--panel-border);
+      border-radius: 15px;
+      background: var(--panel);
+      box-shadow: 0 10px 30px rgba(0, 0, 0, .28);
+      backdrop-filter: blur(12px);
+    }
+    .control {
+      display: grid;
+      width: 44px;
+      height: 44px;
+      place-items: center;
+      padding: 0;
+      border: 0;
+      border-radius: 10px;
+      background: transparent;
+      color: #fff;
+      cursor: pointer;
+      transition: background-color 180ms ease, color 180ms ease;
+    }
+    .control:hover { background: rgba(255, 255, 255, .14); }
+    .control:active { background: rgba(255, 255, 255, .22); }
+    .control:focus-visible { outline: 3px solid var(--focus); outline-offset: 1px; }
+    .control svg { width: 22px; height: 22px; fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; }
+    .zoom-label { min-width: 44px; padding-inline: 7px; font-size: 13px; font-variant-numeric: tabular-nums; }
+    .empty-state {
+      position: absolute;
+      z-index: 4;
+      inset: 0;
+      display: grid;
+      place-items: center;
+      padding: 28px;
+      text-align: center;
+      color: var(--muted);
+      background: linear-gradient(145deg, #17212c, #080b10);
+    }
+    .empty-state[hidden] { display: none; }
+    @media (max-width: 480px) {
+      .camera-card { border-radius: 14px; }
+      .controls { right: 8px; bottom: 8px; gap: 3px; padding: 4px; }
+    }
+    @media (prefers-reduced-motion: reduce) {
+      .camera-image, .control { transition: none; }
+    }
+  </style>
+</head>
+<body>
+  <main class="camera-card" aria-label="Hikvision camera">
+    <div id="viewport" class="viewport" tabindex="0" role="application" aria-label="Zoomable camera image">
+      <img id="camera-image" class="camera-image" alt="" draggable="false">
+    </div>
+    <div class="chrome" aria-hidden="true"></div>
+    <header class="header" aria-live="polite">
+      <span id="status-dot" class="status-dot"></span>
+      <div class="title-wrap">
+        <div id="camera-name" class="camera-name">Hikvision</div>
+        <div id="status" class="status"></div>
+      </div>
+    </header>
+    <nav class="controls" aria-label="Camera zoom controls">
+      <button id="zoom-out" class="control" type="button">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h14"/></svg>
+      </button>
+      <button id="zoom-reset" class="control zoom-label" type="button">1×</button>
+      <button id="zoom-in" class="control" type="button">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg>
+      </button>
+      <button id="refresh" class="control" type="button">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20 11a8 8 0 1 0-2.3 5.7M20 4v7h-7"/></svg>
+      </button>
+    </nav>
+    <div id="empty-state" class="empty-state" hidden></div>
+  </main>
+
+  <script>
+    function onHomeyReady(Homey) {
+      const viewport = document.getElementById('viewport');
+      const image = document.getElementById('camera-image');
+      const cameraName = document.getElementById('camera-name');
+      const status = document.getElementById('status');
+      const statusDot = document.getElementById('status-dot');
+      const emptyState = document.getElementById('empty-state');
+      const resetButton = document.getElementById('zoom-reset');
+      const deviceId = Homey.getDeviceIds()[0];
+      const pointers = new Map();
+      let scale = 1;
+      let panX = 0;
+      let panY = 0;
+      let dragging = false;
+      let lastPointer = null;
+      let pinchDistance = 0;
+      let pinchScale = 1;
+      let loading = false;
+
+      const text = (key, fallback, tokens) => {
+        const translated = Homey.__(`widget.camera_zoom.${key}`, tokens || {});
+        return translated && !translated.startsWith('widget.') ? translated : fallback;
+      };
+
+      document.getElementById('zoom-out').setAttribute('aria-label', text('zoom_out', 'Zoom out'));
+      document.getElementById('zoom-in').setAttribute('aria-label', text('zoom_in', 'Zoom in'));
+      document.getElementById('zoom-reset').setAttribute('aria-label', text('zoom_reset', 'Reset zoom'));
+      document.getElementById('refresh').setAttribute('aria-label', text('refresh', 'Refresh image'));
+
+      const clampPan = () => {
+        if (scale <= 1 || !image.naturalWidth) {
+          panX = 0;
+          panY = 0;
+          return;
+        }
+        const rect = viewport.getBoundingClientRect();
+        const imageRatio = image.naturalWidth / image.naturalHeight;
+        const viewportRatio = rect.width / rect.height;
+        const baseWidth = viewportRatio > imageRatio ? rect.height * imageRatio : rect.width;
+        const baseHeight = viewportRatio > imageRatio ? rect.height : rect.width / imageRatio;
+        const maxX = Math.max(0, (baseWidth * scale - rect.width) / 2);
+        const maxY = Math.max(0, (baseHeight * scale - rect.height) / 2);
+        panX = Math.max(-maxX, Math.min(maxX, panX));
+        panY = Math.max(-maxY, Math.min(maxY, panY));
+      };
+
+      const renderTransform = () => {
+        clampPan();
+        image.style.transform = `translate(-50%, -50%) translate3d(${panX}px, ${panY}px, 0) scale(${scale})`;
+        resetButton.textContent = `${Number(scale.toFixed(1))}×`;
+      };
+
+      const setScale = nextScale => {
+        scale = Math.max(1, Math.min(4, nextScale));
+        renderTransform();
+      };
+
+      const resetZoom = () => {
+        scale = 1;
+        panX = 0;
+        panY = 0;
+        renderTransform();
+      };
+
+      const feedback = () => { try { Homey.hapticFeedback(); } catch (error) {} };
+      document.getElementById('zoom-out').addEventListener('click', () => { feedback(); setScale(scale - .5); });
+      document.getElementById('zoom-in').addEventListener('click', () => { feedback(); setScale(scale + .5); });
+      resetButton.addEventListener('click', () => { feedback(); resetZoom(); });
+      document.getElementById('refresh').addEventListener('click', () => { feedback(); loadSnapshot(true); });
+
+      viewport.addEventListener('wheel', event => {
+        event.preventDefault();
+        setScale(scale + (event.deltaY < 0 ? .25 : -.25));
+      }, { passive: false });
+      viewport.addEventListener('dblclick', resetZoom);
+      viewport.addEventListener('keydown', event => {
+        const actions = {
+          '+': () => setScale(scale + .25),
+          '=': () => setScale(scale + .25),
+          '-': () => setScale(scale - .25),
+          '0': resetZoom,
+          ArrowLeft: () => { panX += 24; renderTransform(); },
+          ArrowRight: () => { panX -= 24; renderTransform(); },
+          ArrowUp: () => { panY += 24; renderTransform(); },
+          ArrowDown: () => { panY -= 24; renderTransform(); },
+        };
+        if (actions[event.key]) {
+          event.preventDefault();
+          actions[event.key]();
+        }
+      });
+
+      const distance = values => {
+        const [a, b] = values;
+        return Math.hypot(a.clientX - b.clientX, a.clientY - b.clientY);
+      };
+      viewport.addEventListener('pointerdown', event => {
+        viewport.setPointerCapture(event.pointerId);
+        pointers.set(event.pointerId, event);
+        if (pointers.size === 1) {
+          dragging = true;
+          lastPointer = event;
+          viewport.classList.add('dragging');
+        } else if (pointers.size === 2) {
+          pinchDistance = distance([...pointers.values()]);
+          pinchScale = scale;
+        }
+      });
+      viewport.addEventListener('pointermove', event => {
+        if (!pointers.has(event.pointerId)) return;
+        pointers.set(event.pointerId, event);
+        if (pointers.size === 2) {
+          const currentDistance = distance([...pointers.values()]);
+          if (pinchDistance) setScale(pinchScale * currentDistance / pinchDistance);
+        } else if (dragging && lastPointer && scale > 1) {
+          panX += event.clientX - lastPointer.clientX;
+          panY += event.clientY - lastPointer.clientY;
+          lastPointer = event;
+          renderTransform();
+        }
+      });
+      const releasePointer = event => {
+        pointers.delete(event.pointerId);
+        if (pointers.size === 1) lastPointer = [...pointers.values()][0];
+        if (pointers.size === 0) {
+          dragging = false;
+          lastPointer = null;
+          viewport.classList.remove('dragging');
+        }
+      };
+      viewport.addEventListener('pointerup', releasePointer);
+      viewport.addEventListener('pointercancel', releasePointer);
+      window.addEventListener('resize', renderTransform);
+
+      async function loadSnapshot(manual) {
+        if (!deviceId || loading || (!manual && document.hidden)) return;
+        loading = true;
+        if (!image.src) status.textContent = text('loading', 'Loading camera image…');
+        try {
+          const result = await Homey.api('POST', '/snapshot', { deviceId });
+          const nextSource = `data:${result.mimeType};base64,${result.image}`;
+          const preload = new Image();
+          await new Promise((resolve, reject) => {
+            preload.onload = resolve;
+            preload.onerror = reject;
+            preload.src = nextSource;
+          });
+          image.src = nextSource;
+          image.alt = text('image_alt', `Live camera image from ${result.name}`, { name: result.name });
+          cameraName.textContent = result.name;
+          const time = new Date(result.timestamp).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit' });
+          status.textContent = text('updated', `Updated at ${time}`, { time });
+          statusDot.classList.remove('error');
+          emptyState.hidden = true;
+          renderTransform();
+        } catch (error) {
+          status.textContent = error?.message || text('error', 'The camera image could not be loaded.');
+          statusDot.classList.add('error');
+          if (!image.src) {
+            emptyState.textContent = text('error', 'The camera image could not be loaded.');
+            emptyState.hidden = false;
+          }
+        } finally {
+          loading = false;
+        }
+      }
+
+      if (!deviceId) {
+        emptyState.textContent = text('select_camera', 'Select a Hikvision camera in the widget settings.');
+        emptyState.hidden = false;
+      } else {
+        loadSnapshot(false);
+        setInterval(() => loadSnapshot(false), 15000);
+        document.addEventListener('visibilitychange', () => { if (!document.hidden) loadSnapshot(false); });
+      }
+      Homey.ready();
+    }
+  </script>
+</body>
+</html>

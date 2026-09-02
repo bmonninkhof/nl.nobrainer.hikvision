@@ -1,0 +1,16 @@
+{
+  "title": {
+    "en": "Region exiting ended",
+    "nl": "Verlaten van gebied beëindigd",
+    "de": "Verlassen des Bereichs beendet"
+  },
+  "tokens": [
+    {
+      "name": "channelID",
+      "type": "number",
+      "title": { "en": "Channel number", "nl": "Kanaalnummer", "de": "Kanalnummer" },
+      "example": 2
+    }
+  ],
+  "args": [{ "name": "device", "type": "device", "filter": "driver_id=hikvision-camnvr" }]
+}

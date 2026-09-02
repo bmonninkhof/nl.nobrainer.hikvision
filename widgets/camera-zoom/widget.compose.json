@@ -1,0 +1,28 @@
+{
+  "name": {
+    "en": "Hikvision camera zoom",
+    "nl": "Hikvision-camera met zoom",
+    "de": "Hikvision-Kamera mit Zoom"
+  },
+  "description": {
+    "en": "View, zoom and pan a Hikvision camera image.",
+    "nl": "Bekijk, vergroot en versleep een Hikvision-camerabeeld.",
+    "de": "Ein Hikvision-Kamerabild anzeigen, vergrößern und verschieben."
+  },
+  "height": "56.25%",
+  "transparent": true,
+  "devices": {
+    "type": "app",
+    "singular": true,
+    "filter": {
+      "class": "camera",
+      "capabilities": "hik_status"
+    }
+  },
+  "api": {
+    "getSnapshot": {
+      "method": "POST",
+      "path": "/snapshot"
+    }
+  }
+}

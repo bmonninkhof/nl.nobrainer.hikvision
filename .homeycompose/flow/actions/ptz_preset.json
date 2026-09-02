@@ -1,0 +1,44 @@
+{
+  "title": {
+    "en": "Go to PTZ preset",
+    "nl": "Ga naar PTZ-preset",
+    "de": "PTZ-Voreinstellung aufrufen"
+  },
+  "titleFormatted": {
+    "en": "Move camera [[channel]] to PTZ preset [[preset]]",
+    "nl": "Beweeg camera [[channel]] naar PTZ-preset [[preset]]",
+    "de": "Kamera [[channel]] zur PTZ-Voreinstellung [[preset]] bewegen"
+  },
+  "hint": {
+    "en": "The preset must already be stored in the camera or NVR.",
+    "nl": "De preset moet al in de camera of NVR zijn opgeslagen.",
+    "de": "Die Voreinstellung muss bereits in der Kamera oder im NVR gespeichert sein."
+  },
+  "args": [
+    {
+      "name": "device",
+      "type": "device",
+      "filter": "driver_id=hikvision-camnvr"
+    },
+    {
+      "name": "channel",
+      "type": "autocomplete",
+      "title": { "en": "Camera channel", "nl": "Camerakanaal", "de": "Kamerakanal" },
+      "placeholder": {
+        "en": "Select a PTZ channel",
+        "nl": "Selecteer een PTZ-kanaal",
+        "de": "PTZ-Kanal auswählen"
+      }
+    },
+    {
+      "name": "preset",
+      "type": "autocomplete",
+      "title": { "en": "Stored preset", "nl": "Opgeslagen preset", "de": "Gespeicherte Voreinstellung" },
+      "placeholder": {
+        "en": "Select a stored preset",
+        "nl": "Selecteer een opgeslagen preset",
+        "de": "Gespeicherte Voreinstellung auswählen"
+      }
+    }
+  ]
+}

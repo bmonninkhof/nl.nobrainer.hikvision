@@ -1,0 +1,25 @@
+{
+  "name": "nl.nobrainer.hikvision",
+  "version": "2026.9.3",
+  "description": "Local Hikvision camera, doorbell and NVR integration",
+  "main": "app.js",
+  "private": true,
+  "license": "GPL-3.0-only",
+  "engines": {
+    "node": ">=18"
+  },
+  "scripts": {
+    "build": "homey app build",
+    "lint": "eslint .",
+    "validate": "homey app validate --level publish",
+    "test": "node --test",
+    "check": "npm run lint && npm test && npm run validate"
+  },
+  "dependencies": {
+    "xml2js": "^0.6.2"
+  },
+  "devDependencies": {
+    "eslint": "^10.9.1",
+    "homey": "^4.4.3"
+  }
+}

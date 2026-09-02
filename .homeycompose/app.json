@@ -1,0 +1,47 @@
+{
+  "id": "nl.nobrainer.hikvision",
+  "version": "2026.9.3",
+  "compatibility": ">=12.3.0",
+  "sdk": 3,
+  "runtime": "nodejs",
+  "platforms": ["local"],
+  "name": {
+    "en": "Hikvision",
+    "nl": "Hikvision",
+    "de": "Hikvision"
+  },
+  "description": {
+    "en": "Keep an eye on what matters, live and locally.",
+    "nl": "Houd lokaal en live in de gaten wat belangrijk is.",
+    "de": "Behalte lokal und live im Blick, was wichtig ist."
+  },
+  "category": "security",
+  "tags": {
+    "en": ["Hikvision", "camera", "doorbell", "NVR", "live video", "security"],
+    "nl": ["Hikvision", "camera", "deurbel", "NVR", "live-video", "beveiliging"],
+    "de": ["Hikvision", "Kamera", "Türklingel", "NVR", "Live-Video", "Sicherheit"]
+  },
+  "permissions": [],
+  "images": {
+    "large": "/assets/images/large.png",
+    "small": "/assets/images/small.png",
+    "xlarge": "/assets/images/xlarge.png"
+  },
+  "author": {
+    "name": "Brian Monninkhof",
+    "email": "nobrainerhomey@gmail.com"
+  },
+  "brandColor": "#d71820",
+  "contributors": {
+    "developers": [
+      { "name": "Martin P" },
+      { "name": "Johan Bendz" }
+    ]
+  },
+  "homeyCommunityTopicId": 157226,
+  "source": "https://github.com/bmonninkhof/nl.nobrainer.hikvision",
+  "support": "mailto:nobrainerhomey@gmail.com",
+  "bugs": {
+    "url": "https://community.homey.app/t/app-pro-test-hikvision-sdk-v3/157226"
+  }
+}

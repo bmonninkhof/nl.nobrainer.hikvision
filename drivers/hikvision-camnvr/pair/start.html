@@ -1,0 +1,154 @@
+<main class="hy-nostretch">
+  <p data-i18n="pair.intro"></p>
+
+  <fieldset class="hy-form-group">
+    <legend class="hy-label" data-i18n="pair.connection"></legend>
+
+    <div class="hy-form-group">
+      <label class="hy-label" for="address" data-i18n="pair.address"></label>
+      <input class="hy-input-text" id="address" type="text" placeholder="192.168.1.100" autocomplete="off" required>
+    </div>
+
+    <div class="hy-form-group">
+      <label class="hy-label" for="username" data-i18n="pair.username"></label>
+      <input class="hy-input-text" id="username" type="text" value="admin" autocomplete="username" required>
+    </div>
+
+    <div class="hy-form-group">
+      <label class="hy-label" for="password" data-i18n="pair.password"></label>
+      <input class="hy-input-text" id="password" type="password" autocomplete="current-password">
+    </div>
+
+    <div class="hy-form-group">
+      <label class="hy-label" for="auth-method" data-i18n="pair.auth_method"></label>
+      <select class="hy-input-text" id="auth-method">
+        <option value="automatic" data-i18n="pair.auth_automatic"></option>
+        <option value="digest" data-i18n="pair.auth_digest"></option>
+        <option value="basic" data-i18n="pair.auth_basic"></option>
+      </select>
+      <small data-i18n="pair.auth_hint"></small>
+    </div>
+
+    <div class="hy-form-group">
+      <label class="hy-label" for="port" data-i18n="pair.port"></label>
+      <input class="hy-input-text" id="port" type="number" min="1" max="65535" value="80" required>
+    </div>
+
+    <div class="hy-form-group">
+      <label class="hy-label" for="rtsp-port" data-i18n="pair.rtsp_port"></label>
+      <input class="hy-input-text" id="rtsp-port" type="number" min="1" max="65535" value="554" required>
+    </div>
+
+    <label class="hy-label hy-checkbox">
+      <input id="ssl" type="checkbox">
+      <span data-i18n="pair.ssl"></span>
+    </label>
+
+    <label class="hy-label hy-checkbox" id="strict-row" hidden>
+      <input id="strict" type="checkbox">
+      <span data-i18n="pair.strict"></span>
+    </label>
+  </fieldset>
+
+  <p id="status" role="status" aria-live="polite"></p>
+  <div class="button-row">
+    <button class="hy-button hy-button-fill" id="test" type="button" data-i18n="pair.test"></button>
+    <button class="hy-button hy-button-primary hy-button-fill" id="install" type="button" data-i18n="pair.install" disabled></button>
+  </div>
+</main>
+
+<script>
+  (() => {
+    const element = id => document.getElementById(id);
+    const testButton = element('test');
+    const installButton = element('install');
+    const status = element('status');
+    const ssl = element('ssl');
+    let testedDevice = null;
+
+    Homey.setTitle(Homey.__('pair.title'));
+
+    ssl.addEventListener('change', () => {
+      element('strict-row').hidden = !ssl.checked;
+      element('port').value = ssl.checked ? '443' : '80';
+      if (!ssl.checked) element('strict').checked = false;
+    });
+
+    const readForm = () => ({
+      address: element('address').value.trim(),
+      username: element('username').value.trim(),
+      password: element('password').value,
+      auth_method: element('auth-method').value,
+      port: Number(element('port').value),
+      rtsp_port: Number(element('rtsp-port').value),
+      ssl: ssl.checked,
+      strict: element('strict').checked,
+    });
+
+    const resetTest = () => {
+      testedDevice = null;
+      installButton.disabled = true;
+      status.textContent = '';
+    };
+    for (const input of document.querySelectorAll('input, select')) {
+      input.addEventListener('input', resetTest);
+      input.addEventListener('change', resetTest);
+    }
+
+    testButton.addEventListener('click', async () => {
+      const data = readForm();
+      if (!data.address || !data.username || !Number.isInteger(data.port) || !Number.isInteger(data.rtsp_port)) {
+        status.textContent = Homey.__('pair.nosettings');
+        return;
+      }
+
+      testButton.disabled = true;
+      installButton.disabled = true;
+      status.textContent = Homey.__('pair.testing');
+      try {
+        testedDevice = await Homey.emit('testConnection', data);
+        const successKey = testedDevice.snapshotAvailable
+          ? 'pair.test_success'
+          : 'pair.test_success_no_snapshot';
+        status.textContent = Homey.__(successKey)
+          .replace('__name__', testedDevice.name)
+          .replace('__type__', testedDevice.type)
+          .replace('__version__', testedDevice.firmwareVersion);
+        installButton.disabled = false;
+      } catch (error) {
+        testedDevice = null;
+        status.textContent = error.message || Homey.__('pair.unknownerror');
+      } finally {
+        testButton.disabled = false;
+      }
+    });
+
+    installButton.addEventListener('click', async () => {
+      if (!testedDevice) return;
+      testButton.disabled = true;
+      installButton.disabled = true;
+      status.textContent = Homey.__('pair.installing');
+      try {
+        await Homey.createDevice({
+          name: testedDevice.name,
+          data: { id: testedDevice.id },
+          settings: testedDevice.settings,
+        });
+        status.textContent = Homey.__('pair.success');
+        await Homey.nextView();
+      } catch (error) {
+        status.textContent = /duplicate device data/i.test(error?.message || '')
+          ? Homey.__('pair.already_added_generic')
+          : (error.message || Homey.__('pair.unknownerror'));
+        testButton.disabled = false;
+        installButton.disabled = false;
+      }
+    });
+  })();
+</script>
+
+<style>
+  #status { min-height: 1.5em; margin: 1rem 0; }
+  .hy-checkbox { display: flex; align-items: center; gap: .65rem; margin-top: .75rem; }
+  .button-row { display: grid; gap: .75rem; }
+</style>

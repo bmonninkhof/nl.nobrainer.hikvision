@@ -1,0 +1,22 @@
+{
+  "type": "boolean",
+  "title": {
+    "en": "Region entrance",
+    "nl": "Gebied betreden",
+    "de": "Bereich betreten"
+  },
+  "getable": true,
+  "setable": false,
+  "insights": true,
+  "insightsTitleTrue": {
+    "en": "Region entrance detected",
+    "nl": "Betreden van gebied gedetecteerd",
+    "de": "Betreten des Bereichs erkannt"
+  },
+  "insightsTitleFalse": {
+    "en": "No region entrance",
+    "nl": "Gebied wordt niet betreden",
+    "de": "Kein Betreten des Bereichs"
+  },
+  "icon": "/assets/info.svg"
+}

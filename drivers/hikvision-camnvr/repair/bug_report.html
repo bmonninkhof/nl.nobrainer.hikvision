@@ -1,0 +1,86 @@
+<script type="application/javascript">
+  Homey.setNavigationClose();
+
+  function translate(key) {
+    return Homey.__(key);
+  }
+
+  function renderBugReport(result) {
+    var status = document.getElementById('bug-report-status');
+    var output = document.getElementById('bug-report-output');
+    if (!result || result.success !== true) {
+      status.innerText = result && result.error ? result.error : translate('repair.failed');
+      output.value = '';
+      return;
+    }
+    status.innerText = translate('repair.ready');
+    output.value = result.report || '';
+  }
+
+  function createBugReport() {
+    Homey.showLoadingOverlay();
+    Homey.emit('get_bug_report').then(function (result) {
+      Homey.hideLoadingOverlay();
+      renderBugReport(result);
+    }).catch(function (error) {
+      Homey.hideLoadingOverlay();
+      renderBugReport({
+        success: false,
+        error: error && error.message ? error.message : translate('repair.failed'),
+      });
+    });
+  }
+
+  function copyBugReport() {
+    var output = document.getElementById('bug-report-output');
+    if (!output || !output.value) {
+      Homey.alert(translate('repair.create_first'));
+      return;
+    }
+    output.select();
+    document.execCommand('copy');
+    Homey.alert(translate('repair.copied'));
+  }
+
+  Homey.on('bug_report', function (result) {
+    renderBugReport(result);
+    return true;
+  });
+
+  window.addEventListener('load', function () {
+    document.getElementById('bug-report-title').innerText = translate('repair.title');
+    document.getElementById('bug-report-status').innerText = translate('repair.intro');
+    document.getElementById('bug-report-privacy').innerText = translate('repair.privacy');
+    document.getElementById('bug-report-create').innerText = translate('repair.create');
+    document.getElementById('bug-report-copy').innerText = translate('repair.copy');
+    document.getElementById('bug-report-close').innerText = translate('repair.close');
+  });
+</script>
+
+<style>
+  .bug-report-actions {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+    margin: 1rem 0;
+  }
+  .bug-report-output {
+    min-height: 16rem;
+    font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+    font-size: 0.82rem;
+    line-height: 1.35;
+    resize: vertical;
+  }
+</style>
+
+<fieldset class="homey-form-fieldset">
+  <legend class="homey-form-legend" id="bug-report-title">Bug report</legend>
+  <p class="homey-subtitle" id="bug-report-status"></p>
+  <p class="homey-subtitle" id="bug-report-privacy"></p>
+  <div class="bug-report-actions">
+    <button id="bug-report-create" type="button" onclick="createBugReport()" class="homey-button-primary-full"></button>
+    <button id="bug-report-copy" type="button" onclick="copyBugReport()" class="homey-button-secondary-full"></button>
+    <button id="bug-report-close" type="button" onclick="Homey.done()" class="homey-button-secondary-full"></button>
+  </div>
+  <textarea id="bug-report-output" class="homey-form-textarea bug-report-output" readonly></textarea>
+</fieldset>

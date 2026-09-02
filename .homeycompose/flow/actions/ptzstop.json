@@ -1,0 +1,17 @@
+{
+  "title": { "en": "Stop PTZ", "nl": "PTZ stoppen", "de": "PTZ stoppen" },
+  "titleFormatted": {
+    "en": "Stop PTZ for camera [[channel]]",
+    "nl": "Stop PTZ van camera [[channel]]",
+    "de": "PTZ von Kamera [[channel]] stoppen"
+  },
+  "hint": {
+    "en": "Stops an ongoing pan, tilt or zoom movement on the selected channel.",
+    "nl": "Stopt een actieve draai-, kantel- of zoombeweging op het gekozen kanaal.",
+    "de": "Stoppt eine laufende Schwenk-, Neige- oder Zoombewegung auf dem gewählten Kanal."
+  },
+  "args": [
+    { "name": "device", "type": "device", "filter": "driver_id=hikvision-camnvr" },
+    { "name": "channel", "type": "autocomplete", "title": { "en": "Camera channel", "nl": "Camerakanaal", "de": "Kamerakanal" }, "placeholder": { "en": "Select a PTZ channel", "nl": "Selecteer een PTZ-kanaal", "de": "PTZ-Kanal auswählen" } }
+  ]
+}

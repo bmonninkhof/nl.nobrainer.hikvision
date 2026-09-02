@@ -1,0 +1,4 @@
+{
+  "title": { "en": "Connected", "nl": "Verbonden", "de": "Verbunden" },
+  "args": [{ "name": "device", "type": "device", "filter": "driver_id=hikvision-camnvr" }]
+}
