@@ -113,6 +113,7 @@ class HikvisionDevice extends Homey.Device {
       lastErrorCode: null,
     };
     this.unhandledEvents = [];
+    this.recentEventDiagnostics = [];
     this.motionAlarmStartedAt = 0;
     this.motionAlarmTimer = null;
     this.activeAlarmChannels = new Map(
@@ -166,6 +167,9 @@ class HikvisionDevice extends Homey.Device {
     });
     client.on('unhandled-event', event => {
       if (isCurrent()) this.recordUnhandledEvent(event);
+    });
+    client.on('event-diagnostic', event => {
+      if (isCurrent()) this.recordEventDiagnostic(event);
     });
 
     try {
@@ -414,6 +418,18 @@ class HikvisionDevice extends Homey.Device {
       channel: Number(event.channel) || 0,
     });
     this.unhandledEvents = this.unhandledEvents.slice(-MAX_DIAGNOSTIC_EVENTS);
+  }
+
+  recordEventDiagnostic(event) {
+    this.recentEventDiagnostics.push({
+      receivedAt: new Date().toISOString(),
+      eventType: String(event.eventType || '').slice(0, 100),
+      mappedType: event.mappedType ? String(event.mappedType).slice(0, 100) : null,
+      eventState: String(event.eventState || '').slice(0, 50),
+      channel: Number(event.channel) || 0,
+      activePostCount: Number.isFinite(event.activePostCount) ? event.activePostCount : null,
+    });
+    this.recentEventDiagnostics = this.recentEventDiagnostics.slice(-MAX_DIAGNOSTIC_EVENTS);
   }
 
   async syncAlarmCapabilities(deviceType) {
@@ -775,6 +791,7 @@ class HikvisionDevice extends Homey.Device {
         imageUpdateTimers: this.cameraImageUpdateTimers.size,
         ptzTimers: this.ptzDelayTimers.size,
       },
+      recentEvents: [...this.recentEventDiagnostics],
       unhandledEvents: [...this.unhandledEvents],
     };
   }

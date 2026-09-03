@@ -769,6 +769,24 @@ test('onbekende firmware-events worden zonder ruwe XML voor diagnose gemeld', as
   client.stop();
 });
 
+test('alle ISAPI-gebeurtenissen leveren privacyveilige diagnostiek voor het bugrapport', async () => {
+  const client = new HikvisionClient({ host: 'nvr', port: 80, username: 'admin', password: '' });
+  const diagnostics = [];
+  client.on('event-diagnostic', event => diagnostics.push(event));
+
+  await client._handleAlertXml('<EventNotificationAlert><eventType>linedetection</eventType><eventState>active</eventState><dynChannelID>3</dynChannelID><activePostCount>1</activePostCount><privateData>secret</privateData></EventNotificationAlert>');
+
+  assert.deepEqual(diagnostics, [{
+    eventType: 'linedetection',
+    mappedType: 'LineDetection',
+    eventState: 'active',
+    channel: 3,
+    activePostCount: 1,
+  }]);
+  assert.equal(JSON.stringify(diagnostics).includes('secret'), false);
+  client.stop();
+});
+
 test('gewone actieve gebeurtenis zonder activePostCount wordt niet als heartbeat gewist', async () => {
   const client = new HikvisionClient({ host: 'camera', port: 80, username: 'admin', password: '' });
   const alarms = [];

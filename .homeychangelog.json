@@ -1,4 +1,9 @@
 {
+  "2026.9.5": {
+    "en": "Make the privacy-safe bug report load reliably and add recent ISAPI event details to diagnose missing NVR smart-event triggers.",
+    "nl": "Laat het privacyveilige bugrapport betrouwbaar laden en voeg recente ISAPI-gebeurtenisdetails toe om ontbrekende slimme NVR-triggers te onderzoeken.",
+    "de": "Der datenschutzsichere Fehlerbericht wird zuverlässig geladen und um aktuelle ISAPI-Ereignisdetails zur Diagnose fehlender NVR-Smart-Event-Auslöser ergänzt."
+  },
   "2026.9.4": {
     "en": "Add a safe Flow action to end a ringing Hikvision intercom call after verifying device support and the current call status.",
     "nl": "Voeg een veilige Flow-actie toe om een overgaande Hikvision-intercomoproep te beëindigen na controle van apparaatondersteuning en de actuele oproepstatus.",

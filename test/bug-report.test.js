@@ -25,9 +25,12 @@ test('reparatiewizard biedt een kopieerbaar privacyveilig rapport', () => {
   const device = fs.readFileSync(path.join(root, 'drivers/hikvision-camnvr/device.js'), 'utf8');
   assert.deepEqual(compose.repair, [{ id: 'bug_report' }]);
   assert.match(view, /get_bug_report/);
+  assert.match(view, /setTimeout\(createBugReport, 0\)/);
+  assert.match(view, /Create again/);
   assert.match(view, /document\.execCommand\('copy'\)/);
   assert.match(device, /getBugReport\(\)/);
   assert.match(device, /getAuthenticationDiagnostics/);
+  assert.match(device, /recentEvents: \[\.\.\.this\.recentEventDiagnostics\]/);
   assert.match(device, /authMethod: normalizeAuthMethod/);
   assert.doesNotMatch(device, /settings:\s*\{\s*\.\.\.settings/);
 });

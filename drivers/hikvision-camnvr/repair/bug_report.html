@@ -1,32 +1,47 @@
 <script type="application/javascript">
   Homey.setNavigationClose();
 
-  function translate(key) {
-    return Homey.__(key);
+  var reportRequestInProgress = false;
+
+  function translate(key, fallback) {
+    try {
+      var value = typeof Homey.__ === 'function' ? Homey.__(key) : '';
+      return value && value !== key ? value : fallback;
+    } catch (error) {
+      return fallback;
+    }
   }
 
   function renderBugReport(result) {
     var status = document.getElementById('bug-report-status');
     var output = document.getElementById('bug-report-output');
     if (!result || result.success !== true) {
-      status.innerText = result && result.error ? result.error : translate('repair.failed');
+      status.innerText = result && result.error
+        ? result.error
+        : translate('repair.failed', 'Creating the bug report failed.');
       output.value = '';
       return;
     }
-    status.innerText = translate('repair.ready');
+    status.innerText = translate('repair.ready', 'The privacy-safe bug report is ready.');
     output.value = result.report || '';
   }
 
   function createBugReport() {
-    Homey.showLoadingOverlay();
+    if (reportRequestInProgress) return;
+    reportRequestInProgress = true;
+    if (typeof Homey.showLoadingOverlay === 'function') Homey.showLoadingOverlay();
     Homey.emit('get_bug_report').then(function (result) {
-      Homey.hideLoadingOverlay();
+      reportRequestInProgress = false;
+      if (typeof Homey.hideLoadingOverlay === 'function') Homey.hideLoadingOverlay();
       renderBugReport(result);
     }).catch(function (error) {
-      Homey.hideLoadingOverlay();
+      reportRequestInProgress = false;
+      if (typeof Homey.hideLoadingOverlay === 'function') Homey.hideLoadingOverlay();
       renderBugReport({
         success: false,
-        error: error && error.message ? error.message : translate('repair.failed'),
+        error: error && error.message
+          ? error.message
+          : translate('repair.failed', 'Creating the bug report failed.'),
       });
     });
   }
@@ -34,12 +49,12 @@
   function copyBugReport() {
     var output = document.getElementById('bug-report-output');
     if (!output || !output.value) {
-      Homey.alert(translate('repair.create_first'));
+      Homey.alert(translate('repair.create_first', 'Create the bug report first.'));
       return;
     }
     output.select();
     document.execCommand('copy');
-    Homey.alert(translate('repair.copied'));
+    Homey.alert(translate('repair.copied', 'Bug report copied.'));
   }
 
   Homey.on('bug_report', function (result) {
@@ -48,12 +63,19 @@
   });
 
   window.addEventListener('load', function () {
-    document.getElementById('bug-report-title').innerText = translate('repair.title');
-    document.getElementById('bug-report-status').innerText = translate('repair.intro');
-    document.getElementById('bug-report-privacy').innerText = translate('repair.privacy');
-    document.getElementById('bug-report-create').innerText = translate('repair.create');
-    document.getElementById('bug-report-copy').innerText = translate('repair.copy');
-    document.getElementById('bug-report-close').innerText = translate('repair.close');
+    document.getElementById('bug-report-title').innerText = translate('repair.title', 'Bug report');
+    document.getElementById('bug-report-status').innerText = translate(
+      'repair.intro',
+      'A privacy-safe bug report is being created.',
+    );
+    document.getElementById('bug-report-privacy').innerText = translate(
+      'repair.privacy',
+      'Passwords, usernames, addresses, snapshots and video are not included.',
+    );
+    document.getElementById('bug-report-create').innerText = translate('repair.create', 'Create again');
+    document.getElementById('bug-report-copy').innerText = translate('repair.copy', 'Copy bug report');
+    document.getElementById('bug-report-close').innerText = translate('repair.close', 'Close');
+    window.setTimeout(createBugReport, 0);
   });
 </script>
 
@@ -75,12 +97,12 @@
 
 <fieldset class="homey-form-fieldset">
   <legend class="homey-form-legend" id="bug-report-title">Bug report</legend>
-  <p class="homey-subtitle" id="bug-report-status"></p>
-  <p class="homey-subtitle" id="bug-report-privacy"></p>
+  <p class="homey-subtitle" id="bug-report-status">A privacy-safe bug report is being created.</p>
+  <p class="homey-subtitle" id="bug-report-privacy">Passwords, usernames, addresses, snapshots and video are not included.</p>
   <div class="bug-report-actions">
-    <button id="bug-report-create" type="button" onclick="createBugReport()" class="homey-button-primary-full"></button>
-    <button id="bug-report-copy" type="button" onclick="copyBugReport()" class="homey-button-secondary-full"></button>
-    <button id="bug-report-close" type="button" onclick="Homey.done()" class="homey-button-secondary-full"></button>
+    <button id="bug-report-create" type="button" onclick="createBugReport()" class="homey-button-primary-full">Create again</button>
+    <button id="bug-report-copy" type="button" onclick="copyBugReport()" class="homey-button-secondary-full">Copy bug report</button>
+    <button id="bug-report-close" type="button" onclick="Homey.done()" class="homey-button-secondary-full">Close</button>
   </div>
   <textarea id="bug-report-output" class="homey-form-textarea bug-report-output" readonly></textarea>
 </fieldset>

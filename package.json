@@ -1,6 +1,6 @@
 {
   "name": "nl.nobrainer.hikvision",
-  "version": "2026.9.4",
+  "version": "2026.9.5",
   "description": "Local Hikvision camera, doorbell and NVR integration",
   "main": "app.js",
   "private": true,
