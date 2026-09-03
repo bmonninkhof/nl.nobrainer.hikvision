@@ -8,7 +8,7 @@ ISAPI for device functions and events, and RTSP for video. No Hikvision cloud
 account is required.
 
 - **App ID:** `nl.nobrainer.hikvision`
-- **Current Test release:** `2026.9.5` (local candidate; `2026.9.4` is currently published)
+- **Current Test release:** `2026.9.5`
 - **Homey:** Homey Pro, firmware 12.3.0 or newer
 - **Install:** [Homey App Store Test](https://homey.app/en-us/app/nl.nobrainer.hikvision/Hikvision/test/)
 - **Support:** [Homey Community topic](https://community.homey.app/t/app-pro-test-hikvision-sdk-v3/157226)
