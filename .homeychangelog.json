@@ -1,4 +1,9 @@
 {
+  "2026.9.7": {
+    "en": "Prevent NVR display diagnostics from blocking bug reports by running probes concurrently, enforcing a total timeout and combining duplicate report requests.",
+    "nl": "Voorkom dat NVR-weergavediagnostiek bugrapporten blokkeert door controles gelijktijdig uit te voeren, een totale tijdslimiet toe te passen en dubbele rapportaanvragen samen te voegen.",
+    "de": "Verhindert, dass NVR-Anzeigediagnosen Fehlerberichte blockieren, indem Prüfungen parallel ausgeführt, eine Gesamtzeitbegrenzung angewendet und doppelte Berichtsanfragen zusammengeführt werden."
+  },
   "2026.9.6": {
     "en": "Add read-only, privacy-safe NVR local-display diagnostics to bug reports for investigating HDMI, VGA and preview-layout support.",
     "nl": "Voeg uitlezende, privacyveilige diagnostiek voor lokale NVR-weergave toe aan bugrapporten om ondersteuning voor HDMI, VGA en voorbeeldindelingen te onderzoeken.",

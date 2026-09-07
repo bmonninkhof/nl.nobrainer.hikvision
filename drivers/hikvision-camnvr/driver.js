@@ -141,14 +141,21 @@ class HikvisionDriver extends Homey.Driver {
   }
 
   async onRepair(session, device) {
+    let bugReportPromise = null;
     const getBugReport = async () => {
-      try {
-        if (typeof device.getBugReport === 'function') return await device.getBugReport();
-        return { success: false, error: this.homey.__('repair.unavailable') };
-      } catch (error) {
-        this.error('Bug report generation failed', error);
-        return { success: false, error: this.homey.__('repair.failed') };
-      }
+      if (bugReportPromise) return bugReportPromise;
+      bugReportPromise = (async () => {
+        try {
+          if (typeof device.getBugReport === 'function') return await device.getBugReport();
+          return { success: false, error: this.homey.__('repair.unavailable') };
+        } catch (error) {
+          this.error('Bug report generation failed', error);
+          return { success: false, error: this.homey.__('repair.failed') };
+        } finally {
+          bugReportPromise = null;
+        }
+      })();
+      return bugReportPromise;
     };
     session.setHandler('showView', async view => {
       if (view === 'bug_report') await session.emit('bug_report', await getBugReport());

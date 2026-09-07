@@ -29,6 +29,7 @@ test('reparatiewizard biedt een kopieerbaar privacyveilig rapport', () => {
   assert.match(view, /Create again/);
   assert.match(view, /document\.execCommand\('copy'\)/);
   assert.match(device, /async getBugReport\(\)/);
+  assert.match(fs.readFileSync(path.join(root, 'drivers/hikvision-camnvr/driver.js'), 'utf8'), /if \(bugReportPromise\) return bugReportPromise/);
   assert.match(device, /getLocalDisplayDiagnostics/);
   assert.match(device, /getAuthenticationDiagnostics/);
   assert.match(device, /recentEvents: \[\.\.\.this\.recentEventDiagnostics\]/);

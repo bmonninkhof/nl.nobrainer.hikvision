@@ -1006,3 +1006,33 @@ test('ongeldige NVR-weergaverespons breekt het bugrapportonderzoek niet af', asy
   const diagnostics = await client.getLocalDisplayDiagnostics();
   assert.equal(Object.values(diagnostics.probes).every(probe => probe.status === 'unavailable'), true);
 });
+
+test('lokale NVR-weergavediagnose voert probes parallel uit en heeft een totale tijdslimiet', async () => {
+  const client = new HikvisionClient({ host: 'nvr', port: 80, username: 'admin', password: '' });
+  let active = 0;
+  let maximumActive = 0;
+  client.request = async () => {
+    active += 1;
+    maximumActive = Math.max(maximumActive, active);
+    await new Promise(resolve => setTimeout(resolve, 25));
+    active -= 1;
+    return {
+      statusCode: 200,
+      headers: { 'content-type': 'application/xml' },
+      body: Buffer.from('<VideoCap><isSupportPreviewSwitch>true</isSupportPreviewSwitch></VideoCap>'),
+    };
+  };
+
+  const startedAt = Date.now();
+  const diagnostics = await client.getLocalDisplayDiagnostics({ timeout: 1000, overallTimeout: 200 });
+  assert.equal(maximumActive, 4);
+  assert.equal(Date.now() - startedAt < 90, true);
+  assert.equal(diagnostics.timedOut, false);
+
+  client.request = async () => new Promise(() => {});
+  const timeoutStartedAt = Date.now();
+  const timedOut = await client.getLocalDisplayDiagnostics({ timeout: 1000, overallTimeout: 20 });
+  assert.equal(Date.now() - timeoutStartedAt < 100, true);
+  assert.equal(timedOut.timedOut, true);
+  assert.equal(Object.values(timedOut.probes).every(probe => probe.errorCode === 'ETIMEDOUT'), true);
+});
