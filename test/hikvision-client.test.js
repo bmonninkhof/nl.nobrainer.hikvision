@@ -921,3 +921,88 @@ test('intercomoproep wordt alleen beëindigd als hangUp als capability is gemeld
   client.getJson = async () => ({ CallSignal: { cmdType: { '@opt': ['request', 'reject'] } } });
   await assert.rejects(client.hangUpIntercomCall(), error => error.code === 'ECALLCONTROLUNSUPPORTED');
 });
+
+test('lokale NVR-weergavediagnose gebruikt alleen begrensde GET-verzoeken en vat antwoorden veilig samen', async () => {
+  const client = new HikvisionClient({ host: 'nvr', port: 80, username: 'admin', password: '' });
+  const requests = [];
+  client._requestOnce = async (path, options) => {
+    requests.push({ path, method: options.method, timeout: options.timeout });
+    if (path === '/ISAPI/System/Video/capabilities') {
+      return {
+        statusCode: 200,
+        headers: { 'content-type': 'application/xml' },
+        body: Buffer.from('<VideoCap><videoOutputPortNums>2</videoOutputPortNums><menuNums>1</menuNums><isSupportPreviewSwitch>true</isSupportPreviewSwitch><isSupportPreviewSplitSwitchCfg>true</isSupportPreviewSplitSwitchCfg><isSupportMenuStatus>false</isSupportMenuStatus></VideoCap>'),
+      };
+    }
+    if (path === '/ISAPI/System/Video/outputs/channels') {
+      return {
+        statusCode: 200,
+        headers: { 'content-type': 'application/xml' },
+        body: Buffer.from('<VideoOutputChannelList><VideoOutputChannel><id>1</id><type>HDMI</type><mode>HDMI_1080P</mode><resolution>1920*1080/60HZ</resolution><menu><mirrorMenu>true</mirrorMenu></menu></VideoOutputChannel><VideoOutputChannel><id>2</id><type>VGA</type><mode>open</mode></VideoOutputChannel></VideoOutputChannelList>'),
+      };
+    }
+    if (path === '/ISAPI/System/Video/Menu') {
+      return {
+        statusCode: 200,
+        headers: { 'content-type': 'application/xml' },
+        body: Buffer.from('<MenuList><Menu><id>1</id><mode>manual</mode><VideoOutputPortList><videoOutputPortID>1</videoOutputPortID><videoOutputPortID>2</videoOutputPortID></VideoOutputPortList></Menu></MenuList>'),
+      };
+    }
+    return {
+      statusCode: 200,
+      headers: { 'content-type': 'application/json' },
+      body: Buffer.from('{"PreviewSplitSwitchCfg":{"enabled":true,"Layout":{"mode":"2x2"}}}'),
+    };
+  };
+
+  const diagnostics = await client.getLocalDisplayDiagnostics({ timeout: 1234 });
+  assert.equal(diagnostics.readOnly, true);
+  assert.equal(diagnostics.probes.videoCapabilities.result.videoOutputPortCount, 2);
+  assert.equal(diagnostics.probes.videoCapabilities.result.previewSwitchSupported, true);
+  assert.deepEqual(diagnostics.probes.videoOutputs.result, [
+    { id: '1', type: 'HDMI', mode: 'HDMI_1080P', resolution: '1920*1080/60HZ', mirrorsMenu: true },
+    { id: '2', type: 'VGA', mode: 'open', resolution: null, mirrorsMenu: null },
+  ]);
+  assert.deepEqual(diagnostics.probes.videoMenus.result[0].videoOutputPortIds, ['1', '2']);
+  assert.deepEqual(diagnostics.probes.previewSplitSwitchConfig.result.schemaPaths, [
+    'PreviewSplitSwitchCfg',
+    'PreviewSplitSwitchCfg.enabled',
+    'PreviewSplitSwitchCfg.Layout',
+    'PreviewSplitSwitchCfg.Layout.mode',
+  ]);
+  assert.equal(requests.length, 4);
+  assert.equal(requests.every(request => request.method === 'GET' && request.timeout === 1234), true);
+});
+
+test('lokale NVR-weergavediagnose vangt niet-ondersteunde endpoints en time-outs per probe af', async () => {
+  const client = new HikvisionClient({ host: 'nvr', port: 80, username: 'admin', password: '' });
+  let requestNumber = 0;
+  client._requestOnce = async () => {
+    requestNumber += 1;
+    if (requestNumber === 1) {
+      return { statusCode: 404, headers: {}, body: Buffer.alloc(0) };
+    }
+    const error = new Error('connection timed out at 192.168.1.10');
+    error.code = 'ETIMEDOUT';
+    throw error;
+  };
+
+  const diagnostics = await client.getLocalDisplayDiagnostics({ timeout: 10 });
+  assert.equal(diagnostics.probes.videoCapabilities.status, 'unavailable');
+  assert.equal(diagnostics.probes.videoCapabilities.httpStatus, 404);
+  assert.equal(diagnostics.probes.videoOutputs.errorCode, 'ETIMEDOUT');
+  assert.equal(Object.keys(diagnostics.probes).length, 4);
+  assert.doesNotMatch(JSON.stringify(diagnostics), /192\.168\.1\.10/);
+});
+
+test('ongeldige NVR-weergaverespons breekt het bugrapportonderzoek niet af', async () => {
+  const client = new HikvisionClient({ host: 'nvr', port: 80, username: 'admin', password: '' });
+  client._requestOnce = async () => ({
+    statusCode: 200,
+    headers: { 'content-type': 'application/json' },
+    body: Buffer.from('{invalid'),
+  });
+
+  const diagnostics = await client.getLocalDisplayDiagnostics();
+  assert.equal(Object.values(diagnostics.probes).every(probe => probe.status === 'unavailable'), true);
+});

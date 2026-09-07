@@ -796,7 +796,7 @@ class HikvisionDevice extends Homey.Device {
     };
   }
 
-  getBugReport() {
+  async getBugReport() {
     const settings = this.getSettings();
     const data = this.getData();
     const privateValues = [settings.address, settings.username, settings.password, data?.id];
@@ -805,6 +805,26 @@ class HikvisionDevice extends Homey.Device {
       capability,
       this.getCapabilityValue(capability),
     ]));
+    let localDisplay;
+    if (!this.client || !this.isapiAvailable || parseBoolean(settings.rtsp_only)) {
+      localDisplay = {
+        checkedAt: new Date().toISOString(),
+        readOnly: true,
+        skipped: true,
+        reason: parseBoolean(settings.rtsp_only) ? 'rtsp-only' : 'isapi-unavailable',
+      };
+    } else {
+      try {
+        localDisplay = await this.client.getLocalDisplayDiagnostics();
+      } catch (error) {
+        localDisplay = {
+          checkedAt: new Date().toISOString(),
+          readOnly: true,
+          skipped: false,
+          errorCode: getDiagnosticErrorCode(error),
+        };
+      }
+    }
     const report = sanitizeForBugReport({
       reportType: 'Hikvision device bug report',
       createdAt: new Date().toISOString(),
@@ -834,6 +854,9 @@ class HikvisionDevice extends Homey.Device {
       },
       capabilities: capabilityValues,
       diagnostics: this.getDiagnostics(),
+      experimentalDiagnostics: {
+        localNvrDisplay: localDisplay,
+      },
     }, privateValues);
 
     return { success: true, report: JSON.stringify(report, null, 2) };

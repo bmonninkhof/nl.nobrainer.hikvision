@@ -28,7 +28,8 @@ test('reparatiewizard biedt een kopieerbaar privacyveilig rapport', () => {
   assert.match(view, /setTimeout\(createBugReport, 0\)/);
   assert.match(view, /Create again/);
   assert.match(view, /document\.execCommand\('copy'\)/);
-  assert.match(device, /getBugReport\(\)/);
+  assert.match(device, /async getBugReport\(\)/);
+  assert.match(device, /getLocalDisplayDiagnostics/);
   assert.match(device, /getAuthenticationDiagnostics/);
   assert.match(device, /recentEvents: \[\.\.\.this\.recentEventDiagnostics\]/);
   assert.match(device, /authMethod: normalizeAuthMethod/);
