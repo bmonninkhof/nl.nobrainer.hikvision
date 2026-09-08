@@ -5,6 +5,7 @@ const fs = require('node:fs');
 const path = require('node:path');
 const test = require('node:test');
 const { hashPrivateValue, sanitizeForBugReport } = require('../lib/bug-report');
+const { createMinimalBugReport } = require('../lib/minimal-bug-report');
 
 test('bugrapport verwijdert netwerk- en accountgegevens', () => {
   const privateValues = ['camera.example.local', 'admin-user', 'top-secret'];
@@ -30,9 +31,30 @@ test('reparatiewizard biedt een kopieerbaar privacyveilig rapport', () => {
   assert.match(view, /document\.execCommand\('copy'\)/);
   assert.match(device, /async getBugReport\(\)/);
   assert.match(fs.readFileSync(path.join(root, 'drivers/hikvision-camnvr/driver.js'), 'utf8'), /if \(bugReportPromise\) return bugReportPromise/);
+  assert.match(fs.readFileSync(path.join(root, 'drivers/hikvision-camnvr/driver.js'), 'utf8'), /createMinimalBugReport/);
+  assert.match(fs.readFileSync(path.join(root, 'drivers/hikvision-camnvr/driver.js'), 'utf8'), /session\.setHandler\('showView', async \(\) => true\)/);
   assert.match(device, /getLocalDisplayDiagnostics/);
+  assert.match(device, /status: 'collecting'/);
+  assert.match(device, /refreshLocalDisplayDiagnostics/);
   assert.match(device, /getAuthenticationDiagnostics/);
   assert.match(device, /recentEvents: \[\.\.\.this\.recentEventDiagnostics\]/);
   assert.match(device, /authMethod: normalizeAuthMethod/);
   assert.doesNotMatch(device, /settings:\s*\{\s*\.\.\.settings/);
+});
+
+test('minimaal bugrapport blijft beschikbaar wanneer volledige generatie faalt', () => {
+  const result = createMinimalBugReport({
+    id: 'nl.nobrainer.hikvision',
+    version: '2026.9.8',
+    sdk: 3,
+  }, 'ECIRCULAR');
+  const report = JSON.parse(result.report);
+  assert.equal(result.success, true);
+  assert.equal(report.app.version, '2026.9.8');
+  assert.deepEqual(report.diagnostics, {
+    status: 'limited',
+    stage: 'device-report-generation',
+    errorCode: 'ECIRCULAR',
+  });
+  assert.doesNotMatch(result.report, /address|username|password/i);
 });

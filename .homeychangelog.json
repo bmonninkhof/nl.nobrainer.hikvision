@@ -1,4 +1,9 @@
 {
+  "2026.9.8": {
+    "en": "Guarantee a privacy-safe fallback bug report, collect NVR display diagnostics in the background and add an optional direct RTSP playback mode for black video in native Homey apps.",
+    "nl": "Garandeer een privacyveilig noodbugrapport, verzamel NVR-weergavediagnostiek op de achtergrond en voeg een optionele directe RTSP-modus toe voor zwart beeld in native Homey-apps.",
+    "de": "Garantiert einen datenschutzsicheren Ersatz-Fehlerbericht, sammelt NVR-Anzeigediagnosen im Hintergrund und ergänzt einen optionalen direkten RTSP-Modus bei schwarzem Video in nativen Homey-Apps."
+  },
   "2026.9.7": {
     "en": "Prevent NVR display diagnostics from blocking bug reports by running probes concurrently, enforcing a total timeout and combining duplicate report requests.",
     "nl": "Voorkom dat NVR-weergavediagnostiek bugrapporten blokkeert door controles gelijktijdig uit te voeren, een totale tijdslimiet toe te passen en dubbele rapportaanvragen samen te voegen.",

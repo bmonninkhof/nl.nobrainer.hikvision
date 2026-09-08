@@ -27,7 +27,8 @@ test('VIS met defecte ISAPI gebruikt de begrensde RTSP-fallback', () => {
   assert.match(source, /const channels = rtspOnly \|\| isSingleChannelDevice\(deviceType\)/);
   assert.match(source, /if \(isapiAvailable\) \{\s*await this\.registerCameraImages/);
   assert.match(source, /await this\.registerCameraVideos\(info\.type, client, generation, \{ rtspOnly: !isapiAvailable \}\)/);
-  assert.match(source, /if \(isapiAvailable\) \{\s*this\.startConnectionHealthChecks/);
+  assert.match(source, /if \(isapiAvailable\) \{[\s\S]{0,500}this\.startConnectionHealthChecks/);
+  assert.match(source, /refreshLocalDisplayDiagnostics\(client, generation\)/);
   assert.match(source, /ISAPI temporarily unavailable; automatic recovery is active/);
 });
 
@@ -53,4 +54,7 @@ test('Live-videodiagnose bevat profielkeuze en RTSP-only-status', () => {
   assert.match(source, /rtspOnlyConfigured: parseBoolean\(this\.getSettings\(\)\.rtsp_only\)/);
   assert.match(source, /videoProfiles: Object\.fromEntries\(this\.videoProfiles\)/);
   assert.match(source, /const preference = String\(this\.getSettings\(\)\.live_stream \|\| 'automatic'\)/);
+  assert.match(source, /const videoTransport = String\(this\.getSettings\(\)\.video_transport \|\| 'automatic'\)/);
+  assert.match(source, /if \(videoTransport === 'direct'\) videoOptions\.disableWebRTCProxy = true/);
+  assert.match(source, /if \(videoTransport === 'webrtc'\) videoOptions\.disableWebRTCProxy = false/);
 });

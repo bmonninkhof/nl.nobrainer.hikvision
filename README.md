@@ -8,7 +8,7 @@ ISAPI for device functions and events, and RTSP for video. No Hikvision cloud
 account is required.
 
 - **App ID:** `nl.nobrainer.hikvision`
-- **Current Test release:** `2026.9.7`
+- **Current Test release:** `2026.9.8`
 - **Homey:** Homey Pro, firmware 12.3.0 or newer
 - **Install:** [Homey App Store Test](https://homey.app/en-us/app/nl.nobrainer.hikvision/Hikvision/test/)
 - **Support:** [Homey Community topic](https://community.homey.app/t/app-pro-test-hikvision-sdk-v3/157226)
@@ -21,6 +21,7 @@ account is required.
 ## Highlights
 
 - Native Homey Live video with automatic selection of a compatible H.264 stream
+- Optional direct RTSP playback mode for native Homey app compatibility testing
 - Snapshots for cameras, door stations and up to sixteen online NVR channels
 - Dashboard widget with digital zoom, pan, pinch gestures and automatic refresh
 - Motion, doorbell and smart-event triggers with snapshot image tags

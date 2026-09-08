@@ -1,8 +1,9 @@
 'use strict';
 
 const Homey = require('homey');
-const { HikvisionClient } = require('../../lib/hikvision-client');
+const { HikvisionClient, getDiagnosticErrorCode } = require('../../lib/hikvision-client');
 const { isSingleChannelDevice } = require('../../lib/device-type');
+const { createMinimalBugReport } = require('../../lib/minimal-bug-report');
 const { normalizeAuthMethod, parseBoolean } = require('../../lib/settings');
 const { getUserErrorMessage } = require('../../lib/user-error');
 
@@ -150,16 +151,14 @@ class HikvisionDriver extends Homey.Driver {
           return { success: false, error: this.homey.__('repair.unavailable') };
         } catch (error) {
           this.error('Bug report generation failed', error);
-          return { success: false, error: this.homey.__('repair.failed') };
+          return createMinimalBugReport(this.homey.manifest, getDiagnosticErrorCode(error));
         } finally {
           bugReportPromise = null;
         }
       })();
       return bugReportPromise;
     };
-    session.setHandler('showView', async view => {
-      if (view === 'bug_report') await session.emit('bug_report', await getBugReport());
-    });
+    session.setHandler('showView', async () => true);
     session.setHandler('get_bug_report', getBugReport);
   }
 

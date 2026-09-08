@@ -59,6 +59,22 @@
           ]
         },
         {
+          "id": "video_transport",
+          "type": "dropdown",
+          "value": "automatic",
+          "label": { "en": "Playback transport", "nl": "Afspeeltransport", "de": "Wiedergabetransport" },
+          "hint": {
+            "en": "Keep Automatic unless video works in a browser but is black in the Homey app. Direct RTSP bypasses Homey's WebRTC proxy for compatibility testing.",
+            "nl": "Laat op Automatisch staan, tenzij beeld in een browser werkt maar zwart is in de Homey-app. Directe RTSP omzeilt voor compatibiliteitstests de WebRTC-proxy van Homey.",
+            "de": "Automatisch beibehalten, außer das Video funktioniert im Browser, bleibt aber in der Homey-App schwarz. Direktes RTSP umgeht für Kompatibilitätstests den WebRTC-Proxy von Homey."
+          },
+          "values": [
+            { "id": "automatic", "label": { "en": "Automatic (recommended)", "nl": "Automatisch (aanbevolen)", "de": "Automatisch (empfohlen)" } },
+            { "id": "webrtc", "label": { "en": "Homey WebRTC proxy", "nl": "Homey WebRTC-proxy", "de": "Homey-WebRTC-Proxy" } },
+            { "id": "direct", "label": { "en": "Direct RTSP (compatibility)", "nl": "Directe RTSP (compatibiliteit)", "de": "Direktes RTSP (Kompatibilität)" } }
+          ]
+        },
+        {
           "id": "rtsp_only",
           "type": "checkbox",
           "value": false,

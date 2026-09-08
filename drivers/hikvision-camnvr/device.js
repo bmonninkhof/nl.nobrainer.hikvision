@@ -87,6 +87,8 @@ class HikvisionDevice extends Homey.Device {
       ptz: 'not-checked',
       relays: 'not-checked',
     };
+    this.localDisplayDiagnostics = null;
+    this.localDisplayDiagnosticsPromise = null;
     this.lastRelayCommandAt = 0;
     this.relayDiagnostics = [];
     this.callControlDiagnostics = {
@@ -230,6 +232,11 @@ class HikvisionDevice extends Homey.Device {
       if (isCurrent()) {
         await this.handleConnected();
         if (isapiAvailable) {
+          if (String(info.type || '').toUpperCase().includes('NVR')) {
+            this.refreshLocalDisplayDiagnostics(client, generation).catch(error => {
+              this.error('NVR local-display diagnostics failed', error);
+            });
+          }
           this.startConnectionHealthChecks(client, generation);
           if (this.eventMonitoringEnabled) {
             client.startAlertStream();
@@ -750,6 +757,7 @@ class HikvisionDevice extends Homey.Device {
         isapiAvailable: this.isapiAvailable,
         eventMonitoringEnabled: this.eventMonitoringEnabled,
         rtspOnlyConfigured: parseBoolean(this.getSettings().rtsp_only),
+        videoTransport: String(this.getSettings().video_transport || 'automatic'),
       },
       videoProfiles: Object.fromEntries(this.videoProfiles),
       doorbell: doorbellDiagnostics,
@@ -805,8 +813,16 @@ class HikvisionDevice extends Homey.Device {
       capability,
       this.getCapabilityValue(capability),
     ]));
+    const deviceType = String(this.getCapabilityValue('hik_type') || '').toUpperCase();
     let localDisplay;
-    if (!this.client || !this.isapiAvailable || parseBoolean(settings.rtsp_only)) {
+    if (!deviceType.includes('NVR')) {
+      localDisplay = {
+        checkedAt: new Date().toISOString(),
+        readOnly: true,
+        skipped: true,
+        reason: 'not-nvr',
+      };
+    } else if (!this.client || !this.isapiAvailable || parseBoolean(settings.rtsp_only)) {
       localDisplay = {
         checkedAt: new Date().toISOString(),
         readOnly: true,
@@ -814,16 +830,15 @@ class HikvisionDevice extends Homey.Device {
         reason: parseBoolean(settings.rtsp_only) ? 'rtsp-only' : 'isapi-unavailable',
       };
     } else {
-      try {
-        localDisplay = await this.client.getLocalDisplayDiagnostics();
-      } catch (error) {
-        localDisplay = {
-          checkedAt: new Date().toISOString(),
-          readOnly: true,
-          skipped: false,
-          errorCode: getDiagnosticErrorCode(error),
-        };
-      }
+      this.refreshLocalDisplayDiagnostics(this.client, this.connectionGeneration).catch(error => {
+        this.error('NVR local-display diagnostics refresh failed', error);
+      });
+      localDisplay = this.localDisplayDiagnostics || {
+        checkedAt: null,
+        readOnly: true,
+        skipped: false,
+        status: 'collecting',
+      };
     }
     const report = sanitizeForBugReport({
       reportType: 'Hikvision device bug report',
@@ -850,6 +865,7 @@ class HikvisionDevice extends Homey.Device {
         authMethod: normalizeAuthMethod(settings.auth_method),
         motionHoldSeconds: Number(settings.motion_hold_seconds) || 10,
         liveStream: String(settings.live_stream || 'automatic'),
+        videoTransport: String(settings.video_transport || 'automatic'),
         rtspOnly: parseBoolean(settings.rtsp_only),
       },
       capabilities: capabilityValues,
@@ -860,6 +876,35 @@ class HikvisionDevice extends Homey.Device {
     }, privateValues);
 
     return { success: true, report: JSON.stringify(report, null, 2) };
+  }
+
+  async refreshLocalDisplayDiagnostics(client = this.client, generation = this.connectionGeneration) {
+    if (!client || this.localDisplayDiagnosticsPromise) return this.localDisplayDiagnosticsPromise;
+    const isCurrent = () => this.client === client && this.connectionGeneration === generation;
+    const refreshPromise = client.getLocalDisplayDiagnostics()
+      .then(result => {
+        if (isCurrent()) this.localDisplayDiagnostics = { ...result, status: 'ready' };
+        return result;
+      })
+      .catch(error => {
+        if (isCurrent()) {
+          this.localDisplayDiagnostics = {
+            checkedAt: new Date().toISOString(),
+            readOnly: true,
+            skipped: false,
+            status: 'failed',
+            errorCode: getDiagnosticErrorCode(error),
+          };
+        }
+        return this.localDisplayDiagnostics;
+      })
+      .finally(() => {
+        if (this.localDisplayDiagnosticsPromise === refreshPromise) {
+          this.localDisplayDiagnosticsPromise = null;
+        }
+      });
+    this.localDisplayDiagnosticsPromise = refreshPromise;
+    return refreshPromise;
   }
 
   async resetAlarmCapabilities() {
@@ -1278,6 +1323,7 @@ class HikvisionDevice extends Homey.Device {
 
     for (const [channelId, channelName] of [...channels.entries()].slice(0, MAX_CAMERA_IMAGES)) {
       const preference = String(this.getSettings().live_stream || 'automatic');
+      const videoTransport = String(this.getSettings().video_transport || 'automatic');
       const fallbackStreamIndex = preference === 'main' ? 1 : 2;
       let profile = {
         streamId: Number(`${channelId}0${fallbackStreamIndex}`),
@@ -1295,7 +1341,10 @@ class HikvisionDevice extends Homey.Device {
       }
       if (!isCurrent()) return;
 
-      const video = await this.homey.videos.createVideoRTSP({ demuxer: profile.demuxer });
+      const videoOptions = { demuxer: profile.demuxer };
+      if (videoTransport === 'direct') videoOptions.disableWebRTCProxy = true;
+      if (videoTransport === 'webrtc') videoOptions.disableWebRTCProxy = false;
+      const video = await this.homey.videos.createVideoRTSP(videoOptions);
       video.registerVideoUrlListener(async () => {
         const settings = this.getSettings();
         const username = encodeURIComponent(String(settings.username || ''));
@@ -1319,6 +1368,7 @@ class HikvisionDevice extends Homey.Device {
         width: profile.width,
         height: profile.height,
         preference,
+        videoTransport,
         rtspOnly,
       });
       this.log(`Live video voor kanaal ${channelId} geregistreerd (${profile.codec}${profile.width && profile.height ? `, ${profile.width}x${profile.height}` : ''})`);
