@@ -1522,6 +1522,44 @@
       },
       "id": "camera-zoom",
       "settings": []
+    },
+    "recordings": {
+      "name": {
+        "en": "Hikvision recordings",
+        "nl": "Hikvision-opnames",
+        "de": "Hikvision-Aufnahmen"
+      },
+      "description": {
+        "en": "Find and select recorded Hikvision camera footage.",
+        "nl": "Zoek en selecteer opgenomen Hikvision-camerabeelden.",
+        "de": "Aufgezeichnete Hikvision-Kamerabilder suchen und auswählen."
+      },
+      "height": 420,
+      "transparent": false,
+      "devices": {
+        "type": "app",
+        "singular": true,
+        "filter": {
+          "class": "camera",
+          "capabilities": "hik_status"
+        }
+      },
+      "api": {
+        "getChannels": {
+          "method": "POST",
+          "path": "/channels"
+        },
+        "search": {
+          "method": "POST",
+          "path": "/search"
+        },
+        "select": {
+          "method": "POST",
+          "path": "/select"
+        }
+      },
+      "id": "recordings",
+      "settings": []
     }
   },
   "capabilities": {

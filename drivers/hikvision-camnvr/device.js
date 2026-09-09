@@ -2,6 +2,7 @@
 
 const Homey = require('homey');
 const process = require('node:process');
+const crypto = require('node:crypto');
 const { HikvisionClient, getDiagnosticErrorCode } = require('../../lib/hikvision-client');
 const { hashPrivateValue, sanitizeForBugReport } = require('../../lib/bug-report');
 const { getUnsupportedAlarmCapabilities } = require('../../lib/device-capabilities');
@@ -68,6 +69,9 @@ class HikvisionDevice extends Homey.Device {
     this.cameraImages = new Map();
     this.cameraVideos = new Map();
     this.videoProfiles = new Map();
+    this.recordingTokens = new Map();
+    this.selectedRecording = null;
+    this.recordingVideoPromise = null;
     this.cameraImageUpdateTimers = new Map();
     this.snapshotCache = new Map();
     this.snapshotCacheUpdatedAt = new Map();
@@ -412,6 +416,9 @@ class HikvisionDevice extends Homey.Device {
     for (const video of this.cameraVideos.values()) video.unregister().catch(this.error);
     this.cameraVideos.clear();
     this.videoProfiles.clear();
+    this.recordingTokens.clear();
+    this.selectedRecording = null;
+    this.recordingVideoPromise = null;
     this.snapshotRequests.clear();
     this.lastDoorbellPressAt.clear();
     this.resetAlarmCapabilities().catch(this.error);
@@ -1373,6 +1380,85 @@ class HikvisionDevice extends Homey.Device {
       });
       this.log(`Live video voor kanaal ${channelId} geregistreerd (${profile.codec}${profile.width && profile.height ? `, ${profile.width}x${profile.height}` : ''})`);
     }
+  }
+
+  getRecordingChannels() {
+    return [...this.availableChannels].map(([id, name]) => ({ id, name: `[${id}] ${name}` }));
+  }
+
+  async searchWidgetRecordings({ channel, startTime, endTime } = {}) {
+    if (!this.client || !this.isapiAvailable) throw new Error(this.homey.__('widget.recordings.unavailable'));
+    const channelId = Number(channel);
+    if (!this.availableChannels.has(channelId)) throw new Error(this.homey.__('widget.recordings.invalid_channel'));
+    const start = new Date(startTime);
+    const end = new Date(endTime);
+    if (!Number.isFinite(start.getTime()) || !Number.isFinite(end.getTime()) || start >= end
+      || end.getTime() - start.getTime() > 7 * 24 * 60 * 60 * 1000) {
+      throw new Error(this.homey.__('widget.recordings.invalid_period'));
+    }
+    const result = await this.client.searchRecordings({
+      channel: channelId,
+      startTime: start,
+      endTime: end,
+      maxResults: 40,
+    });
+    const now = Date.now();
+    for (const [token, item] of this.recordingTokens) {
+      if (item.expiresAt <= now) this.recordingTokens.delete(token);
+    }
+    return {
+      more: result.status.toUpperCase() === 'MORE',
+      recordings: result.recordings.map(recording => {
+        const token = crypto.randomUUID();
+        this.recordingTokens.set(token, { ...recording, expiresAt: now + 10 * 60 * 1000 });
+        return {
+          token,
+          channel: recording.channel,
+          startTime: recording.startTime,
+          endTime: recording.endTime,
+          codec: recording.codec,
+          compatible: !recording.codec.toUpperCase().includes('265'),
+        };
+      }),
+    };
+  }
+
+  getSelectedRecordingUrl() {
+    if (!this.selectedRecording) throw new Error(this.homey.__('widget.recordings.select_first'));
+    const settings = this.getSettings();
+    const source = new URL(this.selectedRecording.playbackUri);
+    if (source.protocol !== 'rtsp:') throw new Error(this.homey.__('widget.recordings.invalid_playback'));
+    const address = String(settings.address || '').trim();
+    source.hostname = address.includes(':') ? `[${address.replace(/^\[|\]$/g, '')}]` : address;
+    source.port = String(Number(settings.rtsp_port) || 554);
+    source.username = String(settings.username || '');
+    source.password = String(settings.password || '');
+    return source.toString();
+  }
+
+  async ensureRecordingVideo() {
+    if (this.cameraVideos.has('recording')) return;
+    if (this.recordingVideoPromise) return this.recordingVideoPromise;
+    this.recordingVideoPromise = (async () => {
+      const video = await this.homey.videos.createVideoRTSP({ demuxer: 'h264' });
+      video.registerVideoUrlListener(async () => ({ url: this.getSelectedRecordingUrl() }));
+      await this.setCameraVideo('recording', this.homey.__('widget.recordings.video_title'), video);
+      this.cameraVideos.set('recording', video);
+    })().finally(() => { this.recordingVideoPromise = null; });
+    return this.recordingVideoPromise;
+  }
+
+  async selectWidgetRecording(token) {
+    const recording = this.recordingTokens.get(String(token || ''));
+    if (!recording || recording.expiresAt <= Date.now()) {
+      throw new Error(this.homey.__('widget.recordings.selection_expired'));
+    }
+    if (recording.codec.toUpperCase().includes('265')) {
+      throw new Error(this.homey.__('widget.recordings.h265_unsupported'));
+    }
+    this.selectedRecording = recording;
+    await this.ensureRecordingVideo();
+    return { success: true, startTime: recording.startTime, endTime: recording.endTime };
   }
 }
 

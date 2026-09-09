@@ -17,6 +17,17 @@
       "rotate_phone_fallback": "Drehe dein Smartphone im Uhrzeigersinn. Das Bild wurde für das Querformat gedreht.",
       "landscape_unavailable": "Die Querformatansicht wird von dieser Version der Homey-App nicht unterstützt.",
       "image_alt": "Live-Kamerabild von __name__"
+    },
+    "recordings": {
+      "channel": "Kamerakanal", "start": "Von", "end": "Bis", "search": "Aufnahmen suchen",
+      "searching": "Suche…", "none": "Keine Aufnahmen gefunden.", "found": "__count__ Aufnahmen gefunden.",
+      "first_results": "Die ersten 40 Aufnahmen werden angezeigt.", "select": "Auswählen", "h265": "H.265 nicht unterstützt",
+      "selected": "Ausgewählt. Öffne dieses Gerät und wähle Live → Aufnahme, um das Video abzuspielen.",
+      "error": "Aufnahmen konnten nicht durchsucht werden.", "unavailable": "Die Aufnahmesuche ist nicht verfügbar.",
+      "invalid_channel": "Dieser Kamerakanal ist nicht verfügbar.", "invalid_period": "Wähle einen gültigen Zeitraum von höchstens sieben Tagen.",
+      "select_first": "Wähle zuerst eine Aufnahme.", "invalid_playback": "Die Kamera hat eine ungültige Wiedergabeadresse zurückgegeben.",
+      "selection_expired": "Diese Auswahl ist abgelaufen. Suche erneut.", "h265_unsupported": "H.265-Aufnahmen können in Homey nicht abgespielt werden.",
+      "video_title": "Aufnahme"
     }
   },
   "disconnect": "Verbindung getrennt – erneuter Verbindungsversuch.",

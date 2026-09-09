@@ -1036,3 +1036,36 @@ test('lokale NVR-weergavediagnose voert probes parallel uit en heeft een totale 
   assert.equal(timedOut.timedOut, true);
   assert.equal(Object.values(timedOut.probes).every(probe => probe.errorCode === 'ETIMEDOUT'), true);
 });
+
+test('opnamezoekopdracht gebruikt een begrensde ISAPI-zoekopdracht en verbergt niets uit het resultaat', async () => {
+  const client = new HikvisionClient({ host: 'camera', port: 80, username: 'admin', password: '' });
+  let request;
+  client.request = async (path, options) => {
+    request = { path, options };
+    return {
+      statusCode: 200,
+      headers: { 'content-type': 'application/xml' },
+      body: Buffer.from('<CMSearchResult><responseStatusStrg>MORE</responseStatusStrg><numOfMatches>1</numOfMatches><matchList><searchMatchItem><trackID>201</trackID><timeSpan><startTime>2026-09-09T10:00:00Z</startTime><endTime>2026-09-09T10:01:00Z</endTime></timeSpan><mediaSegmentDescriptor><codecType>H.264-BP</codecType><playbackURI>rtsp://camera/Streaming/tracks/201/?starttime=x</playbackURI></mediaSegmentDescriptor></searchMatchItem></matchList></CMSearchResult>'),
+    };
+  };
+  const result = await client.searchRecordings({
+    channel: 2,
+    startTime: '2026-09-09T09:00:00Z',
+    endTime: '2026-09-09T11:00:00Z',
+    maxResults: 100,
+  });
+  assert.equal(request.path, '/ISAPI/ContentMgmt/search');
+  assert.equal(request.options.method, 'POST');
+  assert.match(request.options.body, /<trackID>201<\/trackID>/);
+  assert.match(request.options.body, /<maxResults>40<\/maxResults>/);
+  assert.equal(result.status, 'MORE');
+  assert.deepEqual(result.recordings[0], {
+    channel: 2,
+    trackId: 201,
+    startTime: '2026-09-09T10:00:00Z',
+    endTime: '2026-09-09T10:01:00Z',
+    codec: 'H.264-BP',
+    recordingType: '',
+    playbackUri: 'rtsp://camera/Streaming/tracks/201/?starttime=x',
+  });
+});

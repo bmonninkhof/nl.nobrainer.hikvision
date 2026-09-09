@@ -17,6 +17,17 @@
       "rotate_phone_fallback": "Turn your phone clockwise. The image has been rotated for landscape viewing.",
       "landscape_unavailable": "Landscape view is not supported by this Homey app version.",
       "image_alt": "Live camera image from __name__"
+    },
+    "recordings": {
+      "channel": "Camera channel", "start": "From", "end": "Until", "search": "Search recordings",
+      "searching": "Searching…", "none": "No recordings found.", "found": "__count__ recordings found.",
+      "first_results": "Showing the first 40 recordings.", "select": "Select", "h265": "H.265 unsupported",
+      "selected": "Selected. Open this device and choose Live → Recording to play it.",
+      "error": "Recordings could not be searched.", "unavailable": "Recording search is unavailable.",
+      "invalid_channel": "This camera channel is unavailable.", "invalid_period": "Choose a valid period of no more than seven days.",
+      "select_first": "Select a recording first.", "invalid_playback": "The camera returned an invalid playback address.",
+      "selection_expired": "This selection has expired. Search again.", "h265_unsupported": "H.265 recordings cannot be played in Homey.",
+      "video_title": "Recording"
     }
   },
   "disconnect": "Disconnected – attempting to reconnect.",

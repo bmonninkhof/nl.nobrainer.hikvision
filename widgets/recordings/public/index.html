@@ -1,0 +1,96 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>Hikvision recordings</title>
+  <style>
+    * { box-sizing: border-box; }
+    body { margin: 0; padding: 14px; color: var(--homey-text-color, #17202a); background: var(--homey-background-color, #fff); font: 500 14px/1.35 -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; }
+    form { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+    label { display: grid; gap: 4px; }
+    label:first-child { grid-column: 1 / -1; }
+    select, input, button { min-height: 42px; border: 1px solid rgba(127,127,127,.35); border-radius: 10px; padding: 8px 10px; font: inherit; }
+    button { border: 0; background: #eb1a2c; color: #fff; font-weight: 700; cursor: pointer; }
+    #search { grid-column: 1 / -1; }
+    #status { min-height: 22px; margin: 10px 0 4px; }
+    #results { display: grid; gap: 8px; max-height: 210px; overflow: auto; }
+    .clip { display: flex; align-items: center; justify-content: space-between; gap: 10px; padding: 9px 10px; border: 1px solid rgba(127,127,127,.25); border-radius: 10px; }
+    .clip small { display: block; opacity: .7; }
+    .clip button { flex: 0 0 auto; min-height: 36px; }
+    .clip button:disabled { opacity: .45; }
+    @media (max-width: 420px) { body { padding: 10px; } form { grid-template-columns: 1fr; } label, label:first-child, #search { grid-column: 1; } }
+  </style>
+</head>
+<body>
+  <form id="form">
+    <label><span id="channel-label"></span><select id="channel"></select></label>
+    <label><span id="start-label"></span><input id="start" type="datetime-local" required></label>
+    <label><span id="end-label"></span><input id="end" type="datetime-local" required></label>
+    <button id="search" type="submit"></button>
+  </form>
+  <div id="status" role="status"></div>
+  <div id="results"></div>
+  <script>
+    function onHomeyReady(Homey) {
+      const deviceId = Homey.getDeviceIds()[0];
+      const $ = id => document.getElementById(id);
+      const t = (key, fallback, tokens) => {
+        const value = Homey.__(`widget.recordings.${key}`, tokens || {});
+        return value && !value.startsWith('widget.') ? value : fallback;
+      };
+      $('channel-label').textContent = t('channel', 'Camera channel');
+      $('start-label').textContent = t('start', 'From');
+      $('end-label').textContent = t('end', 'Until');
+      $('search').textContent = t('search', 'Search recordings');
+      const now = new Date();
+      const earlier = new Date(now.getTime() - 2 * 60 * 60 * 1000);
+      const localValue = date => new Date(date.getTime() - date.getTimezoneOffset() * 60000).toISOString().slice(0, 16);
+      $('start').value = localValue(earlier);
+      $('end').value = localValue(now);
+      const setStatus = message => { $('status').textContent = message; };
+      const displayTime = value => new Date(value).toLocaleString([], { dateStyle: 'short', timeStyle: 'medium' });
+
+      async function loadChannels() {
+        const channels = await Homey.api('POST', '/channels', { deviceId });
+        $('channel').replaceChildren(...channels.map(item => {
+          const option = document.createElement('option'); option.value = item.id; option.textContent = item.name; return option;
+        }));
+      }
+      $('form').addEventListener('submit', async event => {
+        event.preventDefault();
+        $('search').disabled = true;
+        $('results').replaceChildren();
+        setStatus(t('searching', 'Searching…'));
+        try {
+          const result = await Homey.api('POST', '/search', {
+            deviceId, channel: Number($('channel').value),
+            startTime: new Date($('start').value).toISOString(), endTime: new Date($('end').value).toISOString(),
+          });
+          if (!result.recordings.length) { setStatus(t('none', 'No recordings found.')); return; }
+          setStatus(result.more ? t('first_results', 'Showing the first 40 recordings.') : t('found', '__count__ recordings found.', { count: result.recordings.length }));
+          for (const clip of result.recordings) {
+            const row = document.createElement('div'); row.className = 'clip';
+            const details = document.createElement('div');
+            details.innerHTML = `<strong>${displayTime(clip.startTime)}</strong><small>${displayTime(clip.endTime)} · ${clip.codec || 'video'}</small>`;
+            const button = document.createElement('button'); button.type = 'button'; button.disabled = !clip.compatible;
+            button.textContent = clip.compatible ? t('select', 'Select') : t('h265', 'H.265 unsupported');
+            button.addEventListener('click', async () => {
+              button.disabled = true;
+              try {
+                await Homey.api('POST', '/select', { deviceId, token: clip.token });
+                setStatus(t('selected', 'Selected. Open this device and choose Live → Recording to play it.'));
+              } catch (error) { setStatus(error.message || t('error', 'The recording could not be selected.')); }
+              finally { button.disabled = !clip.compatible; }
+            });
+            row.append(details, button); $('results').append(row);
+          }
+        } catch (error) { setStatus(error.message || t('error', 'Recordings could not be searched.')); }
+        finally { $('search').disabled = false; }
+      });
+      loadChannels().catch(error => setStatus(error.message));
+      Homey.ready();
+    }
+  </script>
+</body>
+</html>

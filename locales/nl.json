@@ -17,6 +17,17 @@
       "rotate_phone_fallback": "Draai je telefoon rechtsom. Het beeld is aangepast voor liggende weergave.",
       "landscape_unavailable": "Liggende weergave wordt niet ondersteund door deze versie van de Homey-app.",
       "image_alt": "Live camerabeeld van __name__"
+    },
+    "recordings": {
+      "channel": "Camerakanaal", "start": "Vanaf", "end": "Tot", "search": "Opnames zoeken",
+      "searching": "Zoeken…", "none": "Geen opnames gevonden.", "found": "__count__ opnames gevonden.",
+      "first_results": "De eerste 40 opnames worden getoond.", "select": "Selecteren", "h265": "H.265 niet ondersteund",
+      "selected": "Geselecteerd. Open dit apparaat en kies Live → Opname om het fragment af te spelen.",
+      "error": "Opnames konden niet worden doorzocht.", "unavailable": "Opnames zoeken is niet beschikbaar.",
+      "invalid_channel": "Dit camerakanaal is niet beschikbaar.", "invalid_period": "Kies een geldige periode van maximaal zeven dagen.",
+      "select_first": "Selecteer eerst een opname.", "invalid_playback": "De camera gaf een ongeldig afspeeladres terug.",
+      "selection_expired": "Deze selectie is verlopen. Zoek opnieuw.", "h265_unsupported": "H.265-opnames kunnen niet in Homey worden afgespeeld.",
+      "video_title": "Opname"
     }
   },
   "disconnect": "Verbinding verbroken – er wordt opnieuw verbinding gemaakt.",
