@@ -17,6 +17,20 @@ test('app- en drivericoon zijn verschillend en gebruiken een 960-pixelcanvas', (
   assert.notEqual(driverIcon, appIcon);
   assert.match(appIcon, /viewBox="0 0 960 960"/);
   assert.match(driverIcon, /viewBox="0 0 960 960"/);
+
+  for (const icon of ['camera.svg', 'doorbell.svg', 'recorder.svg']) {
+    const value = fs.readFileSync(path.join(
+      __dirname,
+      '..',
+      'drivers',
+      'hikvision-camnvr',
+      'assets',
+      icon,
+    ), 'utf8');
+    assert.match(value, /viewBox="0 0 960 960"/, icon);
+    assert.match(value, /fill="#000"/, icon);
+    assert.doesNotMatch(value, /stroke=/, icon);
+  }
 });
 
 test('winkelafbeeldingen hebben alle verplichte afmetingen', () => {

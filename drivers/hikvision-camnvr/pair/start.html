@@ -4,9 +4,18 @@
   <fieldset class="hy-form-group">
     <legend class="hy-label" data-i18n="pair.connection"></legend>
 
+    <div class="hy-form-group" id="discovery-row" hidden>
+      <label class="hy-label" for="discovered-address" data-i18n="pair.discovered_device"></label>
+      <select class="hy-input-text" id="discovered-address"></select>
+    </div>
+
+    <button class="hy-button hy-button-fill" id="discover" type="button" data-i18n="pair.search_devices"></button>
+    <small id="discovery-status" aria-live="polite"></small>
+
     <div class="hy-form-group">
       <label class="hy-label" for="address" data-i18n="pair.address"></label>
       <input class="hy-input-text" id="address" type="text" placeholder="192.168.1.100" autocomplete="off" required>
+      <small data-i18n="pair.address_hint"></small>
     </div>
 
     <div class="hy-form-group">
@@ -48,12 +57,22 @@
       <input id="strict" type="checkbox">
       <span data-i18n="pair.strict"></span>
     </label>
+
+    <div class="hy-form-group">
+      <label class="hy-label" for="icon-type" data-i18n="pair.icon_type"></label>
+      <select class="hy-input-text" id="icon-type">
+        <option value="automatic" data-i18n="pair.icon_automatic"></option>
+        <option value="camera" data-i18n="pair.icon_camera"></option>
+        <option value="doorbell" data-i18n="pair.icon_doorbell"></option>
+        <option value="recorder" data-i18n="pair.icon_recorder"></option>
+      </select>
+      <small data-i18n="pair.icon_hint"></small>
+    </div>
   </fieldset>
 
   <p id="status" role="status" aria-live="polite"></p>
   <div class="button-row">
     <button class="hy-button hy-button-fill" id="test" type="button" data-i18n="pair.test"></button>
-    <button class="hy-button hy-button-primary hy-button-fill" id="install" type="button" data-i18n="pair.install" disabled></button>
   </div>
 </main>
 
@@ -61,10 +80,12 @@
   (() => {
     const element = id => document.getElementById(id);
     const testButton = element('test');
-    const installButton = element('install');
+    const discoverButton = element('discover');
+    const discoveredAddress = element('discovered-address');
+    const discoveryRow = element('discovery-row');
+    const discoveryStatus = element('discovery-status');
     const status = element('status');
     const ssl = element('ssl');
-    let testedDevice = null;
 
     Homey.setTitle(Homey.__('pair.title'));
 
@@ -83,17 +104,57 @@
       rtsp_port: Number(element('rtsp-port').value),
       ssl: ssl.checked,
       strict: element('strict').checked,
+      icon_type: element('icon-type').value,
     });
 
     const resetTest = () => {
-      testedDevice = null;
-      installButton.disabled = true;
       status.textContent = '';
+      Homey.emit('clearTestedDevice').catch(() => {});
     };
     for (const input of document.querySelectorAll('input, select')) {
       input.addEventListener('input', resetTest);
       input.addEventListener('change', resetTest);
     }
+
+    discoveredAddress.addEventListener('change', () => {
+      if (!discoveredAddress.value) return;
+      element('address').value = discoveredAddress.value;
+      element('address').dispatchEvent(new Event('input', { bubbles: true }));
+    });
+
+    const discoverDevices = async () => {
+      discoverButton.disabled = true;
+      discoveryStatus.textContent = Homey.__('pair.searching_devices');
+      try {
+        const devices = await Homey.emit('getDiscoveredDevices');
+        discoveredAddress.replaceChildren();
+        const placeholder = document.createElement('option');
+        placeholder.value = '';
+        placeholder.textContent = Homey.__('pair.select_discovered_device');
+        discoveredAddress.appendChild(placeholder);
+        for (const device of devices) {
+          const option = document.createElement('option');
+          option.value = device.address;
+          option.textContent = device.address;
+          discoveredAddress.appendChild(option);
+        }
+        discoveryRow.hidden = devices.length === 0;
+        discoveryStatus.textContent = devices.length > 0
+          ? Homey.__('pair.devices_found').replace('__count__', String(devices.length))
+          : Homey.__('pair.no_devices_found');
+        if (devices.length === 1 && !element('address').value.trim()) {
+          discoveredAddress.value = devices[0].address;
+          discoveredAddress.dispatchEvent(new Event('change'));
+        }
+      } catch (error) {
+        discoveryRow.hidden = true;
+        discoveryStatus.textContent = Homey.__('pair.discovery_failed');
+      } finally {
+        discoverButton.disabled = false;
+      }
+    };
+
+    discoverButton.addEventListener('click', discoverDevices);
 
     testButton.addEventListener('click', async () => {
       const data = readForm();
@@ -103,52 +164,31 @@
       }
 
       testButton.disabled = true;
-      installButton.disabled = true;
       status.textContent = Homey.__('pair.testing');
       try {
-        testedDevice = await Homey.emit('testConnection', data);
+        const testedDevice = await Homey.emit('testConnection', data);
         const successKey = testedDevice.snapshotAvailable
           ? 'pair.test_success'
           : 'pair.test_success_no_snapshot';
         status.textContent = Homey.__(successKey)
           .replace('__name__', testedDevice.name)
           .replace('__type__', testedDevice.type)
-          .replace('__version__', testedDevice.firmwareVersion);
-        installButton.disabled = false;
+          .replace('__version__', testedDevice.firmwareVersion)
+          + ` ${Homey.__('pair.continue_after_test')}`;
       } catch (error) {
-        testedDevice = null;
         status.textContent = error.message || Homey.__('pair.unknownerror');
       } finally {
         testButton.disabled = false;
       }
     });
 
-    installButton.addEventListener('click', async () => {
-      if (!testedDevice) return;
-      testButton.disabled = true;
-      installButton.disabled = true;
-      status.textContent = Homey.__('pair.installing');
-      try {
-        await Homey.createDevice({
-          name: testedDevice.name,
-          data: { id: testedDevice.id },
-          settings: testedDevice.settings,
-        });
-        status.textContent = Homey.__('pair.success');
-        await Homey.nextView();
-      } catch (error) {
-        status.textContent = /duplicate device data/i.test(error?.message || '')
-          ? Homey.__('pair.already_added_generic')
-          : (error.message || Homey.__('pair.unknownerror'));
-        testButton.disabled = false;
-        installButton.disabled = false;
-      }
-    });
+    discoverDevices();
   })();
 </script>
 
 <style>
   #status { min-height: 1.5em; margin: 1rem 0; }
+  #discovery-status { display: block; margin-block: .5rem 1rem; }
   .hy-checkbox { display: flex; align-items: center; gap: .65rem; margin-top: .75rem; }
   .button-row { display: grid; gap: .75rem; }
 </style>

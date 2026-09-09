@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<svg xmlns="http://www.w3.org/2000/svg" width="960" height="960" viewBox="0 0 960 960" role="img" aria-label="Security camera lens">
-  <path fill="#fff" d="M58 480C164 278 306 177 480 177S796 278 902 480C796 682 654 783 480 783S164 682 58 480Zm422-190c-105 0-190 85-190 190s85 190 190 190 190-85 190-190-85-190-190-190Z" fill-rule="evenodd"/>
-  <circle cx="480" cy="480" r="82" fill="#fff"/>
+<svg xmlns="http://www.w3.org/2000/svg" width="960" height="960" viewBox="0 0 960 960" role="img" aria-label="Hikvision camera lens">
+  <path fill="#000" fill-rule="evenodd" d="M52 480C151 286 304 176 480 176s329 110 428 304c-99 194-252 304-428 304S151 674 52 480Zm104 0c84 137 197 208 324 208s240-71 324-208c-84-137-197-208-324-208S240 343 156 480Z"/>
+  <path fill="#000" fill-rule="evenodd" d="M480 316a164 164 0 1 1 0 328 164 164 0 0 1 0-328Zm0 72a92 92 0 1 0 0 184 92 92 0 0 0 0-184Z"/>
+  <circle cx="480" cy="480" r="34" fill="#000"/>
 </svg>

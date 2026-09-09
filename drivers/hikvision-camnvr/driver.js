@@ -2,7 +2,7 @@
 
 const Homey = require('homey');
 const { HikvisionClient, getDiagnosticErrorCode } = require('../../lib/hikvision-client');
-const { isSingleChannelDevice } = require('../../lib/device-type');
+const { getDeviceIconType, isSingleChannelDevice } = require('../../lib/device-type');
 const { createMinimalBugReport } = require('../../lib/minimal-bug-report');
 const { normalizeAuthMethod, parseBoolean } = require('../../lib/settings');
 const { getUserErrorMessage } = require('../../lib/user-error');
@@ -41,6 +41,12 @@ const CONDITION_CAPABILITIES = {
   hik_alarm_region_exiting_is_active: 'hik_alarm_region_exiting',
   hik_event_monitoring_is_active: 'hik_event_monitoring',
 };
+const PAIRING_ICONS = Object.freeze({
+  camera: '/camera.svg',
+  doorbell: '/doorbell.svg',
+  recorder: '/recorder.svg',
+});
+const DISCOVERY_STRATEGY_IDS = ['hikvision-mac', 'hikvision-mac-2', 'hikvision-mac-3'];
 
 function selectedNumber(value) {
   return Number(value?.id ?? value);
@@ -138,7 +144,64 @@ class HikvisionDriver extends Homey.Driver {
   }
 
   async onPair(session) {
-    session.setHandler('testConnection', async data => this.testConnection(data));
+    let pairingDevice = null;
+
+    session.setHandler('getDiscoveredDevices', async () => this.getDiscoveredDevices());
+    session.setHandler('testConnection', async data => {
+      const testedDevice = await this.testConnection(data);
+      pairingDevice = this.createPairingDevice(testedDevice, data.icon_type);
+      return {
+        id: testedDevice.id,
+        name: testedDevice.name,
+        type: testedDevice.type,
+        firmwareVersion: testedDevice.firmwareVersion,
+        snapshotAvailable: testedDevice.snapshotAvailable,
+        snapshotBytes: testedDevice.snapshotBytes,
+        snapshotChannel: testedDevice.snapshotChannel,
+        iconType: pairingDevice.icon.replace(/^\//, '').replace(/\.svg$/, ''),
+      };
+    });
+    session.setHandler('clearTestedDevice', async () => {
+      pairingDevice = null;
+      return true;
+    });
+    session.setHandler('list_devices', async () => {
+      if (!pairingDevice) throw new Error(this.homey.__('pair.test_required'));
+      return [pairingDevice];
+    });
+    session.setHandler('disconnect', async () => {
+      pairingDevice = null;
+    });
+  }
+
+  getDiscoveredDevices() {
+    try {
+      const addresses = DISCOVERY_STRATEGY_IDS.flatMap(id => {
+        const strategy = this.homey.discovery.getStrategy(id);
+        return Object.values(strategy.getDiscoveryResults());
+      })
+        .map(result => String(result.address || '').trim())
+        .filter(Boolean);
+      return [...new Set(addresses)]
+        .sort((left, right) => left.localeCompare(right, undefined, { numeric: true }))
+        .map(address => ({ address }));
+    } catch (error) {
+      this.error('Automatische Hikvision-detectie is mislukt', error);
+      return [];
+    }
+  }
+
+  createPairingDevice(testedDevice, requestedIconType) {
+    const automaticIconType = getDeviceIconType(testedDevice.type);
+    const iconType = Object.hasOwn(PAIRING_ICONS, requestedIconType)
+      ? requestedIconType
+      : automaticIconType;
+    return {
+      name: testedDevice.name,
+      data: { id: testedDevice.id },
+      settings: testedDevice.settings,
+      icon: PAIRING_ICONS[iconType],
+    };
   }
 
   async onRepair(session, device) {

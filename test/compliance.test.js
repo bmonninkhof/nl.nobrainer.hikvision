@@ -50,6 +50,43 @@ test('package en driver gebruiken dezelfde publicatie-identiteit en lokale verbi
   assert.deepEqual(driver.connectivity, ['lan']);
 });
 
+test('pairing gebruikt Homey-apparaatselectie en standaardinstallatie', () => {
+  const driver = JSON.parse(fs.readFileSync(path.join(
+    root,
+    'drivers/hikvision-camnvr/driver.compose.json',
+  )));
+  assert.deepEqual(driver.pair.map(view => view.id), ['start', 'list_devices', 'add_devices']);
+  assert.equal(driver.pair[1].template, 'list_devices');
+  assert.equal(driver.pair[1].options.singular, true);
+  assert.equal(driver.pair[2].template, 'add_devices');
+
+  const pairView = fs.readFileSync(path.join(
+    root,
+    'drivers/hikvision-camnvr/pair/start.html',
+  ), 'utf8');
+  assert.doesNotMatch(pairView, /Homey\.createDevice/);
+  assert.doesNotMatch(pairView, /id="install"/);
+  assert.match(pairView, /getDiscoveredDevices/);
+  assert.match(pairView, /icon_type/);
+});
+
+test('Hikvision MAC-detectie bevat bekende fabrikantprefixen', () => {
+  const prefixes = ['hikvision-mac', 'hikvision-mac-2', 'hikvision-mac-3']
+    .flatMap(id => {
+      const discovery = JSON.parse(fs.readFileSync(path.join(
+        root,
+        `.homeycompose/discovery/${id}.json`,
+      )));
+      assert.equal(discovery.type, 'mac');
+      assert.ok(discovery.mac.manufacturer.length <= 32);
+      return discovery.mac.manufacturer;
+    });
+  assert.ok(prefixes.length >= 80);
+  assert.ok(prefixes.some(prefix => (
+    prefix[0] === 172 && prefix[1] === 203 && prefix[2] === 81
+  )));
+});
+
 test('winkelteksten en changelog bevatten geen interne publicatietekst', () => {
   const readmes = ['README.txt', 'README.nl.txt', 'README.de.txt'];
   for (const filename of readmes) {

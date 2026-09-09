@@ -6,6 +6,7 @@ const {
   isSingleChannelDevice,
   isVideoIntercomDevice,
   isVisDevice,
+  getDeviceIconType,
   supportsRtspOnlyFallback,
 } = require('../lib/device-type');
 
@@ -14,6 +15,18 @@ test('camera- en deurbeltypen worden als apparaten met één kanaal herkend', ()
     assert.equal(isSingleChannelDevice(type), true, type);
   }
   assert.equal(isSingleChannelDevice('NVR'), false);
+});
+
+test('apparaattypen krijgen een herkenbaar pairingicoon', () => {
+  for (const type of ['NVR', 'DVR', 'Network Video Recorder']) {
+    assert.equal(getDeviceIconType(type), 'recorder', type);
+  }
+  for (const type of ['VIS', 'DoorBell', 'Door Station', 'video_intercom']) {
+    assert.equal(getDeviceIconType(type), 'doorbell', type);
+  }
+  for (const type of ['IPCamera', 'Unknown', '']) {
+    assert.equal(getDeviceIconType(type), 'camera', type);
+  }
 });
 
 test('alleen deurbel- en video-intercomtypen krijgen oproepstatuscontrole', () => {
