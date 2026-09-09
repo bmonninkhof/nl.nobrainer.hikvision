@@ -36,6 +36,14 @@
       min-height: 0;
       border-radius: 0;
     }
+    body.landscape-fallback .camera-card {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      width: 100vh;
+      height: 100vw;
+      transform: translate(-50%, -50%) rotate(90deg);
+    }
     .viewport {
       position: absolute;
       inset: 0;
@@ -106,6 +114,17 @@
       box-shadow: 0 10px 30px rgba(0, 0, 0, .28);
       backdrop-filter: blur(12px);
     }
+    .landscape-control {
+      position: absolute;
+      z-index: 4;
+      right: max(10px, env(safe-area-inset-right));
+      bottom: max(10px, env(safe-area-inset-bottom));
+      border: 1px solid var(--panel-border);
+      background: var(--panel);
+      box-shadow: 0 10px 30px rgba(0, 0, 0, .28);
+      backdrop-filter: blur(12px);
+    }
+    .controls-with-landscape { right: max(68px, calc(env(safe-area-inset-right) + 58px)); }
     .control {
       display: grid;
       width: 44px;
@@ -163,10 +182,14 @@
     @media (max-width: 480px) {
       .camera-card { border-radius: 14px; }
       .controls {
-        right: max(8px, env(safe-area-inset-right));
+        right: max(64px, calc(env(safe-area-inset-right) + 56px));
         bottom: max(8px, env(safe-area-inset-bottom));
         gap: 3px;
         padding: 4px;
+      }
+      .landscape-control {
+        right: max(8px, env(safe-area-inset-right));
+        bottom: max(8px, env(safe-area-inset-bottom));
       }
     }
     @media (prefers-reduced-motion: reduce) {
@@ -187,7 +210,7 @@
         <div id="status" class="status"></div>
       </div>
     </header>
-    <nav class="controls" aria-label="Camera zoom controls">
+    <nav class="controls controls-with-landscape" aria-label="Camera zoom controls">
       <button id="zoom-out" class="control" type="button">
         <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h14"/></svg>
       </button>
@@ -198,10 +221,10 @@
       <button id="refresh" class="control" type="button">
         <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20 11a8 8 0 1 0-2.3 5.7M20 4v7h-7"/></svg>
       </button>
-      <button id="landscape" class="control" type="button" aria-pressed="false">
-        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M8 3H5a2 2 0 0 0-2 2v3M16 3h3a2 2 0 0 1 2 2v3M8 21H5a2 2 0 0 1-2-2v-3M16 21h3a2 2 0 0 0 2-2v-3"/></svg>
-      </button>
     </nav>
+    <button id="landscape" class="control landscape-control" type="button" aria-pressed="false">
+      <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M8 3H5a2 2 0 0 0-2 2v3M16 3h3a2 2 0 0 1 2 2v3M8 21H5a2 2 0 0 1-2-2v-3M16 21h3a2 2 0 0 0 2-2v-3"/></svg>
+    </button>
     <div id="landscape-hint" class="landscape-hint" role="status" hidden></div>
     <div id="empty-state" class="empty-state" hidden></div>
   </main>
@@ -229,6 +252,7 @@
       let pinchScale = 1;
       let loading = false;
       let landscapeRequested = false;
+      let landscapeFallback = false;
       let landscapeHintTimer = null;
 
       const text = (key, fallback, tokens) => {
@@ -243,8 +267,9 @@
 
       const getFullscreenElement = () => document.fullscreenElement || document.webkitFullscreenElement || null;
       const updateLandscapeButton = () => {
-        const active = Boolean(getFullscreenElement()) || landscapeRequested;
+        const active = Boolean(getFullscreenElement()) || landscapeRequested || landscapeFallback;
         document.body.classList.toggle('landscape-active', active);
+        document.body.classList.toggle('landscape-fallback', landscapeFallback);
         landscapeButton.setAttribute('aria-pressed', String(active));
         landscapeButton.setAttribute('aria-label', active
           ? text('exit_landscape', 'Exit landscape view')
@@ -261,11 +286,13 @@
       };
       const exitLandscape = async () => {
         landscapeRequested = false;
+        landscapeFallback = false;
         unlockOrientation();
         try {
           if (document.exitFullscreen && document.fullscreenElement) await document.exitFullscreen();
           else if (document.webkitExitFullscreen && document.webkitFullscreenElement) document.webkitExitFullscreen();
         } catch (error) {}
+        try { await Homey.setHeight('56.25%'); } catch (error) {}
         updateLandscapeButton();
       };
       const enterLandscape = async () => {
@@ -290,7 +317,16 @@
             orientationLocked = true;
           }
         } catch (error) {}
-        if (!orientationLocked) {
+        if (!fullscreenAvailable) {
+          try {
+            await Homey.setHeight('177.78%');
+            landscapeFallback = true;
+            showLandscapeHint(text('rotate_phone_fallback', 'Turn your phone clockwise. The image has been rotated for landscape viewing.'));
+          } catch (error) {
+            landscapeRequested = false;
+            showLandscapeHint(text('landscape_unavailable', 'Landscape view is not supported by this Homey app version.'));
+          }
+        } else if (!orientationLocked) {
           showLandscapeHint(fullscreenAvailable
             ? text('rotate_phone', 'Turn your phone sideways for landscape view.')
             : text('landscape_unavailable', 'Landscape fullscreen is not supported by this Homey app version.'));
@@ -340,13 +376,15 @@
       document.getElementById('refresh').addEventListener('click', () => { feedback(); loadSnapshot(true); });
       landscapeButton.addEventListener('click', async () => {
         feedback();
-        if (getFullscreenElement() || landscapeRequested) await exitLandscape();
+        if (getFullscreenElement() || landscapeRequested || landscapeFallback) await exitLandscape();
         else await enterLandscape();
       });
       const onFullscreenChange = () => {
         if (!getFullscreenElement()) {
-          landscapeRequested = false;
-          unlockOrientation();
+          if (!landscapeFallback) {
+            landscapeRequested = false;
+            unlockOrientation();
+          }
         }
         updateLandscapeButton();
         renderTransform();

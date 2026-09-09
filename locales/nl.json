@@ -14,7 +14,8 @@
       "enter_landscape": "Liggend weergeven",
       "exit_landscape": "Liggende weergave sluiten",
       "rotate_phone": "Draai je telefoon voor liggende weergave.",
-      "landscape_unavailable": "Liggend volledig scherm wordt niet ondersteund door deze versie van de Homey-app.",
+      "rotate_phone_fallback": "Draai je telefoon rechtsom. Het beeld is aangepast voor liggende weergave.",
+      "landscape_unavailable": "Liggende weergave wordt niet ondersteund door deze versie van de Homey-app.",
       "image_alt": "Live camerabeeld van __name__"
     }
   },
