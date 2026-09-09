@@ -11,6 +11,10 @@
       "zoom_reset": "Zoom zurücksetzen",
       "zoom_in": "Vergrößern",
       "refresh": "Bild aktualisieren",
+      "enter_landscape": "Im Querformat anzeigen",
+      "exit_landscape": "Querformat schließen",
+      "rotate_phone": "Drehe dein Smartphone für die Querformatansicht.",
+      "landscape_unavailable": "Querformat im Vollbild wird von dieser Version der Homey-App nicht unterstützt.",
       "image_alt": "Live-Kamerabild von __name__"
     }
   },

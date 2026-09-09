@@ -32,6 +32,10 @@
       background: linear-gradient(145deg, #17212c, #080b10);
       isolation: isolate;
     }
+    body.landscape-active .camera-card {
+      min-height: 0;
+      border-radius: 0;
+    }
     .viewport {
       position: absolute;
       inset: 0;
@@ -91,8 +95,8 @@
     .controls {
       position: absolute;
       z-index: 3;
-      right: 10px;
-      bottom: 10px;
+      right: max(10px, env(safe-area-inset-right));
+      bottom: max(10px, env(safe-area-inset-bottom));
       display: flex;
       gap: 7px;
       padding: 6px;
@@ -132,9 +136,38 @@
       background: linear-gradient(145deg, #17212c, #080b10);
     }
     .empty-state[hidden] { display: none; }
+    .landscape-hint {
+      position: absolute;
+      z-index: 5;
+      left: 50%;
+      bottom: max(76px, calc(env(safe-area-inset-bottom) + 66px));
+      max-width: calc(100% - 32px);
+      padding: 8px 12px;
+      border: 1px solid var(--panel-border);
+      border-radius: 12px;
+      background: var(--panel);
+      color: var(--text);
+      font-size: 13px;
+      text-align: center;
+      transform: translateX(-50%);
+      pointer-events: none;
+      backdrop-filter: blur(12px);
+    }
+    .landscape-hint[hidden] { display: none; }
+    @media (orientation: landscape) {
+      body.landscape-active .header {
+        padding-top: max(10px, env(safe-area-inset-top));
+        padding-left: max(12px, env(safe-area-inset-left));
+      }
+    }
     @media (max-width: 480px) {
       .camera-card { border-radius: 14px; }
-      .controls { right: 8px; bottom: 8px; gap: 3px; padding: 4px; }
+      .controls {
+        right: max(8px, env(safe-area-inset-right));
+        bottom: max(8px, env(safe-area-inset-bottom));
+        gap: 3px;
+        padding: 4px;
+      }
     }
     @media (prefers-reduced-motion: reduce) {
       .camera-image, .control { transition: none; }
@@ -165,7 +198,11 @@
       <button id="refresh" class="control" type="button">
         <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20 11a8 8 0 1 0-2.3 5.7M20 4v7h-7"/></svg>
       </button>
+      <button id="landscape" class="control" type="button" aria-pressed="false">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M8 3H5a2 2 0 0 0-2 2v3M16 3h3a2 2 0 0 1 2 2v3M8 21H5a2 2 0 0 1-2-2v-3M16 21h3a2 2 0 0 0 2-2v-3"/></svg>
+      </button>
     </nav>
+    <div id="landscape-hint" class="landscape-hint" role="status" hidden></div>
     <div id="empty-state" class="empty-state" hidden></div>
   </main>
 
@@ -178,6 +215,9 @@
       const statusDot = document.getElementById('status-dot');
       const emptyState = document.getElementById('empty-state');
       const resetButton = document.getElementById('zoom-reset');
+      const landscapeButton = document.getElementById('landscape');
+      const landscapeHint = document.getElementById('landscape-hint');
+      const cameraCard = document.querySelector('.camera-card');
       const deviceId = Homey.getDeviceIds()[0];
       const pointers = new Map();
       let scale = 1;
@@ -188,6 +228,8 @@
       let pinchDistance = 0;
       let pinchScale = 1;
       let loading = false;
+      let landscapeRequested = false;
+      let landscapeHintTimer = null;
 
       const text = (key, fallback, tokens) => {
         const translated = Homey.__(`widget.camera_zoom.${key}`, tokens || {});
@@ -198,6 +240,63 @@
       document.getElementById('zoom-in').setAttribute('aria-label', text('zoom_in', 'Zoom in'));
       document.getElementById('zoom-reset').setAttribute('aria-label', text('zoom_reset', 'Reset zoom'));
       document.getElementById('refresh').setAttribute('aria-label', text('refresh', 'Refresh image'));
+
+      const getFullscreenElement = () => document.fullscreenElement || document.webkitFullscreenElement || null;
+      const updateLandscapeButton = () => {
+        const active = Boolean(getFullscreenElement()) || landscapeRequested;
+        document.body.classList.toggle('landscape-active', active);
+        landscapeButton.setAttribute('aria-pressed', String(active));
+        landscapeButton.setAttribute('aria-label', active
+          ? text('exit_landscape', 'Exit landscape view')
+          : text('enter_landscape', 'View in landscape'));
+      };
+      const showLandscapeHint = message => {
+        clearTimeout(landscapeHintTimer);
+        landscapeHint.textContent = message;
+        landscapeHint.hidden = false;
+        landscapeHintTimer = setTimeout(() => { landscapeHint.hidden = true; }, 4000);
+      };
+      const unlockOrientation = () => {
+        try { window.screen.orientation?.unlock?.(); } catch (error) {}
+      };
+      const exitLandscape = async () => {
+        landscapeRequested = false;
+        unlockOrientation();
+        try {
+          if (document.exitFullscreen && document.fullscreenElement) await document.exitFullscreen();
+          else if (document.webkitExitFullscreen && document.webkitFullscreenElement) document.webkitExitFullscreen();
+        } catch (error) {}
+        updateLandscapeButton();
+      };
+      const enterLandscape = async () => {
+        landscapeRequested = true;
+        updateLandscapeButton();
+        let fullscreenAvailable = false;
+        try {
+          if (cameraCard.requestFullscreen) {
+            fullscreenAvailable = true;
+            await cameraCard.requestFullscreen({ navigationUI: 'hide' });
+          } else if (cameraCard.webkitRequestFullscreen) {
+            fullscreenAvailable = true;
+            await Promise.resolve(cameraCard.webkitRequestFullscreen());
+          }
+        } catch (error) {
+          fullscreenAvailable = false;
+        }
+        let orientationLocked = false;
+        try {
+          if (window.screen.orientation?.lock) {
+            await window.screen.orientation.lock('landscape');
+            orientationLocked = true;
+          }
+        } catch (error) {}
+        if (!orientationLocked) {
+          showLandscapeHint(fullscreenAvailable
+            ? text('rotate_phone', 'Turn your phone sideways for landscape view.')
+            : text('landscape_unavailable', 'Landscape fullscreen is not supported by this Homey app version.'));
+        }
+        updateLandscapeButton();
+      };
 
       const clampPan = () => {
         if (scale <= 1 || !image.naturalWidth) {
@@ -239,6 +338,21 @@
       document.getElementById('zoom-in').addEventListener('click', () => { feedback(); setScale(scale + .5); });
       resetButton.addEventListener('click', () => { feedback(); resetZoom(); });
       document.getElementById('refresh').addEventListener('click', () => { feedback(); loadSnapshot(true); });
+      landscapeButton.addEventListener('click', async () => {
+        feedback();
+        if (getFullscreenElement() || landscapeRequested) await exitLandscape();
+        else await enterLandscape();
+      });
+      const onFullscreenChange = () => {
+        if (!getFullscreenElement()) {
+          landscapeRequested = false;
+          unlockOrientation();
+        }
+        updateLandscapeButton();
+        renderTransform();
+      };
+      document.addEventListener('fullscreenchange', onFullscreenChange);
+      document.addEventListener('webkitfullscreenchange', onFullscreenChange);
 
       viewport.addEventListener('wheel', event => {
         event.preventDefault();
@@ -303,6 +417,7 @@
       viewport.addEventListener('pointerup', releasePointer);
       viewport.addEventListener('pointercancel', releasePointer);
       window.addEventListener('resize', renderTransform);
+      window.addEventListener('orientationchange', renderTransform);
 
       async function loadSnapshot(manual) {
         if (!deviceId || loading || (!manual && document.hidden)) return;
@@ -345,6 +460,7 @@
         setInterval(() => loadSnapshot(false), 15000);
         document.addEventListener('visibilitychange', () => { if (!document.hidden) loadSnapshot(false); });
       }
+      updateLandscapeButton();
       Homey.ready();
     }
   </script>
