@@ -88,6 +88,7 @@
     const discoveryStatus = element('discovery-status');
     const status = element('status');
     const ssl = element('ssl');
+    let pairingDataRevision = 0;
 
     Homey.setTitle(Homey.__('pair.title'));
 
@@ -111,12 +112,17 @@
 
     const resetTest = () => {
       status.textContent = '';
-      Homey.emit('clearTestedDevice').catch(() => {});
+      pairingDataRevision += 1;
+      Homey.emit('updatePairingData', {
+        revision: pairingDataRevision,
+        data: readForm(),
+      }).catch(() => {});
     };
     for (const input of document.querySelectorAll('input, select')) {
       input.addEventListener('input', resetTest);
       input.addEventListener('change', resetTest);
     }
+    resetTest();
 
     discoveredAddress.addEventListener('change', () => {
       if (!discoveredAddress.value) return;

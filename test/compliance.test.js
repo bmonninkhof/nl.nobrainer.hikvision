@@ -68,6 +68,7 @@ test('pairing gebruikt Homey-apparaatselectie en standaardinstallatie', () => {
   assert.doesNotMatch(pairView, /id="install"/);
   assert.match(pairView, /getDiscoveredDevices/);
   assert.match(pairView, /icon_type/);
+  assert.match(pairView, /Homey\.emit\('updatePairingData'/);
   assert.match(pairView, /min-height: 48px/);
   assert.match(pairView, /\.discovery-section #discovery-row \{\s*margin: 0 0 \.85rem;/);
   assert.match(pairView, /select\.hy-input-text \{[\s\S]*?appearance: none;/);
@@ -77,6 +78,13 @@ test('pairing gebruikt Homey-apparaatselectie en standaardinstallatie', () => {
   assert.match(pairView, /-webkit-text-fill-color: #111114 !important/);
   assert.match(pairView, /\.hy-nostretch > p:first-child \{\s*margin: 1\.25rem 0 1\.5rem;/);
   assert.doesNotMatch(pairView, /prefers-color-scheme: dark/);
+
+  const driverSource = fs.readFileSync(path.join(
+    root,
+    'drivers/hikvision-camnvr/driver.js',
+  ), 'utf8');
+  assert.match(driverSource, /setHandler\('updatePairingData'/);
+  assert.match(driverSource, /if \(!pairingDevice\) \{\s*if \(!pairingData\)[\s\S]*?testConnection\(pairingData\)/);
 });
 
 test('Hikvision MAC-detectie bevat bekende fabrikantprefixen', () => {
