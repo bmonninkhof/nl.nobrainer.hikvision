@@ -99,6 +99,12 @@ test('pairing gebruikt Homey-apparaatselectie en standaardinstallatie', () => {
   assert.match(driverSource, /setHandler\('updatePairingData'/);
   assert.match(driverSource, /setHandler\('runPairingTest'[\s\S]*?testConnection\(pairingData\)/);
   assert.match(driverSource, /if \(!pairingDevice\) throw new Error\(this\.homey\.__\('pair\.test_required'\)\)/);
+  assert.match(driverSource, /camera: 'camera'/);
+  assert.match(driverSource, /doorbell: 'doorbell2'/);
+  assert.match(driverSource, /ptz: 'sensor-outdoor-motion'/);
+  assert.match(driverSource, /recorder: 'vcr'/);
+  assert.match(driverSource, /iconOverride: HOMEY_ICON_OVERRIDES\[iconType\]/);
+  assert.doesNotMatch(driverSource, /icon: PAIRING_ICONS\[iconType\]/);
 
   const testView = fs.readFileSync(path.join(
     root,

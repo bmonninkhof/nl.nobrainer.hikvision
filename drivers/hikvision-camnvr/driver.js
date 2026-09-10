@@ -42,10 +42,11 @@ const CONDITION_CAPABILITIES = {
   hik_alarm_region_exiting_is_active: 'hik_alarm_region_exiting',
   hik_event_monitoring_is_active: 'hik_event_monitoring',
 };
-const PAIRING_ICONS = Object.freeze({
-  camera: '/camera.svg',
-  doorbell: '/doorbell.svg',
-  recorder: '/recorder.svg',
+const HOMEY_ICON_OVERRIDES = Object.freeze({
+  camera: 'camera',
+  doorbell: 'doorbell2',
+  ptz: 'sensor-outdoor-motion',
+  recorder: 'vcr',
 });
 const DISCOVERY_STRATEGY_IDS = ['hikvision-mac', 'hikvision-mac-2', 'hikvision-mac-3'];
 
@@ -176,7 +177,7 @@ class HikvisionDriver extends Homey.Driver {
         snapshotAvailable: testedDevice.snapshotAvailable,
         snapshotBytes: testedDevice.snapshotBytes,
         snapshotChannel: testedDevice.snapshotChannel,
-        iconType: pairingDevice.icon.replace(/^\//, '').replace(/\.svg$/, ''),
+        iconType: pairingDevice.iconOverride,
       };
     });
     session.setHandler('list_devices', async () => {
@@ -207,15 +208,16 @@ class HikvisionDriver extends Homey.Driver {
   }
 
   createPairingDevice(testedDevice, requestedIconType) {
-    const automaticIconType = getDeviceIconType(testedDevice.type);
-    const iconType = Object.hasOwn(PAIRING_ICONS, requestedIconType)
+    let automaticIconType = getDeviceIconType(testedDevice.type);
+    if (automaticIconType === 'camera' && testedDevice.ptzAvailable) automaticIconType = 'ptz';
+    const iconType = Object.hasOwn(HOMEY_ICON_OVERRIDES, requestedIconType)
       ? requestedIconType
       : automaticIconType;
     return {
       name: testedDevice.name,
       data: { id: testedDevice.id },
       settings: testedDevice.settings,
-      icon: PAIRING_ICONS[iconType],
+      iconOverride: HOMEY_ICON_OVERRIDES[iconType],
     };
   }
 
@@ -281,6 +283,14 @@ class HikvisionDriver extends Homey.Driver {
       const channels = isSingleChannelDevice(type) || !type.toUpperCase().includes('NVR')
         ? new Map([[1, 'Camera']])
         : await client.getChannels();
+      let ptzAvailable = false;
+      if (getDeviceIconType(type) === 'camera') {
+        const ptzChannels = await client.getPtzChannels({
+          channelIds: [...channels.keys()],
+          isNvr: false,
+        });
+        ptzAvailable = ptzChannels.size > 0;
+      }
       const snapshotChannel = channels.keys().next().value || 1;
       let snapshotBytes = 0;
       let snapshotAvailable = false;
@@ -291,7 +301,14 @@ class HikvisionDriver extends Homey.Driver {
       } catch (error) {
         this.log(`Snapshot is niet beschikbaar tijdens koppelen: ${error.message}`);
       }
-      return { ...info, settings, snapshotAvailable, snapshotBytes, snapshotChannel };
+      return {
+        ...info,
+        settings,
+        snapshotAvailable,
+        snapshotBytes,
+        snapshotChannel,
+        ptzAvailable,
+      };
     } catch (error) {
       if (error.code === 'DUPLICATE_DEVICE') throw error;
       this.error('Connection test failed', error);
