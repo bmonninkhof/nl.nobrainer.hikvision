@@ -15,7 +15,7 @@
       --focus: #8ec5ff;
     }
     * { box-sizing: border-box; }
-    html, body { width: 100%; height: 100%; margin: 0; overflow: hidden; }
+    html, body { width: 100%; height: 100%; margin: 0; overflow: hidden; overscroll-behavior: none; }
     body {
       background: #111820;
       color: var(--text);
@@ -263,7 +263,7 @@
       document.getElementById('zoom-out').setAttribute('aria-label', text('zoom_out', 'Zoom out'));
       document.getElementById('zoom-in').setAttribute('aria-label', text('zoom_in', 'Zoom in'));
       document.getElementById('zoom-reset').setAttribute('aria-label', text('zoom_reset', 'Reset zoom'));
-      const refreshLabel = text('refresh', 'Refresh image');
+      const refreshLabel = text('capture', 'Take snapshot');
       document.getElementById('refresh').setAttribute('aria-label', refreshLabel);
       document.getElementById('refresh').setAttribute('title', refreshLabel);
 
@@ -341,13 +341,14 @@
           panY = 0;
           return;
         }
-        const rect = viewport.getBoundingClientRect();
+        const viewportWidth = viewport.clientWidth;
+        const viewportHeight = viewport.clientHeight;
         const imageRatio = image.naturalWidth / image.naturalHeight;
-        const viewportRatio = rect.width / rect.height;
-        const baseWidth = viewportRatio > imageRatio ? rect.height * imageRatio : rect.width;
-        const baseHeight = viewportRatio > imageRatio ? rect.height : rect.width / imageRatio;
-        const maxX = Math.max(0, (baseWidth * scale - rect.width) / 2);
-        const maxY = Math.max(0, (baseHeight * scale - rect.height) / 2);
+        const viewportRatio = viewportWidth / viewportHeight;
+        const baseWidth = viewportRatio > imageRatio ? viewportHeight * imageRatio : viewportWidth;
+        const baseHeight = viewportRatio > imageRatio ? viewportHeight : viewportWidth / imageRatio;
+        const maxX = Math.max(0, (baseWidth * scale - viewportWidth) / 2);
+        const maxY = Math.max(0, (baseHeight * scale - viewportHeight) / 2);
         panX = Math.max(-maxX, Math.min(maxX, panX));
         panY = Math.max(-maxY, Math.min(maxY, panY));
       };
@@ -418,6 +419,7 @@
         return Math.hypot(a.clientX - b.clientX, a.clientY - b.clientY);
       };
       viewport.addEventListener('pointerdown', event => {
+        if (event.cancelable) event.preventDefault();
         viewport.setPointerCapture(event.pointerId);
         pointers.set(event.pointerId, event);
         if (pointers.size === 1) {
@@ -431,13 +433,21 @@
       });
       viewport.addEventListener('pointermove', event => {
         if (!pointers.has(event.pointerId)) return;
+        if (event.cancelable) event.preventDefault();
         pointers.set(event.pointerId, event);
         if (pointers.size === 2) {
           const currentDistance = distance([...pointers.values()]);
           if (pinchDistance) setScale(pinchScale * currentDistance / pinchDistance);
         } else if (dragging && lastPointer && scale > 1) {
-          panX += event.clientX - lastPointer.clientX;
-          panY += event.clientY - lastPointer.clientY;
+          const deltaX = event.clientX - lastPointer.clientX;
+          const deltaY = event.clientY - lastPointer.clientY;
+          if (landscapeFallback) {
+            panX += deltaY;
+            panY -= deltaX;
+          } else {
+            panX += deltaX;
+            panY += deltaY;
+          }
           lastPointer = event;
           renderTransform();
         }
@@ -453,6 +463,9 @@
       };
       viewport.addEventListener('pointerup', releasePointer);
       viewport.addEventListener('pointercancel', releasePointer);
+      viewport.addEventListener('touchmove', event => {
+        if (event.cancelable) event.preventDefault();
+      }, { passive: false });
       window.addEventListener('resize', renderTransform);
       window.addEventListener('orientationchange', renderTransform);
 
@@ -461,7 +474,8 @@
         loading = true;
         if (!image.src) status.textContent = text('loading', 'Loading camera image…');
         try {
-          const result = await Homey.api('POST', '/snapshot', { deviceId });
+          const endpoint = manual ? '/capture' : '/snapshot';
+          const result = await Homey.api('POST', endpoint, { deviceId });
           const nextSource = `data:${result.mimeType};base64,${result.image}`;
           const preload = new Image();
           await new Promise((resolve, reject) => {

@@ -11,6 +11,7 @@
       "zoom_reset": "Reset zoom",
       "zoom_in": "Zoom in",
       "refresh": "Refresh image",
+      "capture": "Take snapshot and start Flow",
       "enter_landscape": "View in landscape",
       "exit_landscape": "Exit landscape view",
       "rotate_phone": "Turn your phone sideways for landscape view.",

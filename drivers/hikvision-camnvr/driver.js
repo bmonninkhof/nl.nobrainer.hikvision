@@ -28,6 +28,7 @@ const TRIGGER_IDS = [
   'RegionExitingDetectionStart',
   'RegionExitingDetectionStop',
   'DoorbellPressed',
+  'SnapshotCaptured',
   'EventMonitoringEnabled',
   'EventMonitoringDisabled',
 ];

@@ -1169,9 +1169,7 @@ class HikvisionDevice extends Homey.Device {
     this.ptzOperations.clear();
   }
 
-  async getWidgetSnapshot(channelId = 1) {
-    if (!this.client) throw new Error(this.homey.__('errors.not_connected'));
-    const snapshot = await this.getSnapshotBuffer(channelId);
+  snapshotResult(channelId, snapshot) {
     return {
       name: this.getName(),
       channelId,
@@ -1179,6 +1177,23 @@ class HikvisionDevice extends Homey.Device {
       image: snapshot.toString('base64'),
       timestamp: this.snapshotCacheUpdatedAt.get(channelId) || Date.now(),
     };
+  }
+
+  async getWidgetSnapshot(channelId = 1) {
+    if (!this.client) throw new Error(this.homey.__('errors.not_connected'));
+    const snapshot = await this.getSnapshotBuffer(channelId);
+    return this.snapshotResult(channelId, snapshot);
+  }
+
+  async captureWidgetSnapshot(channelId = 1) {
+    if (!this.client) throw new Error(this.homey.__('errors.not_connected'));
+    if (!this.availableChannels.has(channelId)) {
+      throw new Error(this.homey.__('errors.channel_not_available'));
+    }
+    const snapshot = await this.getSnapshotBuffer(channelId, { forceRefresh: true });
+    const image = await this.registerFlowSnapshot(snapshot);
+    await this.driver.trigger('SnapshotCaptured', this, { channelID: channelId, snapshot: image });
+    return this.snapshotResult(channelId, snapshot);
   }
 
   async getSnapshotBuffer(channelId, { forceRefresh = false } = {}) {
@@ -1252,6 +1267,10 @@ class HikvisionDevice extends Homey.Device {
     }
 
     const snapshot = await this.getSnapshotBuffer(channelId, { forceRefresh: true });
+    return this.registerFlowSnapshot(snapshot);
+  }
+
+  async registerFlowSnapshot(snapshot) {
     while (this.flowSnapshotImages.size >= MAX_FLOW_SNAPSHOT_IMAGES) {
       const oldestImage = this.flowSnapshotImages.values().next().value;
       await this.unregisterFlowSnapshot(oldestImage);

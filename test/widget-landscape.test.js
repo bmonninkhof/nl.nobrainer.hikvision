@@ -20,6 +20,18 @@ test('camera widget offers an accessible landscape fullscreen control', () => {
   assert.match(widget, /document\.addEventListener\('webkitfullscreenchange'/);
 });
 
+test('rotated camera widget keeps touch panning inside the image', () => {
+  assert.match(widget, /const viewportWidth = viewport\.clientWidth/);
+  assert.match(widget, /if \(landscapeFallback\) \{\s*panX \+= deltaY;\s*panY -= deltaX;/);
+  assert.match(widget, /addEventListener\('touchmove',[\s\S]*?passive: false/);
+  assert.match(widget, /overscroll-behavior: none/);
+});
+
+test('camera button captures a snapshot through the Flow endpoint', () => {
+  assert.match(widget, /const endpoint = manual \? '\/capture' : '\/snapshot'/);
+  assert.match(widget, /text\('capture', 'Take snapshot'\)/);
+});
+
 test('landscape labels are translated in every supported language', () => {
   for (const language of ['en', 'nl', 'de']) {
     const locale = JSON.parse(fs.readFileSync(path.join(root, 'locales', `${language}.json`)));

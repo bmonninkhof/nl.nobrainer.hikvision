@@ -23,3 +23,18 @@ test('momentopnameactie kiest apparaat en kanaal en levert een afbeelding', () =
   assert.equal(manifest.args.find(argument => argument.name === 'channel').type, 'autocomplete');
   assert.equal(manifest.args.find(argument => argument.name === 'device').type, 'device');
 });
+
+test('camerawidget kan een Flow met de gemaakte momentopname starten', () => {
+  const manifest = JSON.parse(fs.readFileSync(path.join(flowRoot, 'triggers', 'SnapshotCaptured.json')));
+  assert.deepEqual(manifest.tokens.map(token => [token.name, token.type]), [
+    ['channelID', 'number'],
+    ['snapshot', 'image'],
+  ]);
+
+  const driver = fs.readFileSync(path.join(__dirname, '..', 'drivers', 'hikvision-camnvr', 'driver.js'), 'utf8');
+  const device = fs.readFileSync(path.join(__dirname, '..', 'drivers', 'hikvision-camnvr', 'device.js'), 'utf8');
+  const widgetApi = fs.readFileSync(path.join(__dirname, '..', 'widgets', 'camera-zoom', 'api.js'), 'utf8');
+  assert.match(driver, /'SnapshotCaptured'/);
+  assert.match(device, /trigger\('SnapshotCaptured', this, \{ channelID: channelId, snapshot: image \}\)/);
+  assert.match(widgetApi, /captureWidgetSnapshot\(1\)/);
+});

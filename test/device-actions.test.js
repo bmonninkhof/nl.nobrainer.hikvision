@@ -179,6 +179,7 @@ test('Flow-snapshots zijn begrensd en oudste afbeeldingen worden opgeruimd', asy
     getSnapshotBuffer: async () => Buffer.from('jpeg'),
     availableChannels: new Map([[1, 'Camera']]),
     unregisterFlowSnapshot: methods.unregisterFlowSnapshot,
+    registerFlowSnapshot: methods.registerFlowSnapshot,
   };
 
   for (let index = 0; index < 9; index += 1) {
