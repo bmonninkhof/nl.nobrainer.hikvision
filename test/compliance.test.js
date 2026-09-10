@@ -73,7 +73,8 @@ test('pairing gebruikt Homey-apparaatselectie en standaardinstallatie', () => {
   assert.match(pairView, /select\.hy-input-text \{[\s\S]*?appearance: none;/);
   assert.match(pairView, /\.hy-checkbox \{[\s\S]*?min-height: 44px;/);
   assert.match(pairView, /color-scheme: light/);
-  assert.match(pairView, /-webkit-text-fill-color: #111114/);
+  assert.match(pairView, /padding: 11px 14px !important/);
+  assert.match(pairView, /-webkit-text-fill-color: #111114 !important/);
   assert.match(pairView, /\.hy-nostretch > p:first-child \{\s*margin: 1\.25rem 0 1\.5rem;/);
   assert.doesNotMatch(pairView, /prefers-color-scheme: dark/);
 });
