@@ -72,21 +72,15 @@
     </div>
   </fieldset>
 
-  <p id="status" role="status" aria-live="polite"></p>
-  <div class="button-row">
-    <button class="hy-button hy-button-fill" id="test" type="button" data-i18n="pair.test"></button>
-  </div>
 </main>
 
 <script>
   (() => {
     const element = id => document.getElementById(id);
-    const testButton = element('test');
     const discoverButton = element('discover');
     const discoveredAddress = element('discovered-address');
     const discoveryRow = element('discovery-row');
     const discoveryStatus = element('discovery-status');
-    const status = element('status');
     const ssl = element('ssl');
     let pairingDataRevision = 0;
 
@@ -111,7 +105,6 @@
     });
 
     const resetTest = () => {
-      status.textContent = '';
       pairingDataRevision += 1;
       Homey.emit('updatePairingData', {
         revision: pairingDataRevision,
@@ -122,8 +115,6 @@
       input.addEventListener('input', resetTest);
       input.addEventListener('change', resetTest);
     }
-    resetTest();
-
     discoveredAddress.addEventListener('change', () => {
       if (!discoveredAddress.value) return;
       element('address').value = discoveredAddress.value;
@@ -164,33 +155,31 @@
 
     discoverButton.addEventListener('click', discoverDevices);
 
-    testButton.addEventListener('click', async () => {
-      const data = readForm();
-      if (!data.address || !data.username || !Number.isInteger(data.port) || !Number.isInteger(data.rtsp_port)) {
-        status.textContent = Homey.__('pair.nosettings');
-        return;
-      }
-
-      testButton.disabled = true;
-      status.textContent = Homey.__('pair.testing');
+    const restoreAndDiscover = async () => {
       try {
-        const testedDevice = await Homey.emit('testConnection', data);
-        const successKey = testedDevice.snapshotAvailable
-          ? 'pair.test_success'
-          : 'pair.test_success_no_snapshot';
-        status.textContent = Homey.__(successKey)
-          .replace('__name__', testedDevice.name)
-          .replace('__type__', testedDevice.type)
-          .replace('__version__', testedDevice.firmwareVersion)
-          + ` ${Homey.__('pair.continue_after_test')}`;
+        const savedState = await Homey.emit('getPairingData');
+        const saved = savedState && savedState.data;
+        pairingDataRevision = Number(savedState && savedState.revision) || 0;
+        if (saved) {
+          element('address').value = saved.address || '';
+          element('username').value = saved.username || 'admin';
+          element('password').value = saved.password || '';
+          element('auth-method').value = saved.auth_method || 'automatic';
+          element('port').value = String(saved.port || 80);
+          element('rtsp-port').value = String(saved.rtsp_port || 554);
+          ssl.checked = Boolean(saved.ssl);
+          element('strict').checked = Boolean(saved.strict);
+          element('strict-row').hidden = !ssl.checked;
+          element('icon-type').value = saved.icon_type || 'automatic';
+        }
       } catch (error) {
-        status.textContent = error.message || Homey.__('pair.unknownerror');
-      } finally {
-        testButton.disabled = false;
+        // Keep the visible form defaults when the session cannot restore data.
       }
-    });
+      resetTest();
+      await discoverDevices();
+    };
 
-    discoverDevices();
+    restoreAndDiscover();
   })();
 </script>
 

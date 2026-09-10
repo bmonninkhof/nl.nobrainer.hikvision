@@ -55,10 +55,17 @@ test('pairing gebruikt Homey-apparaatselectie en standaardinstallatie', () => {
     root,
     'drivers/hikvision-camnvr/driver.compose.json',
   )));
-  assert.deepEqual(driver.pair.map(view => view.id), ['start', 'list_devices', 'add_devices']);
-  assert.equal(driver.pair[1].template, 'list_devices');
-  assert.equal(driver.pair[1].options.singular, true);
-  assert.equal(driver.pair[2].template, 'add_devices');
+  assert.deepEqual(driver.pair.map(view => view.id), [
+    'start',
+    'test_connection',
+    'list_devices',
+    'add_devices',
+  ]);
+  assert.equal(driver.pair[0].navigation.next, 'test_connection');
+  assert.deepEqual(driver.pair[1].navigation, { prev: 'start', next: 'list_devices' });
+  assert.equal(driver.pair[2].template, 'list_devices');
+  assert.equal(driver.pair[2].options.singular, true);
+  assert.equal(driver.pair[3].template, 'add_devices');
 
   const pairView = fs.readFileSync(path.join(
     root,
@@ -69,6 +76,8 @@ test('pairing gebruikt Homey-apparaatselectie en standaardinstallatie', () => {
   assert.match(pairView, /getDiscoveredDevices/);
   assert.match(pairView, /icon_type/);
   assert.match(pairView, /Homey\.emit\('updatePairingData'/);
+  assert.match(pairView, /Homey\.emit\('getPairingData'/);
+  assert.doesNotMatch(pairView, /id="test"/);
   assert.match(pairView, /min-height: 48px/);
   assert.match(pairView, /\.discovery-section #discovery-row \{\s*margin: 0 0 \.85rem;/);
   assert.match(pairView, /select\.hy-input-text \{[\s\S]*?appearance: none;/);
@@ -84,7 +93,16 @@ test('pairing gebruikt Homey-apparaatselectie en standaardinstallatie', () => {
     'drivers/hikvision-camnvr/driver.js',
   ), 'utf8');
   assert.match(driverSource, /setHandler\('updatePairingData'/);
-  assert.match(driverSource, /if \(!pairingDevice\) \{\s*if \(!pairingData\)[\s\S]*?testConnection\(pairingData\)/);
+  assert.match(driverSource, /setHandler\('runPairingTest'[\s\S]*?testConnection\(pairingData\)/);
+  assert.match(driverSource, /if \(!pairingDevice\) throw new Error\(this\.homey\.__\('pair\.test_required'\)\)/);
+
+  const testView = fs.readFileSync(path.join(
+    root,
+    'drivers/hikvision-camnvr/pair/test_connection.html',
+  ), 'utf8');
+  assert.match(testView, /Homey\.showLoadingOverlay\(\)/);
+  assert.match(testView, /Homey\.emit\('runPairingTest'\)/);
+  assert.match(testView, /pair\.back_after_failed_test/);
 });
 
 test('Hikvision MAC-detectie bevat bekende fabrikantprefixen', () => {

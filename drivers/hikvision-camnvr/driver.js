@@ -150,6 +150,10 @@ class HikvisionDriver extends Homey.Driver {
     let pairingDataRevision = 0;
 
     session.setHandler('getDiscoveredDevices', async () => this.getDiscoveredDevices());
+    session.setHandler('getPairingData', async () => ({
+      data: pairingData,
+      revision: pairingDataRevision,
+    }));
     session.setHandler('updatePairingData', async payload => {
       const revision = Number(payload?.revision) || 0;
       if (revision >= pairingDataRevision) {
@@ -159,10 +163,11 @@ class HikvisionDriver extends Homey.Driver {
       }
       return true;
     });
-    session.setHandler('testConnection', async data => {
-      const testedDevice = await this.testConnection(data);
-      pairingData = data;
-      pairingDevice = this.createPairingDevice(testedDevice, data.icon_type);
+    session.setHandler('runPairingTest', async () => {
+      pairingDevice = null;
+      if (!pairingData) throw new Error(this.homey.__('pair.nosettings'));
+      const testedDevice = await this.testConnection(pairingData);
+      pairingDevice = this.createPairingDevice(testedDevice, pairingData.icon_type);
       return {
         id: testedDevice.id,
         name: testedDevice.name,
@@ -174,16 +179,8 @@ class HikvisionDriver extends Homey.Driver {
         iconType: pairingDevice.icon.replace(/^\//, '').replace(/\.svg$/, ''),
       };
     });
-    session.setHandler('clearTestedDevice', async () => {
-      pairingDevice = null;
-      return true;
-    });
     session.setHandler('list_devices', async () => {
-      if (!pairingDevice) {
-        if (!pairingData) throw new Error(this.homey.__('pair.test_required'));
-        const testedDevice = await this.testConnection(pairingData);
-        pairingDevice = this.createPairingDevice(testedDevice, pairingData.icon_type);
-      }
+      if (!pairingDevice) throw new Error(this.homey.__('pair.test_required'));
       return [pairingDevice];
     });
     session.setHandler('disconnect', async () => {

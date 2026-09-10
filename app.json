@@ -1214,6 +1214,13 @@
         {
           "id": "start",
           "navigation": {
+            "next": "test_connection"
+          }
+        },
+        {
+          "id": "test_connection",
+          "navigation": {
+            "prev": "start",
             "next": "list_devices"
           }
         },
@@ -1221,7 +1228,7 @@
           "id": "list_devices",
           "template": "list_devices",
           "navigation": {
-            "prev": "start",
+            "prev": "test_connection",
             "next": "add_devices"
           },
           "options": {

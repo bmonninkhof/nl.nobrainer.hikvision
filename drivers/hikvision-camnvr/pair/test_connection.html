@@ -1,0 +1,101 @@
+<main class="hy-nostretch test-page">
+  <section class="result-card" aria-live="polite">
+    <div id="result-icon" class="result-icon" aria-hidden="true">…</div>
+    <h2 id="result-title" data-i18n="pair.testing"></h2>
+    <p id="result-message" data-i18n="pair.test_wait"></p>
+    <p id="result-instruction"></p>
+  </section>
+</main>
+
+<script>
+  (() => {
+    const title = document.getElementById('result-title');
+    const message = document.getElementById('result-message');
+    const instruction = document.getElementById('result-instruction');
+    const icon = document.getElementById('result-icon');
+
+    Homey.setTitle(Homey.__('pair.test_title'));
+
+    const runTest = async () => {
+      Homey.showLoadingOverlay();
+      try {
+        const testedDevice = await Homey.emit('runPairingTest');
+        const successKey = testedDevice.snapshotAvailable
+          ? 'pair.test_success'
+          : 'pair.test_success_no_snapshot';
+        icon.textContent = '✓';
+        icon.classList.add('success');
+        title.textContent = Homey.__('pair.test_complete');
+        message.textContent = Homey.__(successKey)
+          .replace('__name__', testedDevice.name)
+          .replace('__type__', testedDevice.type)
+          .replace('__version__', testedDevice.firmwareVersion);
+        instruction.textContent = Homey.__('pair.continue_after_test');
+      } catch (error) {
+        icon.textContent = '!';
+        icon.classList.add('failure');
+        title.textContent = Homey.__('pair.test_failed');
+        message.textContent = error.message || Homey.__('pair.unknownerror');
+        instruction.textContent = Homey.__('pair.back_after_failed_test');
+      } finally {
+        Homey.hideLoadingOverlay();
+      }
+    };
+
+    runTest();
+  })();
+</script>
+
+<style>
+  .test-page {
+    display: flex;
+    min-height: 55vh;
+    align-items: center;
+    justify-content: center;
+    padding: 1.5rem 0;
+    text-align: center;
+  }
+
+  .result-card {
+    width: 100%;
+    max-width: 34rem;
+  }
+
+  .result-icon {
+    display: inline-flex;
+    width: 64px;
+    height: 64px;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 1rem;
+    border-radius: 50%;
+    background: #ececf0;
+    color: #55555c;
+    font-size: 34px;
+    font-weight: 700;
+  }
+
+  .result-icon.success {
+    background: #ddf7e8;
+    color: #147a43;
+  }
+
+  .result-icon.failure {
+    background: #fde7e7;
+    color: #b42318;
+  }
+
+  #result-title {
+    margin: 0 0 .75rem;
+  }
+
+  #result-message,
+  #result-instruction {
+    line-height: 1.55;
+  }
+
+  #result-instruction {
+    margin-top: 1rem;
+    color: #64646b;
+  }
+</style>
