@@ -14,8 +14,7 @@
       "enter_landscape": "View in landscape",
       "exit_landscape": "Exit landscape view",
       "rotate_phone": "Turn your phone sideways for landscape view.",
-      "rotate_phone_fallback": "Turn your phone clockwise. The image has been rotated for landscape viewing.",
-      "landscape_unavailable": "Landscape view is not supported by this Homey app version.",
+      "landscape_unavailable": "Fullscreen is blocked by the Homey app on this device.",
       "image_alt": "Live camera image from __name__"
     },
     "recordings": {
