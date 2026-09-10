@@ -72,6 +72,9 @@ test('pairing gebruikt Homey-apparaatselectie en standaardinstallatie', () => {
   assert.match(pairView, /\.discovery-section #discovery-row \{\s*margin: 0 0 \.85rem;/);
   assert.match(pairView, /select\.hy-input-text \{[\s\S]*?appearance: none;/);
   assert.match(pairView, /\.hy-checkbox \{[\s\S]*?min-height: 44px;/);
+  assert.match(pairView, /color-scheme: light/);
+  assert.match(pairView, /-webkit-text-fill-color: #111114/);
+  assert.doesNotMatch(pairView, /prefers-color-scheme: dark/);
 });
 
 test('Hikvision MAC-detectie bevat bekende fabrikantprefixen', () => {
