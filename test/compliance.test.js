@@ -68,6 +68,10 @@ test('pairing gebruikt Homey-apparaatselectie en standaardinstallatie', () => {
   assert.doesNotMatch(pairView, /id="install"/);
   assert.match(pairView, /getDiscoveredDevices/);
   assert.match(pairView, /icon_type/);
+  assert.match(pairView, /min-height: 48px/);
+  assert.match(pairView, /\.discovery-section #discovery-row \{\s*margin: 0 0 \.85rem;/);
+  assert.match(pairView, /select\.hy-input-text \{[\s\S]*?appearance: none;/);
+  assert.match(pairView, /\.hy-checkbox \{[\s\S]*?min-height: 44px;/);
 });
 
 test('Hikvision MAC-detectie bevat bekende fabrikantprefixen', () => {
