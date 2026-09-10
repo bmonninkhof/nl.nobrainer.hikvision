@@ -24,7 +24,7 @@ test('landscape labels are translated in every supported language', () => {
   for (const language of ['en', 'nl', 'de']) {
     const locale = JSON.parse(fs.readFileSync(path.join(root, 'locales', `${language}.json`)));
     const translations = locale.widget.camera_zoom;
-    for (const key of ['enter_landscape', 'exit_landscape', 'rotate_phone', 'rotate_phone_fallback', 'landscape_unavailable']) {
+    for (const key of ['enter_landscape', 'exit_landscape', 'rotate_phone', 'landscape_unavailable']) {
       assert.equal(typeof translations[key], 'string', `${language}.${key} should be translated`);
       assert.ok(translations[key].length > 0, `${language}.${key} should not be empty`);
     }

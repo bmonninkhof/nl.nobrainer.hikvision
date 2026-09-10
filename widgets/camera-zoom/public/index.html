@@ -325,7 +325,6 @@
           try {
             await Homey.setHeight('177.78%');
             landscapeFallback = true;
-            showLandscapeHint(text('rotate_phone_fallback', 'Turn your phone clockwise. The image has been rotated for landscape viewing.'));
           } catch (error) {
             landscapeRequested = false;
             showLandscapeHint(text('landscape_unavailable', 'Fullscreen is blocked by the Homey app on this device.'));

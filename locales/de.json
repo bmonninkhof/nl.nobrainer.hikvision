@@ -14,7 +14,6 @@
       "enter_landscape": "Im Querformat anzeigen",
       "exit_landscape": "Querformat schließen",
       "rotate_phone": "Drehe dein Smartphone für die Querformatansicht.",
-      "rotate_phone_fallback": "Drehe dein Smartphone im Uhrzeigersinn. Das Bild wurde für das Querformat gedreht.",
       "landscape_unavailable": "Der Vollbildmodus wird auf diesem Gerät von der Homey-App blockiert.",
       "image_alt": "Live-Kamerabild von __name__"
     },
