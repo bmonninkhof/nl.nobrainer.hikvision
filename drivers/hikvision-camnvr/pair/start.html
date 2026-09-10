@@ -1,6 +1,7 @@
 <main class="hy-nostretch">
   <p data-i18n="pair.intro"></p>
 
+  <form id="pairing-form" autocomplete="on">
   <fieldset class="hy-form-group">
     <legend class="hy-label" data-i18n="pair.connection"></legend>
 
@@ -22,12 +23,12 @@
 
     <div class="hy-form-group">
       <label class="hy-label" for="username" data-i18n="pair.username"></label>
-      <input class="hy-input-text" id="username" type="text" value="admin" autocomplete="username" required>
+      <input class="hy-input-text" id="username" name="username" type="text" value="admin" autocomplete="section-hikvision username" autocapitalize="none" spellcheck="false" required>
     </div>
 
     <div class="hy-form-group">
       <label class="hy-label" for="password" data-i18n="pair.password"></label>
-      <input class="hy-input-text" id="password" type="password" autocomplete="current-password">
+      <input class="hy-input-text" id="password" name="password" type="password" autocomplete="section-hikvision current-password">
     </div>
 
     <div class="hy-form-group">
@@ -71,6 +72,8 @@
       <small data-i18n="pair.icon_hint"></small>
     </div>
   </fieldset>
+  <button class="credential-submit" type="submit" tabindex="-1" aria-hidden="true">Continue</button>
+  </form>
 
 </main>
 
@@ -81,8 +84,10 @@
     const discoveredAddress = element('discovered-address');
     const discoveryRow = element('discovery-row');
     const discoveryStatus = element('discovery-status');
+    const pairingForm = element('pairing-form');
     const ssl = element('ssl');
     let pairingDataRevision = 0;
+    let lastPairingData = '';
 
     Homey.setTitle(Homey.__('pair.title'));
 
@@ -105,16 +110,29 @@
     });
 
     const resetTest = () => {
+      const data = readForm();
+      const serializedData = JSON.stringify(data);
+      if (serializedData === lastPairingData) return Promise.resolve();
+      lastPairingData = serializedData;
       pairingDataRevision += 1;
-      Homey.emit('updatePairingData', {
+      return Homey.emit('updatePairingData', {
         revision: pairingDataRevision,
-        data: readForm(),
+        data,
       }).catch(() => {});
     };
     for (const input of document.querySelectorAll('input, select')) {
       input.addEventListener('input', resetTest);
       input.addEventListener('change', resetTest);
     }
+    pairingForm.addEventListener('submit', async event => {
+      event.preventDefault();
+      await resetTest();
+      Homey.nextView();
+    });
+    document.addEventListener('visibilitychange', () => {
+      if (document.visibilityState === 'hidden') resetTest();
+    });
+    window.setInterval(resetTest, 500);
     discoveredAddress.addEventListener('change', () => {
       if (!discoveredAddress.value) return;
       element('address').value = discoveredAddress.value;
@@ -172,6 +190,7 @@
           element('strict-row').hidden = !ssl.checked;
           element('icon-type').value = saved.icon_type || 'automatic';
         }
+        lastPairingData = '';
       } catch (error) {
         // Keep the visible form defaults when the session cannot restore data.
       }
@@ -199,6 +218,15 @@
   .hy-nostretch > p:first-child {
     margin: 1.25rem 0 1.5rem;
     line-height: 1.55;
+  }
+
+  .credential-submit {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+    clip-path: inset(50%);
+    white-space: nowrap;
   }
 
   fieldset.hy-form-group {

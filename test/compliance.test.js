@@ -78,6 +78,10 @@ test('pairing gebruikt Homey-apparaatselectie en standaardinstallatie', () => {
   assert.match(pairView, /Homey\.emit\('updatePairingData'/);
   assert.match(pairView, /Homey\.emit\('getPairingData'/);
   assert.doesNotMatch(pairView, /id="test"/);
+  assert.match(pairView, /<form id="pairing-form" autocomplete="on">/);
+  assert.match(pairView, /name="username"[\s\S]*?autocomplete="section-hikvision username"/);
+  assert.match(pairView, /name="password"[\s\S]*?autocomplete="section-hikvision current-password"/);
+  assert.match(pairView, /window\.setInterval\(resetTest, 500\)/);
   assert.match(pairView, /min-height: 48px/);
   assert.match(pairView, /\.discovery-section #discovery-row \{\s*margin: 0 0 \.85rem;/);
   assert.match(pairView, /select\.hy-input-text \{[\s\S]*?appearance: none;/);
