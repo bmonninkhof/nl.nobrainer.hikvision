@@ -36,6 +36,14 @@
       min-height: 0;
       border-radius: 0;
     }
+    body.landscape-fallback .camera-card {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      width: 100vh;
+      height: 100vw;
+      transform: translate(-50%, -50%) rotate(90deg);
+    }
     .viewport {
       position: absolute;
       inset: 0;
@@ -244,6 +252,7 @@
       let pinchScale = 1;
       let loading = false;
       let landscapeRequested = false;
+      let landscapeFallback = false;
       let landscapeHintTimer = null;
 
       const text = (key, fallback, tokens) => {
@@ -260,8 +269,9 @@
 
       const getFullscreenElement = () => document.fullscreenElement || document.webkitFullscreenElement || null;
       const updateLandscapeButton = () => {
-        const active = Boolean(getFullscreenElement()) || landscapeRequested;
+        const active = Boolean(getFullscreenElement()) || landscapeRequested || landscapeFallback;
         document.body.classList.toggle('landscape-active', active);
+        document.body.classList.toggle('landscape-fallback', landscapeFallback);
         landscapeButton.setAttribute('aria-pressed', String(active));
         const label = active
           ? text('exit_landscape', 'Exit landscape view')
@@ -280,11 +290,13 @@
       };
       const exitLandscape = async () => {
         landscapeRequested = false;
+        landscapeFallback = false;
         unlockOrientation();
         try {
           if (document.exitFullscreen && document.fullscreenElement) await document.exitFullscreen();
           else if (document.webkitExitFullscreen && document.webkitFullscreenElement) document.webkitExitFullscreen();
         } catch (error) {}
+        try { await Homey.setHeight('56.25%'); } catch (error) {}
         updateLandscapeButton();
       };
       const enterLandscape = async () => {
@@ -310,8 +322,14 @@
           }
         } catch (error) {}
         if (!fullscreenAvailable) {
-          landscapeRequested = false;
-          showLandscapeHint(text('landscape_unavailable', 'Fullscreen is blocked by the Homey app on this device.'));
+          try {
+            await Homey.setHeight('177.78%');
+            landscapeFallback = true;
+            showLandscapeHint(text('rotate_phone_fallback', 'Turn your phone clockwise. The image has been rotated for landscape viewing.'));
+          } catch (error) {
+            landscapeRequested = false;
+            showLandscapeHint(text('landscape_unavailable', 'Fullscreen is blocked by the Homey app on this device.'));
+          }
         } else if (!orientationLocked) {
           showLandscapeHint(text('rotate_phone', 'Turn your phone sideways for landscape view.'));
         }
@@ -360,11 +378,11 @@
       document.getElementById('refresh').addEventListener('click', () => { feedback(); loadSnapshot(true); });
       landscapeButton.addEventListener('click', async () => {
         feedback();
-        if (getFullscreenElement() || landscapeRequested) await exitLandscape();
+        if (getFullscreenElement() || landscapeRequested || landscapeFallback) await exitLandscape();
         else await enterLandscape();
       });
       const onFullscreenChange = () => {
-        if (!getFullscreenElement()) {
+        if (!getFullscreenElement() && !landscapeFallback) {
           landscapeRequested = false;
           unlockOrientation();
         }
