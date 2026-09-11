@@ -1,4 +1,9 @@
 {
+  "2026.9.9": {
+    "en": "Improve pairing with automatic network discovery, a dedicated connection-test step, password-manager support and standard Homey device icons. Refine mobile fullscreen, landscape, zoom and snapshot controls.",
+    "nl": "Verbeter het koppelen met automatische netwerkdetectie, een aparte verbindingstest, ondersteuning voor wachtwoordmanagers en standaard Homey-apparaatpictogrammen. Verfijn volledig scherm, landscape, zoom en momentopnamen op mobiele apparaten.",
+    "de": "Verbessert die Kopplung mit automatischer Netzwerkerkennung, einem eigenen Verbindungstest, Passwortmanager-Unterstützung und Standard-Homey-Gerätesymbolen. Optimiert Vollbild, Querformat, Zoom und Schnappschüsse auf Mobilgeräten."
+  },
   "2026.9.8": {
     "en": "Guarantee a privacy-safe fallback bug report, collect NVR display diagnostics in the background and add an optional direct RTSP playback mode for black video in native Homey apps.",
     "nl": "Garandeer een privacyveilig noodbugrapport, verzamel NVR-weergavediagnostiek op de achtergrond en voeg een optionele directe RTSP-modus toe voor zwart beeld in native Homey-apps.",
