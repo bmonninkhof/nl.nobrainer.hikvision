@@ -11,10 +11,11 @@ function pngDimensions(file) {
   return [data.readUInt32BE(16), data.readUInt32BE(20)];
 }
 
-test('app- en drivericoon zijn verschillend en gebruiken een 960-pixelcanvas', () => {
+test('app- en drivericoon gebruiken hetzelfde oog en een 960-pixelcanvas', () => {
   const appIcon = fs.readFileSync(path.join(__dirname, '..', 'assets', 'icon.svg'), 'utf8');
   const driverIcon = fs.readFileSync(path.join(__dirname, '..', 'drivers', 'hikvision-camnvr', 'assets', 'icon.svg'), 'utf8');
-  assert.notEqual(driverIcon, appIcon);
+  assert.equal(driverIcon, appIcon);
+  assert.match(driverIcon, /aria-label="Hikvision camera lens"/);
   assert.match(appIcon, /viewBox="0 0 960 960"/);
   assert.match(driverIcon, /viewBox="0 0 960 960"/);
 

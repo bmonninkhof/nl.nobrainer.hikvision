@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<svg xmlns="http://www.w3.org/2000/svg" width="960" height="960" viewBox="0 0 960 960" role="img" aria-label="Security camera">
-  <path fill="#000" fill-rule="evenodd" d="M140 250h480c82 0 148 66 148 148v124c0 82-66 148-148 148H140c-43 0-78-35-78-78V328c0-43 35-78 78-78Zm18 64h450c53 0 96 43 96 96v100c0 53-43 96-96 96H158c-18 0-32-14-32-32V346c0-18 14-32 32-32Z"/>
-  <path fill="#000" fill-rule="evenodd" d="m650 276 248-138v644L650 644V276Zm66 108v152l116 64V320l-116 64Z"/>
-  <path fill="#000" fill-rule="evenodd" d="M276 350a110 110 0 1 1 0 220 110 110 0 0 1 0-220Zm0 58a52 52 0 1 0 0 104 52 52 0 0 0 0-104Z"/>
-  <path fill="#000" d="M350 650h64v92c0 68-55 123-123 123H170v-64h121c33 0 59-26 59-59v-92Zm170 0h64v145h-64V650Z"/>
+<svg xmlns="http://www.w3.org/2000/svg" width="960" height="960" viewBox="0 0 960 960" role="img" aria-label="Hikvision camera lens">
+  <path fill="#000" fill-rule="evenodd" d="M52 480C151 286 304 176 480 176s329 110 428 304c-99 194-252 304-428 304S151 674 52 480Zm104 0c84 137 197 208 324 208s240-71 324-208c-84-137-197-208-324-208S240 343 156 480Z"/>
+  <path fill="#000" fill-rule="evenodd" d="M480 316a164 164 0 1 1 0 328 164 164 0 0 1 0-328Zm0 72a92 92 0 1 0 0 184 92 92 0 0 0 0-184Z"/>
+  <circle cx="480" cy="480" r="34" fill="#000"/>
 </svg>
