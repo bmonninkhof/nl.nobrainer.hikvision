@@ -9,6 +9,7 @@ const {
   readBugReportSection,
   sanitizeForBugReport,
 } = require('../../lib/bug-report');
+const { getRtspDiagnostics } = require('../../lib/rtsp-diagnostics');
 const { getUnsupportedAlarmCapabilities } = require('../../lib/device-capabilities');
 const {
   ALARM_CAPABILITIES,
@@ -1248,6 +1249,18 @@ class HikvisionDevice extends Homey.Device {
     const host = address.includes(':') && !address.startsWith('[') ? `[${address}]` : address;
     const port = Number(settings.rtsp_port) || 554;
     return `rtsp://${username}:${password}@${host}:${port}/Streaming/Channels/${streamId || Number(`${channelId}01`)}`;
+  }
+
+  async getRtspDiagnostics(channelId = 1, streamId) {
+    const settings = this.getSettings();
+    return getRtspDiagnostics({
+      host: String(settings.address || '').trim(),
+      port: Number(settings.rtsp_port) || 554,
+      username: String(settings.username || ''),
+      password: String(settings.password || ''),
+      channelId,
+      streamId,
+    });
   }
 
   async stopAllPtz() {

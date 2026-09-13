@@ -8,7 +8,7 @@ gebruikt Hikvision ISAPI voor apparaatfuncties en gebeurtenissen en RTSP voor
 video. Er is geen Hikvision-cloudaccount nodig.
 
 - **App-ID:** `nl.nobrainer.hikvision`
-- **Huidige testversie:** `2026.9.10`
+- **Huidige testversie:** `2026.9.12`
 - **Homey:** Homey Pro met firmware 12.3.0 of nieuwer
 - **Installeren:** [Homey App Store Test](https://homey.app/nl-nl/app/nl.nobrainer.hikvision/Hikvision/test/)
 - **Ondersteuning:** [Homey Community-topic](https://community.homey.app/t/app-pro-test-hikvision-sdk-v3/157226)
@@ -33,6 +33,7 @@ video. Er is geen Hikvision-cloudaccount nodig.
 - Blijvende bediening van gebeurtenisbewaking zonder video of momentopnamen te stoppen
 - Automatisch opnieuw verbinden en behoud van het laatste geldige camerabeeld
 - Privacyveilige diagnostiek via **Apparaat repareren**
+- Alleen-lezen RTSP-diagnostiek voor NVR-kanalen, inclusief bereikbaarheid, authenticatie en aangeboden codecs
 
 ## Ondersteunde apparaten
 

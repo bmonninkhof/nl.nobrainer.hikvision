@@ -406,6 +406,10 @@ class HikvisionNvrChannelDevice extends Homey.Device {
     const parent = this.requireParent();
     const result = await parent.getBugReport();
     const report = JSON.parse(result.report);
+    const rtsp = await parent.getRtspDiagnostics(
+      this.channelId,
+      this.videoProfile?.streamId,
+    );
     report.reportType = 'Hikvision NVR channel bug report';
     report.driver = { id: 'hikvision-nvr-channel', connection: 'shared-parent-nvr' };
     report.device = {
@@ -421,6 +425,7 @@ class HikvisionNvrChannelDevice extends Homey.Device {
         cameraVideos: (this.cameraVideo ? 1 : 0) + (this.recordingVideo ? 1 : 0),
         flowSnapshotImages: this.flowSnapshotImages.size,
       },
+      rtsp,
     };
     return { success: true, report: JSON.stringify(sanitizeForBugReport(report), null, 2) };
   }
