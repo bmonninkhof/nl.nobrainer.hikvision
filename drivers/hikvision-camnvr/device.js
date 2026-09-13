@@ -11,6 +11,12 @@ const {
 } = require('../../lib/bug-report');
 const { getUnsupportedAlarmCapabilities } = require('../../lib/device-capabilities');
 const {
+  ALARM_CAPABILITIES,
+  EVENT_CAPABILITIES,
+  MOTION_EVENT_CODES,
+  SNAPSHOT_EVENT_CODES,
+} = require('../../lib/hikvision-events');
+const {
   isAnyAlarmActive,
   remainingAlarmHoldMs,
   resetAlarmState,
@@ -44,25 +50,6 @@ const RELAY_COMMAND_COOLDOWN = 3000;
 const MAX_RELAY_DIAGNOSTICS = 20;
 const MAX_CALL_CONTROL_DIAGNOSTICS = 20;
 const RINGING_CALL_STATUSES = new Set(['ring', 'ringing', 'calling']);
-const EVENT_CAPABILITIES = {
-  VideoMotion: 'alarm_motion',
-  VideoBlind: 'alarm_tamper',
-  AlarmLocal: 'hik_alarm_local',
-  VideoLoss: 'hik_alarm_video_loss',
-  LineDetection: 'hik_alarm_line_crossing',
-  IntrusionDetection: 'hik_alarm_intrusion',
-  RegionEntranceDetection: 'hik_alarm_region_entrance',
-  RegionExitingDetection: 'hik_alarm_region_exiting',
-};
-const MOTION_EVENT_CODES = [
-  'VideoMotion',
-  'LineDetection',
-  'IntrusionDetection',
-  'RegionEntranceDetection',
-  'RegionExitingDetection',
-];
-const SNAPSHOT_EVENT_CODES = [...MOTION_EVENT_CODES, 'Doorbell'];
-const ALARM_CAPABILITIES = [...new Set(Object.values(EVENT_CAPABILITIES))];
 
 class HikvisionDevice extends Homey.Device {
   async onInit() {
@@ -129,6 +116,7 @@ class HikvisionDevice extends Homey.Device {
     this.activeAlarmChannels = new Map(
       Object.keys(EVENT_CAPABILITIES).map(eventCode => [eventCode, new Set()]),
     );
+    this.channelSubscribers = new Map();
     this.connectionState = false;
     this.connectionFailureCount = 0;
     this.isapiAvailable = null;
@@ -361,6 +349,59 @@ class HikvisionDevice extends Homey.Device {
     }
 
     this.featureDetection.checkedAt = new Date().toISOString();
+    await this.notifyAllChannelStates();
+  }
+
+  getChannelState(channelId) {
+    return {
+      channelId,
+      channelName: this.availableChannels.get(channelId) || `Camera ${channelId}`,
+      available: this.availableChannels.has(channelId),
+      connected: this.connectionState,
+      eventMonitoringEnabled: this.eventMonitoringEnabled,
+      firmwareVersion: this.getCapabilityValue('hik_version'),
+      parentName: this.getName(),
+      ptzAvailable: this.ptzChannels.has(channelId),
+    };
+  }
+
+  subscribeChannel(channelId, subscriber) {
+    const normalizedChannelId = Number(channelId);
+    if (!this.channelSubscribers.has(normalizedChannelId)) {
+      this.channelSubscribers.set(normalizedChannelId, new Set());
+    }
+    const subscribers = this.channelSubscribers.get(normalizedChannelId);
+    subscribers.add(subscriber);
+    Promise.resolve(subscriber.onState?.(this.getChannelState(normalizedChannelId), { initial: true }))
+      .catch(this.error);
+    return () => {
+      subscribers.delete(subscriber);
+      if (subscribers.size === 0) this.channelSubscribers.delete(normalizedChannelId);
+    };
+  }
+
+  async notifyChannelState(channelId) {
+    const subscribers = [...(this.channelSubscribers.get(Number(channelId)) || [])];
+    const state = this.getChannelState(Number(channelId));
+    await Promise.allSettled(subscribers.map(subscriber => subscriber.onState?.(state, { initial: false })));
+  }
+
+  async notifyAllChannelStates() {
+    await Promise.allSettled([...this.channelSubscribers.keys()].map(channelId => (
+      this.notifyChannelState(channelId)
+    )));
+  }
+
+  async notifyChannelAlarm(code, action, channelId, tokens) {
+    const subscribers = [...(this.channelSubscribers.get(Number(channelId)) || [])];
+    await Promise.allSettled(subscribers.map(subscriber => (
+      subscriber.onAlarm?.(code, action, Number(channelId), tokens)
+    )));
+  }
+
+  async notifyChannelError() {
+    const subscribers = [...this.channelSubscribers.values()].flatMap(items => [...items]);
+    await Promise.allSettled(subscribers.map(subscriber => subscriber.onError?.()));
   }
 
   filterAutocompleteOptions(options, query) {
@@ -403,6 +444,7 @@ class HikvisionDevice extends Homey.Device {
     if (this.client) this.client.stop();
     this.client = null;
     this.connectionState = false;
+    this.notifyAllChannelStates().catch(this.error);
     this.isapiAvailable = null;
     if (this.callStatusPollTimer) clearTimeout(this.callStatusPollTimer);
     this.callStatusPollTimer = null;
@@ -679,6 +721,7 @@ class HikvisionDevice extends Homey.Device {
     this.snapshotCache.clear();
     this.snapshotCacheUpdatedAt.clear();
     this.snapshotRetryAfter.clear();
+    this.channelSubscribers.clear();
   }
 
   async handleConnected() {
@@ -690,6 +733,7 @@ class HikvisionDevice extends Homey.Device {
     await this.setAvailable().catch(this.error);
     this.log('Hikvision device connected');
     await this.driver.trigger('OnConnected', this);
+    await this.notifyAllChannelStates();
   }
 
   async handleDisconnected(error) {
@@ -700,7 +744,11 @@ class HikvisionDevice extends Homey.Device {
     await this.setCapabilityValue('hik_status', false).catch(this.error);
     this.log(`Hikvision connection closed${error ? `: ${error.message}` : ''}`);
     await this.driver.trigger('OnDisconnected', this);
-    if (error) await this.driver.trigger('OnError', this);
+    if (error) {
+      await this.driver.trigger('OnError', this);
+      await this.notifyChannelError();
+    }
+    await this.notifyAllChannelStates();
   }
 
   async handleAlarmStreamError(_error) {
@@ -708,6 +756,7 @@ class HikvisionDevice extends Homey.Device {
     const message = this.homey.__('errors.alarm_stream_unavailable');
     this.log(message);
     await this.driver.trigger('OnError', this);
+    await this.notifyChannelError();
   }
 
   async handleAlarm(code, action, channel) {
@@ -718,7 +767,9 @@ class HikvisionDevice extends Homey.Device {
       const previousPress = this.lastDoorbellPressAt.get(channelId) || 0;
       if (now - previousPress < DOORBELL_DEBOUNCE) return;
       this.lastDoorbellPressAt.set(channelId, now);
-      await this.driver.trigger('DoorbellPressed', this, await this.createEventTokens('Doorbell', channelId));
+      const tokens = await this.createEventTokens('Doorbell', channelId);
+      await this.driver.trigger('DoorbellPressed', this, tokens);
+      await this.notifyChannelAlarm('Doorbell', 'Start', channelId, tokens);
       return;
     }
     const capability = EVENT_CAPABILITIES[code];
@@ -738,7 +789,9 @@ class HikvisionDevice extends Homey.Device {
     const tokens = action === 'Start'
       ? await this.createEventTokens(code, channelId)
       : { channelID: channelId };
-    return this.driver.trigger(triggerId, this, tokens);
+    await this.driver.trigger(triggerId, this, tokens);
+    await this.notifyChannelAlarm(code, action, channelId, tokens);
+    return true;
   }
 
   async createEventTokens(code, channelId) {
@@ -1170,6 +1223,7 @@ class HikvisionDevice extends Homey.Device {
       this.client?.stopAlertStream();
       await this.resetAlarmCapabilities();
       await this.driver.trigger('EventMonitoringDisabled', this);
+      await this.notifyAllChannelStates?.();
       return true;
     }
 
@@ -1182,7 +1236,18 @@ class HikvisionDevice extends Homey.Device {
       generation,
     );
     await this.driver.trigger('EventMonitoringEnabled', this);
+    await this.notifyAllChannelStates?.();
     return true;
+  }
+
+  getRtspUrl(channelId, streamId) {
+    const settings = this.getSettings();
+    const username = encodeURIComponent(String(settings.username || ''));
+    const password = encodeURIComponent(String(settings.password || ''));
+    const address = String(settings.address || '').trim();
+    const host = address.includes(':') && !address.startsWith('[') ? `[${address}]` : address;
+    const port = Number(settings.rtsp_port) || 554;
+    return `rtsp://${username}:${password}@${host}:${port}/Streaming/Channels/${streamId || Number(`${channelId}01`)}`;
   }
 
   async stopAllPtz() {
@@ -1403,17 +1468,7 @@ class HikvisionDevice extends Homey.Device {
       if (videoTransport === 'direct') videoOptions.disableWebRTCProxy = true;
       if (videoTransport === 'webrtc') videoOptions.disableWebRTCProxy = false;
       const video = await this.homey.videos.createVideoRTSP(videoOptions);
-      video.registerVideoUrlListener(async () => {
-        const settings = this.getSettings();
-        const username = encodeURIComponent(String(settings.username || ''));
-        const password = encodeURIComponent(String(settings.password || ''));
-        const address = String(settings.address || '').trim();
-        const host = address.includes(':') && !address.startsWith('[') ? `[${address}]` : address;
-        const port = Number(settings.rtsp_port) || 554;
-        return {
-          url: `rtsp://${username}:${password}@${host}:${port}/Streaming/Channels/${profile.streamId || Number(`${channelId}01`)}`,
-        };
-      });
+      video.registerVideoUrlListener(async () => ({ url: this.getRtspUrl(channelId, profile.streamId) }));
       if (!isCurrent()) {
         await video.unregister().catch(this.error);
         return;
@@ -1474,10 +1529,10 @@ class HikvisionDevice extends Homey.Device {
     };
   }
 
-  getSelectedRecordingUrl() {
-    if (!this.selectedRecording) throw new Error(this.homey.__('widget.recordings.select_first'));
+  getRecordingUrl(recording) {
+    if (!recording) throw new Error(this.homey.__('widget.recordings.select_first'));
     const settings = this.getSettings();
-    const source = new URL(this.selectedRecording.playbackUri);
+    const source = new URL(recording.playbackUri);
     if (source.protocol !== 'rtsp:') throw new Error(this.homey.__('widget.recordings.invalid_playback'));
     const address = String(settings.address || '').trim();
     source.hostname = address.includes(':') ? `[${address.replace(/^\[|\]$/g, '')}]` : address;
@@ -1485,6 +1540,21 @@ class HikvisionDevice extends Homey.Device {
     source.username = String(settings.username || '');
     source.password = String(settings.password || '');
     return source.toString();
+  }
+
+  getSelectedRecordingUrl() {
+    return this.getRecordingUrl(this.selectedRecording);
+  }
+
+  getWidgetRecording(token, { allowUnsupported = false } = {}) {
+    const recording = this.recordingTokens.get(String(token || ''));
+    if (!recording || recording.expiresAt <= Date.now()) {
+      throw new Error(this.homey.__('widget.recordings.selection_expired'));
+    }
+    if (!allowUnsupported && recording.codec.toUpperCase().includes('265')) {
+      throw new Error(this.homey.__('widget.recordings.h265_unsupported'));
+    }
+    return recording;
   }
 
   async ensureRecordingVideo() {
@@ -1500,13 +1570,7 @@ class HikvisionDevice extends Homey.Device {
   }
 
   async selectWidgetRecording(token) {
-    const recording = this.recordingTokens.get(String(token || ''));
-    if (!recording || recording.expiresAt <= Date.now()) {
-      throw new Error(this.homey.__('widget.recordings.selection_expired'));
-    }
-    if (recording.codec.toUpperCase().includes('265')) {
-      throw new Error(this.homey.__('widget.recordings.h265_unsupported'));
-    }
+    const recording = this.getWidgetRecording(token);
     this.selectedRecording = recording;
     await this.ensureRecordingVideo();
     return { success: true, startTime: recording.startTime, endTime: recording.endTime };

@@ -8,7 +8,7 @@ ISAPI for device functions and events, and RTSP for video. No Hikvision cloud
 account is required.
 
 - **App ID:** `nl.nobrainer.hikvision`
-- **Current Test release:** `2026.9.8`
+- **Current Test release:** `2026.9.10`
 - **Homey:** Homey Pro, firmware 12.3.0 or newer
 - **Install:** [Homey App Store Test](https://homey.app/en-us/app/nl.nobrainer.hikvision/Hikvision/test/)
 - **Support:** [Homey Community topic](https://community.homey.app/t/app-pro-test-hikvision-sdk-v3/157226)
@@ -23,6 +23,7 @@ account is required.
 - Native Homey Live video with automatic selection of a compatible H.264 stream
 - Optional direct RTSP playback mode for native Homey app compatibility testing
 - Snapshots for cameras, door stations and up to sixteen online NVR channels
+- Optional individual Homey camera devices for automatically detected NVR channels
 - Dashboard widget with digital zoom, pan, pinch gestures and automatic refresh
 - Motion, doorbell and smart-event triggers with snapshot image tags
 - Separate alarm states and Homey Insights for supported event types
@@ -35,7 +36,7 @@ account is required.
 
 ## Supported devices
 
-The app uses one Homey camera driver for:
+The main Homey camera driver supports:
 
 - Hikvision IP cameras
 - Hikvision NVRs with up to sixteen online camera channels
@@ -46,6 +47,11 @@ The app uses one Homey camera driver for:
 Support depends on the exact model, firmware, enabled services and permissions of
 the local Hikvision account. Features are detected where possible, so unsupported
 relays, channels or PTZ presets are not offered as valid Flow selections.
+
+An optional second driver exposes detected NVR camera channels as individual Homey
+devices. Each channel can then have its own name, zone, tile, Live video, snapshots,
+recordings, alarm status and Flows. These channel devices reuse the installed NVR's
+single ISAPI connection, event stream and bounded snapshot cache.
 
 ## Requirements
 
@@ -67,6 +73,11 @@ relays, channels or PTZ presets are not offered as valid Flow selections.
 5. Use port `80` for HTTP or `443` for HTTPS unless the device is configured
    differently. The usual RTSP port is `554`.
 6. Verify snapshots and Live video, then test the required event triggers.
+
+To add individual NVR channel devices, first install and connect the NVR with the
+combined driver. Run **Add device** again, choose **Hikvision NVR camera channel**
+and select one or more detected channels. Removing or disconnecting the parent NVR
+makes its channel devices unavailable until that NVR is restored.
 
 HTTPS is preferred when the device supports it. Forced Basic authentication over
 HTTP is not encrypted. Enable TLS certificate verification only when the device
@@ -118,6 +129,10 @@ Separate Homey statuses, conditions and Insights are available for the supported
 alarm types. NVR alarm state is aggregated across channels and remains active while
 at least one channel still reports the event. A safety timeout ends events for NVRs
 that send a start notification without the corresponding stop notification.
+
+When a channel is also installed as an individual device, only events carrying
+that channel number update its tile and start its device Flow triggers. The parent
+NVR continues to expose the aggregated state for compatibility with existing Flows.
 
 Motion, line-crossing, intrusion and doorbell triggers include a current snapshot
 image tag where the device can provide one.

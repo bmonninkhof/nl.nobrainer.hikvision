@@ -1,0 +1,70 @@
+<script type="application/javascript">
+  Homey.setNavigationClose();
+
+  function translate(key, fallback) {
+    try {
+      var value = typeof Homey.__ === 'function' ? Homey.__(key) : '';
+      return value && value !== key ? value : fallback;
+    } catch (error) {
+      return fallback;
+    }
+  }
+
+  function render(result) {
+    var status = document.getElementById('status');
+    var output = document.getElementById('output');
+    if (!result || result.success !== true) {
+      status.innerText = result && result.error
+        ? result.error
+        : translate('repair.failed', 'Creating the bug report failed.');
+      output.value = '';
+      return;
+    }
+    status.innerText = translate('repair.ready', 'The privacy-safe bug report is ready.');
+    output.value = result.report || '';
+  }
+
+  function createReport() {
+    if (typeof Homey.showLoadingOverlay === 'function') Homey.showLoadingOverlay();
+    Homey.emit('get_bug_report').then(render).catch(function (error) {
+      render({ success: false, error: error && error.message });
+    }).finally(function () {
+      if (typeof Homey.hideLoadingOverlay === 'function') Homey.hideLoadingOverlay();
+    });
+  }
+
+  function copyReport() {
+    var output = document.getElementById('output');
+    if (!output.value) return Homey.alert(translate('repair.create_first', 'Create the bug report first.'));
+    output.select();
+    document.execCommand('copy');
+    return Homey.alert(translate('repair.copied', 'Bug report copied.'));
+  }
+
+  window.addEventListener('load', function () {
+    document.getElementById('title').innerText = translate('repair.title', 'Bug report');
+    document.getElementById('status').innerText = translate('repair.intro', 'A privacy-safe bug report is being created.');
+    document.getElementById('privacy').innerText = translate('repair.privacy', 'Passwords, usernames, addresses, snapshots and video are not included.');
+    document.getElementById('create').innerText = translate('repair.create', 'Create again');
+    document.getElementById('copy').innerText = translate('repair.copy', 'Copy bug report');
+    document.getElementById('close').innerText = translate('repair.close', 'Close');
+    createReport();
+  });
+</script>
+
+<style>
+  .actions { display: flex; flex-direction: column; gap: .75rem; margin: 1rem 0; }
+  #output { min-height: 16rem; font-family: ui-monospace, monospace; font-size: .82rem; }
+</style>
+
+<fieldset class="homey-form-fieldset">
+  <legend class="homey-form-legend" id="title">Bug report</legend>
+  <p class="homey-subtitle" id="status"></p>
+  <p class="homey-subtitle" id="privacy"></p>
+  <div class="actions">
+    <button id="create" type="button" onclick="createReport()" class="homey-button-primary-full"></button>
+    <button id="copy" type="button" onclick="copyReport()" class="homey-button-secondary-full"></button>
+    <button id="close" type="button" onclick="Homey.done()" class="homey-button-secondary-full"></button>
+  </div>
+  <textarea id="output" class="homey-form-textarea" readonly></textarea>
+</fieldset>

@@ -12,5 +12,5 @@
       "example": 2
     }
   ],
-  "args": [{ "name": "device", "type": "device", "filter": "driver_id=hikvision-camnvr" }]
+  "args": [{ "name": "device", "type": "device", "filter": "driver_id=hikvision-camnvr|hikvision-nvr-channel" }]
 }

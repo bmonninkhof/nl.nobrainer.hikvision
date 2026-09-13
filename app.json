@@ -1,7 +1,7 @@
 {
   "_comment": "This file is generated. Please edit .homeycompose/app.json instead.",
   "id": "nl.nobrainer.hikvision",
-  "version": "2026.9.10",
+  "version": "2026.9.11",
   "compatibility": ">=12.3.0",
   "sdk": 3,
   "runtime": "nodejs",
@@ -96,7 +96,7 @@
           {
             "name": "device",
             "type": "device",
-            "filter": "driver_id=hikvision-camnvr"
+            "filter": "driver_id=hikvision-camnvr|hikvision-nvr-channel"
           }
         ],
         "id": "AlarmLocalStart"
@@ -123,7 +123,7 @@
           {
             "name": "device",
             "type": "device",
-            "filter": "driver_id=hikvision-camnvr"
+            "filter": "driver_id=hikvision-camnvr|hikvision-nvr-channel"
           }
         ],
         "id": "AlarmLocalStop"
@@ -159,7 +159,7 @@
           {
             "name": "device",
             "type": "device",
-            "filter": "driver_id=hikvision-camnvr"
+            "filter": "driver_id=hikvision-camnvr|hikvision-nvr-channel"
           }
         ],
         "id": "DoorbellPressed"
@@ -179,7 +179,7 @@
           {
             "name": "device",
             "type": "device",
-            "filter": "driver_id=hikvision-camnvr"
+            "filter": "driver_id=hikvision-camnvr|hikvision-nvr-channel"
           }
         ],
         "id": "EventMonitoringDisabled"
@@ -199,7 +199,7 @@
           {
             "name": "device",
             "type": "device",
-            "filter": "driver_id=hikvision-camnvr"
+            "filter": "driver_id=hikvision-camnvr|hikvision-nvr-channel"
           }
         ],
         "id": "EventMonitoringEnabled"
@@ -235,7 +235,7 @@
           {
             "name": "device",
             "type": "device",
-            "filter": "driver_id=hikvision-camnvr"
+            "filter": "driver_id=hikvision-camnvr|hikvision-nvr-channel"
           }
         ],
         "id": "IntrusionDetectionStart"
@@ -262,7 +262,7 @@
           {
             "name": "device",
             "type": "device",
-            "filter": "driver_id=hikvision-camnvr"
+            "filter": "driver_id=hikvision-camnvr|hikvision-nvr-channel"
           }
         ],
         "id": "IntrusionDetectionStop"
@@ -298,7 +298,7 @@
           {
             "name": "device",
             "type": "device",
-            "filter": "driver_id=hikvision-camnvr"
+            "filter": "driver_id=hikvision-camnvr|hikvision-nvr-channel"
           }
         ],
         "id": "LineDetectionStart"
@@ -325,7 +325,7 @@
           {
             "name": "device",
             "type": "device",
-            "filter": "driver_id=hikvision-camnvr"
+            "filter": "driver_id=hikvision-camnvr|hikvision-nvr-channel"
           }
         ],
         "id": "LineDetectionStop"
@@ -340,7 +340,7 @@
           {
             "name": "device",
             "type": "device",
-            "filter": "driver_id=hikvision-camnvr"
+            "filter": "driver_id=hikvision-camnvr|hikvision-nvr-channel"
           }
         ],
         "id": "OnConnected"
@@ -355,7 +355,7 @@
           {
             "name": "device",
             "type": "device",
-            "filter": "driver_id=hikvision-camnvr"
+            "filter": "driver_id=hikvision-camnvr|hikvision-nvr-channel"
           }
         ],
         "id": "OnDisconnected"
@@ -370,7 +370,7 @@
           {
             "name": "device",
             "type": "device",
-            "filter": "driver_id=hikvision-camnvr"
+            "filter": "driver_id=hikvision-camnvr|hikvision-nvr-channel"
           }
         ],
         "id": "OnError"
@@ -406,7 +406,7 @@
           {
             "name": "device",
             "type": "device",
-            "filter": "driver_id=hikvision-camnvr"
+            "filter": "driver_id=hikvision-camnvr|hikvision-nvr-channel"
           }
         ],
         "id": "RegionEntranceDetectionStart"
@@ -433,7 +433,7 @@
           {
             "name": "device",
             "type": "device",
-            "filter": "driver_id=hikvision-camnvr"
+            "filter": "driver_id=hikvision-camnvr|hikvision-nvr-channel"
           }
         ],
         "id": "RegionEntranceDetectionStop"
@@ -469,7 +469,7 @@
           {
             "name": "device",
             "type": "device",
-            "filter": "driver_id=hikvision-camnvr"
+            "filter": "driver_id=hikvision-camnvr|hikvision-nvr-channel"
           }
         ],
         "id": "RegionExitingDetectionStart"
@@ -496,7 +496,7 @@
           {
             "name": "device",
             "type": "device",
-            "filter": "driver_id=hikvision-camnvr"
+            "filter": "driver_id=hikvision-camnvr|hikvision-nvr-channel"
           }
         ],
         "id": "RegionExitingDetectionStop"
@@ -532,7 +532,7 @@
           {
             "name": "device",
             "type": "device",
-            "filter": "driver_id=hikvision-camnvr"
+            "filter": "driver_id=hikvision-camnvr|hikvision-nvr-channel"
           }
         ],
         "id": "SnapshotCaptured"
@@ -559,7 +559,7 @@
           {
             "name": "device",
             "type": "device",
-            "filter": "driver_id=hikvision-camnvr"
+            "filter": "driver_id=hikvision-camnvr|hikvision-nvr-channel"
           }
         ],
         "id": "VideoBlindStart"
@@ -586,7 +586,7 @@
           {
             "name": "device",
             "type": "device",
-            "filter": "driver_id=hikvision-camnvr"
+            "filter": "driver_id=hikvision-camnvr|hikvision-nvr-channel"
           }
         ],
         "id": "VideoBlindStop"
@@ -613,7 +613,7 @@
           {
             "name": "device",
             "type": "device",
-            "filter": "driver_id=hikvision-camnvr"
+            "filter": "driver_id=hikvision-camnvr|hikvision-nvr-channel"
           }
         ],
         "id": "VideoLossStart"
@@ -640,7 +640,7 @@
           {
             "name": "device",
             "type": "device",
-            "filter": "driver_id=hikvision-camnvr"
+            "filter": "driver_id=hikvision-camnvr|hikvision-nvr-channel"
           }
         ],
         "id": "VideoLossStop"
@@ -676,7 +676,7 @@
           {
             "name": "device",
             "type": "device",
-            "filter": "driver_id=hikvision-camnvr"
+            "filter": "driver_id=hikvision-camnvr|hikvision-nvr-channel"
           }
         ],
         "id": "VideoMotionStart"
@@ -703,7 +703,7 @@
           {
             "name": "device",
             "type": "device",
-            "filter": "driver_id=hikvision-camnvr"
+            "filter": "driver_id=hikvision-camnvr|hikvision-nvr-channel"
           }
         ],
         "id": "VideoMotionStop"
@@ -720,7 +720,7 @@
           {
             "name": "device",
             "type": "device",
-            "filter": "driver_id=hikvision-camnvr"
+            "filter": "driver_id=hikvision-camnvr|hikvision-nvr-channel"
           }
         ],
         "id": "hik_alarm_intrusion_is_active"
@@ -735,7 +735,7 @@
           {
             "name": "device",
             "type": "device",
-            "filter": "driver_id=hikvision-camnvr"
+            "filter": "driver_id=hikvision-camnvr|hikvision-nvr-channel"
           }
         ],
         "id": "hik_alarm_line_crossing_is_active"
@@ -750,7 +750,7 @@
           {
             "name": "device",
             "type": "device",
-            "filter": "driver_id=hikvision-camnvr"
+            "filter": "driver_id=hikvision-camnvr|hikvision-nvr-channel"
           }
         ],
         "id": "hik_alarm_local_is_active"
@@ -765,7 +765,7 @@
           {
             "name": "device",
             "type": "device",
-            "filter": "driver_id=hikvision-camnvr"
+            "filter": "driver_id=hikvision-camnvr|hikvision-nvr-channel"
           }
         ],
         "id": "hik_alarm_region_entrance_is_active"
@@ -780,7 +780,7 @@
           {
             "name": "device",
             "type": "device",
-            "filter": "driver_id=hikvision-camnvr"
+            "filter": "driver_id=hikvision-camnvr|hikvision-nvr-channel"
           }
         ],
         "id": "hik_alarm_region_exiting_is_active"
@@ -795,7 +795,7 @@
           {
             "name": "device",
             "type": "device",
-            "filter": "driver_id=hikvision-camnvr"
+            "filter": "driver_id=hikvision-camnvr|hikvision-nvr-channel"
           }
         ],
         "id": "hik_alarm_video_loss_is_active"
@@ -815,7 +815,7 @@
           {
             "name": "device",
             "type": "device",
-            "filter": "driver_id=hikvision-camnvr"
+            "filter": "driver_id=hikvision-camnvr|hikvision-nvr-channel"
           }
         ],
         "id": "hik_event_monitoring_is_active"
@@ -830,7 +830,7 @@
           {
             "name": "device",
             "type": "device",
-            "filter": "driver_id=hikvision-camnvr"
+            "filter": "driver_id=hikvision-camnvr|hikvision-nvr-channel"
           }
         ],
         "id": "hik_status_is_connected"
@@ -857,7 +857,7 @@
           {
             "name": "device",
             "type": "device",
-            "filter": "driver_id=hikvision-camnvr"
+            "filter": "driver_id=hikvision-camnvr|hikvision-nvr-channel"
           }
         ],
         "id": "disable_event_monitoring"
@@ -882,7 +882,7 @@
           {
             "name": "device",
             "type": "device",
-            "filter": "driver_id=hikvision-camnvr"
+            "filter": "driver_id=hikvision-camnvr|hikvision-nvr-channel"
           }
         ],
         "id": "enable_event_monitoring"
@@ -902,7 +902,7 @@
           {
             "name": "device",
             "type": "device",
-            "filter": "driver_id=hikvision-camnvr"
+            "filter": "driver_id=hikvision-camnvr|hikvision-nvr-channel"
           }
         ],
         "id": "end_intercom_call"
@@ -927,7 +927,7 @@
           {
             "name": "device",
             "type": "device",
-            "filter": "driver_id=hikvision-camnvr"
+            "filter": "driver_id=hikvision-camnvr|hikvision-nvr-channel"
           },
           {
             "name": "channel",
@@ -980,7 +980,7 @@
           {
             "name": "device",
             "type": "device",
-            "filter": "driver_id=hikvision-camnvr"
+            "filter": "driver_id=hikvision-camnvr|hikvision-nvr-channel"
           },
           {
             "name": "pannumber",
@@ -1067,7 +1067,7 @@
           {
             "name": "device",
             "type": "device",
-            "filter": "driver_id=hikvision-camnvr"
+            "filter": "driver_id=hikvision-camnvr|hikvision-nvr-channel"
           },
           {
             "name": "channel",
@@ -1117,7 +1117,7 @@
           {
             "name": "device",
             "type": "device",
-            "filter": "driver_id=hikvision-camnvr"
+            "filter": "driver_id=hikvision-camnvr|hikvision-nvr-channel"
           },
           {
             "name": "channel",
@@ -1156,7 +1156,7 @@
           {
             "name": "device",
             "type": "device",
-            "filter": "driver_id=hikvision-camnvr"
+            "filter": "driver_id=hikvision-camnvr|hikvision-nvr-channel"
           },
           {
             "name": "relay",
@@ -1533,6 +1533,182 @@
         }
       ],
       "id": "hikvision-camnvr"
+    },
+    {
+      "name": {
+        "en": "Hikvision NVR camera channel",
+        "nl": "Hikvision NVR-camerakanaal",
+        "de": "Hikvision NVR-Kamerakanal"
+      },
+      "class": "camera",
+      "platforms": [
+        "local"
+      ],
+      "connectivity": [
+        "lan"
+      ],
+      "capabilities": [
+        "alarm_motion",
+        "alarm_tamper",
+        "hik_alarm_local",
+        "hik_alarm_video_loss",
+        "hik_alarm_line_crossing",
+        "hik_alarm_intrusion",
+        "hik_alarm_region_entrance",
+        "hik_alarm_region_exiting",
+        "hik_type",
+        "hik_version",
+        "hik_status",
+        "hik_event_monitoring"
+      ],
+      "images": {
+        "large": "/drivers/hikvision-camnvr/assets/images/large.png",
+        "small": "/drivers/hikvision-camnvr/assets/images/small.png",
+        "xlarge": "/drivers/hikvision-camnvr/assets/images/xlarge.png"
+      },
+      "pair": [
+        {
+          "id": "list_devices",
+          "template": "list_devices",
+          "navigation": {
+            "next": "add_devices"
+          },
+          "options": {
+            "singular": false
+          }
+        },
+        {
+          "id": "add_devices",
+          "template": "add_devices"
+        }
+      ],
+      "repair": [
+        {
+          "id": "bug_report"
+        }
+      ],
+      "settings": [
+        {
+          "type": "group",
+          "label": {
+            "en": "Live video",
+            "nl": "Live-video",
+            "de": "Live-Video"
+          },
+          "children": [
+            {
+              "id": "live_stream",
+              "type": "dropdown",
+              "value": "automatic",
+              "label": {
+                "en": "RTSP stream",
+                "nl": "RTSP-stream",
+                "de": "RTSP-Stream"
+              },
+              "hint": {
+                "en": "Automatic prefers the lower-resolution H.264 substream for reliable Homey Live video.",
+                "nl": "Automatisch geeft voor betrouwbare Homey Live-video de voorkeur aan de H.264-substream met lagere resolutie.",
+                "de": "Automatisch bevorzugt für zuverlässiges Homey-Live-Video den H.264-Substream mit niedrigerer Auflösung."
+              },
+              "values": [
+                {
+                  "id": "automatic",
+                  "label": {
+                    "en": "Automatic (recommended)",
+                    "nl": "Automatisch (aanbevolen)",
+                    "de": "Automatisch (empfohlen)"
+                  }
+                },
+                {
+                  "id": "substream",
+                  "label": {
+                    "en": "Substream",
+                    "nl": "Substream",
+                    "de": "Substream"
+                  }
+                },
+                {
+                  "id": "main",
+                  "label": {
+                    "en": "Main stream",
+                    "nl": "Hoofdstream",
+                    "de": "Hauptstream"
+                  }
+                }
+              ]
+            },
+            {
+              "id": "video_transport",
+              "type": "dropdown",
+              "value": "automatic",
+              "label": {
+                "en": "Playback transport",
+                "nl": "Afspeeltransport",
+                "de": "Wiedergabetransport"
+              },
+              "hint": {
+                "en": "Keep Automatic unless video works in a browser but is black in the Homey app.",
+                "nl": "Laat op Automatisch staan, tenzij beeld in een browser werkt maar zwart is in de Homey-app.",
+                "de": "Automatisch beibehalten, außer das Video funktioniert im Browser, bleibt aber in der Homey-App schwarz."
+              },
+              "values": [
+                {
+                  "id": "automatic",
+                  "label": {
+                    "en": "Automatic (recommended)",
+                    "nl": "Automatisch (aanbevolen)",
+                    "de": "Automatisch (empfohlen)"
+                  }
+                },
+                {
+                  "id": "webrtc",
+                  "label": {
+                    "en": "Homey WebRTC proxy",
+                    "nl": "Homey WebRTC-proxy",
+                    "de": "Homey-WebRTC-Proxy"
+                  }
+                },
+                {
+                  "id": "direct",
+                  "label": {
+                    "en": "Direct RTSP (compatibility)",
+                    "nl": "Directe RTSP (compatibiliteit)",
+                    "de": "Direktes RTSP (Kompatibilität)"
+                  }
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "type": "group",
+          "label": {
+            "en": "Homey motion status",
+            "nl": "Homey-bewegingsstatus",
+            "de": "Homey-Bewegungsstatus"
+          },
+          "children": [
+            {
+              "id": "motion_hold_seconds",
+              "type": "number",
+              "value": 10,
+              "min": 1,
+              "max": 300,
+              "label": {
+                "en": "Minimum active time (seconds)",
+                "nl": "Minimale actieve tijd (seconden)",
+                "de": "Minimale Aktivzeit (Sekunden)"
+              },
+              "hint": {
+                "en": "Keeps this channel tile and its zone active long enough after a short detection pulse.",
+                "nl": "Houdt deze kanaaltegel en de bijbehorende zone lang genoeg actief na een korte detectiepuls.",
+                "de": "Hält diese Kanalkachel und ihre Zone nach einem kurzen Erkennungsimpuls lange genug aktiv."
+              }
+            }
+          ]
+        }
+      ],
+      "id": "hikvision-nvr-channel"
     }
   ],
   "widgets": {

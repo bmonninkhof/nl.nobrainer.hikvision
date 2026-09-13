@@ -1,10 +1,17 @@
 'use strict';
 
 const ALLOWED_REFRESH_SECONDS = new Set([5, 10, 15, 30, 60]);
+const DRIVER_IDS = ['hikvision-camnvr', 'hikvision-nvr-channel'];
 
 function getDevice(homey, deviceId) {
-  const driver = homey.drivers.getDriver('hikvision-camnvr');
-  return driver.getDevices().find(candidate => candidate.getId() === String(deviceId || ''));
+  for (const driverId of DRIVER_IDS) {
+    try {
+      const device = homey.drivers.getDriver(driverId).getDevices()
+        .find(candidate => candidate.getId() === String(deviceId || ''));
+      if (device) return device;
+    } catch {}
+  }
+  return undefined;
 }
 
 function getChannelId(body) {

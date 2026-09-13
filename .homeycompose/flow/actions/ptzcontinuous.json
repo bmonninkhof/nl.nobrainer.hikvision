@@ -11,7 +11,7 @@
     "de": "Relative Werte reichen von -100 bis 100."
   },
   "args": [
-    { "name": "device", "type": "device", "filter": "driver_id=hikvision-camnvr" },
+    { "name": "device", "type": "device", "filter": "driver_id=hikvision-camnvr|hikvision-nvr-channel" },
     { "name": "pannumber", "type": "number", "min": -100, "max": 100, "step": 0.1, "placeholder": { "en": "Pan", "nl": "Pan", "de": "Pan" } },
     { "name": "tiltnumber", "type": "number", "min": -100, "max": 100, "step": 0.1, "placeholder": { "en": "Tilt", "nl": "Tilt", "de": "Tilt" } },
     { "name": "zoomnumber", "type": "number", "min": -100, "max": 100, "step": 0.1, "placeholder": { "en": "Zoom", "nl": "Zoom", "de": "Zoom" } },

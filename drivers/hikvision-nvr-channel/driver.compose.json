@@ -1,0 +1,112 @@
+{
+  "name": {
+    "en": "Hikvision NVR camera channel",
+    "nl": "Hikvision NVR-camerakanaal",
+    "de": "Hikvision NVR-Kamerakanal"
+  },
+  "class": "camera",
+  "platforms": ["local"],
+  "connectivity": ["lan"],
+  "capabilities": [
+    "alarm_motion",
+    "alarm_tamper",
+    "hik_alarm_local",
+    "hik_alarm_video_loss",
+    "hik_alarm_line_crossing",
+    "hik_alarm_intrusion",
+    "hik_alarm_region_entrance",
+    "hik_alarm_region_exiting",
+    "hik_type",
+    "hik_version",
+    "hik_status",
+    "hik_event_monitoring"
+  ],
+  "images": {
+    "large": "/drivers/hikvision-camnvr/assets/images/large.png",
+    "small": "/drivers/hikvision-camnvr/assets/images/small.png",
+    "xlarge": "/drivers/hikvision-camnvr/assets/images/xlarge.png"
+  },
+  "pair": [
+    {
+      "id": "list_devices",
+      "template": "list_devices",
+      "navigation": { "next": "add_devices" },
+      "options": { "singular": false }
+    },
+    { "id": "add_devices", "template": "add_devices" }
+  ],
+  "repair": [
+    { "id": "bug_report" }
+  ],
+  "settings": [
+    {
+      "type": "group",
+      "label": {
+        "en": "Live video",
+        "nl": "Live-video",
+        "de": "Live-Video"
+      },
+      "children": [
+        {
+          "id": "live_stream",
+          "type": "dropdown",
+          "value": "automatic",
+          "label": { "en": "RTSP stream", "nl": "RTSP-stream", "de": "RTSP-Stream" },
+          "hint": {
+            "en": "Automatic prefers the lower-resolution H.264 substream for reliable Homey Live video.",
+            "nl": "Automatisch geeft voor betrouwbare Homey Live-video de voorkeur aan de H.264-substream met lagere resolutie.",
+            "de": "Automatisch bevorzugt für zuverlässiges Homey-Live-Video den H.264-Substream mit niedrigerer Auflösung."
+          },
+          "values": [
+            { "id": "automatic", "label": { "en": "Automatic (recommended)", "nl": "Automatisch (aanbevolen)", "de": "Automatisch (empfohlen)" } },
+            { "id": "substream", "label": { "en": "Substream", "nl": "Substream", "de": "Substream" } },
+            { "id": "main", "label": { "en": "Main stream", "nl": "Hoofdstream", "de": "Hauptstream" } }
+          ]
+        },
+        {
+          "id": "video_transport",
+          "type": "dropdown",
+          "value": "automatic",
+          "label": { "en": "Playback transport", "nl": "Afspeeltransport", "de": "Wiedergabetransport" },
+          "hint": {
+            "en": "Keep Automatic unless video works in a browser but is black in the Homey app.",
+            "nl": "Laat op Automatisch staan, tenzij beeld in een browser werkt maar zwart is in de Homey-app.",
+            "de": "Automatisch beibehalten, außer das Video funktioniert im Browser, bleibt aber in der Homey-App schwarz."
+          },
+          "values": [
+            { "id": "automatic", "label": { "en": "Automatic (recommended)", "nl": "Automatisch (aanbevolen)", "de": "Automatisch (empfohlen)" } },
+            { "id": "webrtc", "label": { "en": "Homey WebRTC proxy", "nl": "Homey WebRTC-proxy", "de": "Homey-WebRTC-Proxy" } },
+            { "id": "direct", "label": { "en": "Direct RTSP (compatibility)", "nl": "Directe RTSP (compatibiliteit)", "de": "Direktes RTSP (Kompatibilität)" } }
+          ]
+        }
+      ]
+    },
+    {
+      "type": "group",
+      "label": {
+        "en": "Homey motion status",
+        "nl": "Homey-bewegingsstatus",
+        "de": "Homey-Bewegungsstatus"
+      },
+      "children": [
+        {
+          "id": "motion_hold_seconds",
+          "type": "number",
+          "value": 10,
+          "min": 1,
+          "max": 300,
+          "label": {
+            "en": "Minimum active time (seconds)",
+            "nl": "Minimale actieve tijd (seconden)",
+            "de": "Minimale Aktivzeit (Sekunden)"
+          },
+          "hint": {
+            "en": "Keeps this channel tile and its zone active long enough after a short detection pulse.",
+            "nl": "Houdt deze kanaaltegel en de bijbehorende zone lang genoeg actief na een korte detectiepuls.",
+            "de": "Hält diese Kanalkachel und ihre Zone nach einem kurzen Erkennungsimpuls lange genug aktiv."
+          }
+        }
+      ]
+    }
+  ]
+}

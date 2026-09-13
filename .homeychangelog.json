@@ -1,4 +1,9 @@
 {
+  "2026.9.11": {
+    "en": "Add optional individual Homey devices for automatically detected NVR camera channels, sharing the NVR connection, events and image cache while providing per-channel Live video, snapshots, recordings, status and Flows.",
+    "nl": "Voeg optionele afzonderlijke Homey-apparaten toe voor automatisch gedetecteerde NVR-camerakanalen, met gedeeld gebruik van de NVR-verbinding, gebeurtenissen en beeldcache en met Live-video, momentopnamen, opnames, status en Flows per kanaal.",
+    "de": "Optionale einzelne Homey-Geräte für automatisch erkannte NVR-Kamerakanäle hinzugefügt. Sie teilen NVR-Verbindung, Ereignisse und Bildcache und bieten Live-Video, Schnappschüsse, Aufnahmen, Status und Flows pro Kanal."
+  },
   "2026.9.10": {
     "en": "Let the zoom widget select automatically detected NVR camera channels, offer configurable image refresh intervals and keep bug reports useful when one diagnostic section fails.",
     "nl": "Laat de zoomwidget automatisch gedetecteerde NVR-camerakanalen kiezen, bied instelbare beeldverversing en houd bugrapporten bruikbaar wanneer één diagnosesectie mislukt.",

@@ -1,8 +1,16 @@
 'use strict';
 
+const DRIVER_IDS = ['hikvision-camnvr', 'hikvision-nvr-channel'];
+
 function getDevice(homey, deviceId) {
-  const driver = homey.drivers.getDriver('hikvision-camnvr');
-  return driver.getDevices().find(device => device.getId() === String(deviceId || ''));
+  for (const driverId of DRIVER_IDS) {
+    try {
+      const device = homey.drivers.getDriver(driverId).getDevices()
+        .find(candidate => candidate.getId() === String(deviceId || ''));
+      if (device) return device;
+    } catch {}
+  }
+  return undefined;
 }
 
 module.exports = {

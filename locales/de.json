@@ -118,6 +118,8 @@
     "invalid_preset": "Die PTZ-Voreinstellung muss eine ganze Zahl zwischen 1 und 300 sein.",
     "invalid_relay": "Die Relaisnummer ist ungültig.",
     "channel_not_available": "Dieser Kamerakanal ist auf dem Hikvision-Gerät nicht verfügbar.",
+    "parent_nvr_missing": "Der verknüpfte Hikvision-NVR ist nicht installiert oder kein NVR. Füge den NVR zuerst hinzu oder stelle ihn wieder her.",
+    "parent_nvr_disconnected": "Der verknüpfte Hikvision-NVR ist nicht verbunden.",
     "ptz_not_supported": "Die PTZ-Steuerung wird auf dem ausgewählten Kamerakanal nicht unterstützt.",
     "preset_not_available": "Diese PTZ-Voreinstellung ist auf dem ausgewählten Kamerakanal nicht gespeichert.",
     "relay_not_supported": "Die Türsteuerung wird von diesem Hikvision-Gerät oder Konto nicht unterstützt.",

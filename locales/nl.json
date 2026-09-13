@@ -118,6 +118,8 @@
     "invalid_preset": "De PTZ-preset moet een geheel getal tussen 1 en 300 zijn.",
     "invalid_relay": "Het relaisnummer is ongeldig.",
     "channel_not_available": "Dit camerakanaal is niet beschikbaar op het Hikvision-apparaat.",
+    "parent_nvr_missing": "De gekoppelde Hikvision-NVR is niet geïnstalleerd of is geen NVR. Voeg de NVR eerst toe of herstel deze.",
+    "parent_nvr_disconnected": "De gekoppelde Hikvision-NVR is niet verbonden.",
     "ptz_not_supported": "PTZ-bediening wordt niet ondersteund op het geselecteerde camerakanaal.",
     "preset_not_available": "Deze PTZ-preset is niet opgeslagen op het geselecteerde camerakanaal.",
     "relay_not_supported": "Deurbediening wordt niet ondersteund door dit Hikvision-apparaat of account.",

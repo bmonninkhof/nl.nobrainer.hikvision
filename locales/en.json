@@ -118,6 +118,8 @@
     "invalid_preset": "The PTZ preset must be an integer between 1 and 300.",
     "invalid_relay": "The relay number is invalid.",
     "channel_not_available": "This camera channel is not available on the Hikvision device.",
+    "parent_nvr_missing": "The linked Hikvision NVR is not installed or is not an NVR. Add or restore the NVR first.",
+    "parent_nvr_disconnected": "The linked Hikvision NVR is not connected.",
     "ptz_not_supported": "PTZ control is not supported on the selected camera channel.",
     "preset_not_available": "This PTZ preset is not stored on the selected camera channel.",
     "relay_not_supported": "Door control is not supported by this Hikvision device or account.",

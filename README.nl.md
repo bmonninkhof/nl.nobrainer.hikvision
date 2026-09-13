@@ -8,7 +8,7 @@ gebruikt Hikvision ISAPI voor apparaatfuncties en gebeurtenissen en RTSP voor
 video. Er is geen Hikvision-cloudaccount nodig.
 
 - **App-ID:** `nl.nobrainer.hikvision`
-- **Huidige testversie:** `2026.9.8`
+- **Huidige testversie:** `2026.9.10`
 - **Homey:** Homey Pro met firmware 12.3.0 of nieuwer
 - **Installeren:** [Homey App Store Test](https://homey.app/nl-nl/app/nl.nobrainer.hikvision/Hikvision/test/)
 - **Ondersteuning:** [Homey Community-topic](https://community.homey.app/t/app-pro-test-hikvision-sdk-v3/157226)
@@ -23,6 +23,7 @@ video. Er is geen Hikvision-cloudaccount nodig.
 - Native Homey Live-video met automatische keuze van een compatibele H.264-stream
 - Optionele directe RTSP-weergave om compatibiliteit met de native Homey-app te testen
 - Momentopnamen voor camera's, deurstations en maximaal zestien online NVR-kanalen
+- Optionele afzonderlijke Homey-camera-apparaten voor automatisch gedetecteerde NVR-kanalen
 - Dashboardwidget met digitale zoom, verschuiven, knijpgebaren en automatisch verversen
 - Bewegings-, deurbel- en slimme gebeurtenistriggers met afbeeldingstags
 - Aparte alarmstatussen en Homey Insights voor ondersteunde gebeurtenistypen
@@ -35,7 +36,7 @@ video. Er is geen Hikvision-cloudaccount nodig.
 
 ## Ondersteunde apparaten
 
-De app gebruikt één Homey-cameradriver voor:
+De hoofd-cameradriver van Homey ondersteunt:
 
 - Hikvision IP-camera's
 - Hikvision-NVR's met maximaal zestien online camerakanalen
@@ -47,6 +48,11 @@ Ondersteuning hangt af van het exacte model, de firmware, ingeschakelde diensten
 en rechten van het lokale Hikvision-account. Functies worden waar mogelijk
 automatisch gedetecteerd, zodat niet-ondersteunde relais, kanalen of PTZ-presets
 niet als geldige Flow-keuzes worden aangeboden.
+
+Een optionele tweede driver voegt gedetecteerde NVR-camerakanalen als afzonderlijke
+Homey-apparaten toe. Elk kanaal kan dan een eigen naam, zone, tegel, Live-video,
+momentopnamen, opnames, alarmstatus en Flows krijgen. Deze kanaalapparaten gebruiken
+dezelfde ISAPI-verbinding, eventstream en begrensde beeldcache als de geïnstalleerde NVR.
 
 ## Vereisten
 
@@ -68,6 +74,11 @@ niet als geldige Flow-keuzes worden aangeboden.
 5. Gebruik poort `80` voor HTTP of `443` voor HTTPS, tenzij het apparaat anders is
    ingesteld. De gebruikelijke RTSP-poort is `554`.
 6. Controleer momentopnamen en Live-video en test daarna de gewenste gebeurtenistriggers.
+
+Installeer voor afzonderlijke NVR-kanalen eerst de NVR met de gecombineerde driver.
+Start daarna opnieuw **Apparaat toevoegen**, kies **Hikvision NVR-camerakanaal** en
+selecteer één of meer gedetecteerde kanalen. Als de bovenliggende NVR wordt verwijderd
+of de verbinding verliest, blijven de kanaalapparaten onbeschikbaar totdat de NVR is hersteld.
 
 HTTPS heeft de voorkeur wanneer het apparaat dit ondersteunt. Geforceerde
 Basic-authenticatie via HTTP is niet versleuteld. Schakel TLS-certificaatcontrole
@@ -120,6 +131,10 @@ Insights beschikbaar. Bij een NVR wordt de alarmstatus van de kanalen samengevoe
 en blijft die actief zolang minimaal één kanaal de gebeurtenis meldt. Een
 veiligheidstime-out beëindigt gebeurtenissen wanneer een NVR wel een startmelding,
 maar geen bijbehorende stopmelding verstuurt.
+
+Als een kanaal ook als afzonderlijk apparaat is geïnstalleerd, werken de tegel en
+apparaatgebonden Flow-triggers alleen met gebeurtenissen die dat kanaalnummer bevatten.
+De bovenliggende NVR blijft voor bestaande Flows de samengevoegde status aanbieden.
 
 Triggers voor beweging, lijnoverschrijding, indringing en de deurbel bevatten waar
 mogelijk een actuele momentopname als afbeeldingstag.
