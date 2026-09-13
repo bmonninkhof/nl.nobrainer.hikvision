@@ -231,7 +231,9 @@ class HikvisionDriver extends Homey.Driver {
           return { success: false, error: this.homey.__('repair.unavailable') };
         } catch (error) {
           this.error('Bug report generation failed', error);
-          return createMinimalBugReport(this.homey.manifest, getDiagnosticErrorCode(error));
+          let manifest = {};
+          try { manifest = this.homey.app?.manifest || this.homey.manifest || {}; } catch {}
+          return createMinimalBugReport(manifest, getDiagnosticErrorCode(error));
         } finally {
           bugReportPromise = null;
         }

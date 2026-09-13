@@ -36,5 +36,5 @@ test('camerawidget kan een Flow met de gemaakte momentopname starten', () => {
   const widgetApi = fs.readFileSync(path.join(__dirname, '..', 'widgets', 'camera-zoom', 'api.js'), 'utf8');
   assert.match(driver, /'SnapshotCaptured'/);
   assert.match(device, /trigger\('SnapshotCaptured', this, \{ channelID: channelId, snapshot: image \}\)/);
-  assert.match(widgetApi, /captureWidgetSnapshot\(1\)/);
+  assert.match(widgetApi, /captureWidgetSnapshot\(getChannelId\(body\)\)/);
 });

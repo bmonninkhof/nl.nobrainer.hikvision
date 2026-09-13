@@ -4,6 +4,8 @@
       "select_camera": "Selecteer een Hikvision-camera in de widgetinstellingen.",
       "no_camera_selected": "Er is geen camera geselecteerd.",
       "camera_missing": "De geselecteerde Hikvision-camera bestaat niet meer.",
+      "channel": "Camerakanaal",
+      "no_channels": "Er zijn geen camerakanalen gedetecteerd.",
       "loading": "Camerabeeld laden…",
       "error": "Camerabeeld kon niet worden geladen.",
       "updated": "Bijgewerkt om __time__",

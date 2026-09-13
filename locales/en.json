@@ -4,6 +4,8 @@
       "select_camera": "Select a Hikvision camera in the widget settings.",
       "no_camera_selected": "No camera has been selected.",
       "camera_missing": "The selected Hikvision camera no longer exists.",
+      "channel": "Camera channel",
+      "no_channels": "No camera channels were detected.",
       "loading": "Loading camera image…",
       "error": "The camera image could not be loaded.",
       "updated": "Updated at __time__",

@@ -4,6 +4,8 @@
       "select_camera": "Wählen Sie eine Hikvision-Kamera in den Widget-Einstellungen aus.",
       "no_camera_selected": "Es wurde keine Kamera ausgewählt.",
       "camera_missing": "Die ausgewählte Hikvision-Kamera ist nicht mehr vorhanden.",
+      "channel": "Kamerakanal",
+      "no_channels": "Es wurden keine Kamerakanäle erkannt.",
       "loading": "Kamerabild wird geladen…",
       "error": "Das Kamerabild konnte nicht geladen werden.",
       "updated": "Aktualisiert um __time__",

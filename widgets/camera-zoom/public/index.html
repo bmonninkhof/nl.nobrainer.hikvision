@@ -100,6 +100,22 @@
     .camera-name, .status { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
     .camera-name { font-weight: 700; }
     .status { color: var(--muted); font-size: 12px; }
+    .channel-select {
+      min-width: 0;
+      max-width: 46%;
+      min-height: 34px;
+      margin-left: auto;
+      padding: 5px 28px 5px 9px;
+      border: 1px solid var(--panel-border);
+      border-radius: 10px;
+      background: var(--panel);
+      color: var(--text);
+      font: inherit;
+      font-size: 13px;
+      text-overflow: ellipsis;
+      pointer-events: auto;
+    }
+    .channel-select[hidden] { display: none; }
     .controls {
       position: absolute;
       z-index: 3;
@@ -209,6 +225,7 @@
         <div id="camera-name" class="camera-name">Hikvision</div>
         <div id="status" class="status"></div>
       </div>
+      <select id="channel-select" class="channel-select" hidden></select>
     </header>
     <nav class="controls controls-with-landscape" aria-label="Camera zoom controls">
       <button id="zoom-out" class="control" type="button">
@@ -234,6 +251,7 @@
       const viewport = document.getElementById('viewport');
       const image = document.getElementById('camera-image');
       const cameraName = document.getElementById('camera-name');
+      const channelSelect = document.getElementById('channel-select');
       const status = document.getElementById('status');
       const statusDot = document.getElementById('status-dot');
       const emptyState = document.getElementById('empty-state');
@@ -242,6 +260,10 @@
       const landscapeHint = document.getElementById('landscape-hint');
       const cameraCard = document.querySelector('.camera-card');
       const deviceId = Homey.getDeviceIds()[0];
+      const configuredRefreshSeconds = Number(Homey.getSettings()?.refresh_interval);
+      const refreshSeconds = [5, 10, 15, 30, 60].includes(configuredRefreshSeconds)
+        ? configuredRefreshSeconds
+        : 15;
       const pointers = new Map();
       let scale = 1;
       let panX = 0;
@@ -254,6 +276,7 @@
       let landscapeRequested = false;
       let landscapeFallback = false;
       let landscapeHintTimer = null;
+      let selectedChannelId = 1;
 
       const text = (key, fallback, tokens) => {
         const translated = Homey.__(`widget.camera_zoom.${key}`, tokens || {});
@@ -263,6 +286,7 @@
       document.getElementById('zoom-out').setAttribute('aria-label', text('zoom_out', 'Zoom out'));
       document.getElementById('zoom-in').setAttribute('aria-label', text('zoom_in', 'Zoom in'));
       document.getElementById('zoom-reset').setAttribute('aria-label', text('zoom_reset', 'Reset zoom'));
+      channelSelect.setAttribute('aria-label', text('channel', 'Camera channel'));
       const refreshLabel = text('capture', 'Take snapshot');
       document.getElementById('refresh').setAttribute('aria-label', refreshLabel);
       document.getElementById('refresh').setAttribute('title', refreshLabel);
@@ -475,7 +499,11 @@
         if (!image.src) status.textContent = text('loading', 'Loading camera image…');
         try {
           const endpoint = manual ? '/capture' : '/snapshot';
-          const result = await Homey.api('POST', endpoint, { deviceId });
+          const result = await Homey.api('POST', endpoint, {
+            deviceId,
+            channelId: selectedChannelId,
+            refreshSeconds,
+          });
           const nextSource = `data:${result.mimeType};base64,${result.image}`;
           const preload = new Image();
           await new Promise((resolve, reject) => {
@@ -503,12 +531,42 @@
         }
       }
 
+      async function loadChannels() {
+        const channels = await Homey.api('POST', '/channels', { deviceId });
+        if (!Array.isArray(channels) || channels.length === 0) {
+          throw new Error(text('no_channels', 'No camera channels were detected.'));
+        }
+        channelSelect.replaceChildren(...channels.map(channel => {
+          const option = document.createElement('option');
+          option.value = String(channel.id);
+          option.textContent = channel.name;
+          return option;
+        }));
+        selectedChannelId = Number(channels[0].id);
+        channelSelect.value = String(selectedChannelId);
+        channelSelect.hidden = channels.length < 2;
+      }
+
+      channelSelect.addEventListener('change', () => {
+        const nextChannelId = Number(channelSelect.value);
+        if (!Number.isInteger(nextChannelId) || nextChannelId <= 0) return;
+        selectedChannelId = nextChannelId;
+        resetZoom();
+        image.removeAttribute('src');
+        loadSnapshot(false);
+      });
+
       if (!deviceId) {
         emptyState.textContent = text('select_camera', 'Select a Hikvision camera in the widget settings.');
         emptyState.hidden = false;
       } else {
-        loadSnapshot(false);
-        setInterval(() => loadSnapshot(false), 15000);
+        loadChannels()
+          .then(() => loadSnapshot(false))
+          .catch(error => {
+            emptyState.textContent = error?.message || text('error', 'The camera image could not be loaded.');
+            emptyState.hidden = false;
+          });
+        setInterval(() => loadSnapshot(false), refreshSeconds * 1000);
         document.addEventListener('visibilitychange', () => { if (!document.hidden) loadSnapshot(false); });
       }
       updateLandscapeButton();

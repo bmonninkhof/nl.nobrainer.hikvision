@@ -4,7 +4,11 @@ const assert = require('node:assert/strict');
 const fs = require('node:fs');
 const path = require('node:path');
 const test = require('node:test');
-const { hashPrivateValue, sanitizeForBugReport } = require('../lib/bug-report');
+const {
+  hashPrivateValue,
+  readBugReportSection,
+  sanitizeForBugReport,
+} = require('../lib/bug-report');
 const { createMinimalBugReport } = require('../lib/minimal-bug-report');
 
 test('bugrapport verwijdert netwerk- en accountgegevens', () => {
@@ -57,4 +61,16 @@ test('minimaal bugrapport blijft beschikbaar wanneer volledige generatie faalt',
     errorCode: 'ECIRCULAR',
   });
   assert.doesNotMatch(result.report, /address|username|password/i);
+});
+
+test('een defecte rapportsectie levert een waarschuwing op en blokkeert het rapport niet', () => {
+  const warnings = [];
+  const result = readBugReportSection('video-profiles', () => {
+    const error = new Error('Local file was not found');
+    error.code = 'ENOENT';
+    throw error;
+  }, {}, warnings);
+
+  assert.deepEqual(result, {});
+  assert.deepEqual(warnings, [{ section: 'video-profiles', errorCode: 'ENOENT' }]);
 });

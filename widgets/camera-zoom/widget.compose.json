@@ -19,7 +19,50 @@
       "capabilities": "hik_status"
     }
   },
+  "settings": [
+    {
+      "id": "refresh_interval",
+      "type": "dropdown",
+      "title": {
+        "en": "Image refresh interval",
+        "nl": "Verversingssnelheid beeld",
+        "de": "Bildaktualisierungsintervall"
+      },
+      "hint": {
+        "en": "A shorter interval uses more camera, network and Homey resources.",
+        "nl": "Een korter interval belast de camera, het netwerk en Homey meer.",
+        "de": "Ein kürzeres Intervall belast Kamera, Netzwerk und Homey stärker."
+      },
+      "value": "15",
+      "values": [
+        {
+          "id": "5",
+          "title": { "en": "Every 5 seconds", "nl": "Elke 5 seconden", "de": "Alle 5 Sekunden" }
+        },
+        {
+          "id": "10",
+          "title": { "en": "Every 10 seconds", "nl": "Elke 10 seconden", "de": "Alle 10 Sekunden" }
+        },
+        {
+          "id": "15",
+          "title": { "en": "Every 15 seconds", "nl": "Elke 15 seconden", "de": "Alle 15 Sekunden" }
+        },
+        {
+          "id": "30",
+          "title": { "en": "Every 30 seconds", "nl": "Elke 30 seconden", "de": "Alle 30 Sekunden" }
+        },
+        {
+          "id": "60",
+          "title": { "en": "Every 60 seconds", "nl": "Elke 60 seconden", "de": "Alle 60 Sekunden" }
+        }
+      ]
+    }
+  ],
   "api": {
+    "getChannels": {
+      "method": "POST",
+      "path": "/channels"
+    },
     "getSnapshot": {
       "method": "POST",
       "path": "/snapshot"

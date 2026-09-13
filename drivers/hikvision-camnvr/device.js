@@ -4,7 +4,11 @@ const Homey = require('homey');
 const process = require('node:process');
 const crypto = require('node:crypto');
 const { HikvisionClient, getDiagnosticErrorCode } = require('../../lib/hikvision-client');
-const { hashPrivateValue, sanitizeForBugReport } = require('../../lib/bug-report');
+const {
+  hashPrivateValue,
+  readBugReportSection,
+  sanitizeForBugReport,
+} = require('../../lib/bug-report');
 const { getUnsupportedAlarmCapabilities } = require('../../lib/device-capabilities');
 const {
   isAnyAlarmActive,
@@ -812,15 +816,26 @@ class HikvisionDevice extends Homey.Device {
   }
 
   async getBugReport() {
-    const settings = this.getSettings();
-    const data = this.getData();
+    const reportWarnings = [];
+    const settings = readBugReportSection('settings', () => this.getSettings(), {}, reportWarnings);
+    const data = readBugReportSection('device-data', () => this.getData(), {}, reportWarnings);
     const privateValues = [settings.address, settings.username, settings.password, data?.id];
-    const manifest = this.homey.manifest || {};
-    const capabilityValues = Object.fromEntries(this.getCapabilities().map(capability => [
-      capability,
-      this.getCapabilityValue(capability),
-    ]));
-    const deviceType = String(this.getCapabilityValue('hik_type') || '').toUpperCase();
+    const manifest = readBugReportSection(
+      'app-manifest',
+      () => this.homey.app?.manifest || this.homey.manifest || {},
+      {},
+      reportWarnings,
+    );
+    const capabilityValues = readBugReportSection(
+      'capabilities',
+      () => Object.fromEntries(this.getCapabilities().map(capability => [
+        capability,
+        this.getCapabilityValue(capability),
+      ])),
+      {},
+      reportWarnings,
+    );
+    const deviceType = String(capabilityValues.hik_type || '').toUpperCase();
     let localDisplay;
     if (!deviceType.includes('NVR')) {
       localDisplay = {
@@ -847,6 +862,12 @@ class HikvisionDevice extends Homey.Device {
         status: 'collecting',
       };
     }
+    const diagnostics = readBugReportSection(
+      'diagnostics',
+      () => this.getDiagnostics(),
+      { success: false, status: 'section-unavailable' },
+      reportWarnings,
+    );
     const report = sanitizeForBugReport({
       reportType: 'Hikvision device bug report',
       createdAt: new Date().toISOString(),
@@ -876,7 +897,8 @@ class HikvisionDevice extends Homey.Device {
         rtspOnly: parseBoolean(settings.rtsp_only),
       },
       capabilities: capabilityValues,
-      diagnostics: this.getDiagnostics(),
+      diagnostics,
+      reportWarnings,
       experimentalDiagnostics: {
         localNvrDisplay: localDisplay,
       },
@@ -1170,8 +1192,12 @@ class HikvisionDevice extends Homey.Device {
   }
 
   snapshotResult(channelId, snapshot) {
+    const channelName = this.availableChannels.get(channelId);
+    const name = this.availableChannels.size > 1 && channelName
+      ? `${this.getName()} · [${channelId}] ${channelName}`
+      : this.getName();
     return {
-      name: this.getName(),
+      name,
       channelId,
       mimeType: 'image/jpeg',
       image: snapshot.toString('base64'),
@@ -1179,9 +1205,12 @@ class HikvisionDevice extends Homey.Device {
     };
   }
 
-  async getWidgetSnapshot(channelId = 1) {
+  async getWidgetSnapshot(channelId = 1, { maxAgeMs = SNAPSHOT_CACHE_TTL } = {}) {
     if (!this.client) throw new Error(this.homey.__('errors.not_connected'));
-    const snapshot = await this.getSnapshotBuffer(channelId);
+    if (!this.availableChannels.has(channelId)) {
+      throw new Error(this.homey.__('errors.channel_not_available'));
+    }
+    const snapshot = await this.getSnapshotBuffer(channelId, { maxAgeMs });
     return this.snapshotResult(channelId, snapshot);
   }
 
@@ -1196,12 +1225,15 @@ class HikvisionDevice extends Homey.Device {
     return this.snapshotResult(channelId, snapshot);
   }
 
-  async getSnapshotBuffer(channelId, { forceRefresh = false } = {}) {
+  async getSnapshotBuffer(channelId, { forceRefresh = false, maxAgeMs = SNAPSHOT_CACHE_TTL } = {}) {
     const now = Date.now();
+    const cacheTtl = Number.isFinite(Number(maxAgeMs))
+      ? Math.max(0, Math.min(60000, Number(maxAgeMs)))
+      : SNAPSHOT_CACHE_TTL;
     const cachedSnapshot = this.snapshotCache.get(channelId);
     const cachedAt = this.snapshotCacheUpdatedAt.get(channelId) || 0;
     if (!forceRefresh && cachedSnapshot
-      && (now - cachedAt < SNAPSHOT_CACHE_TTL || now < (this.snapshotRetryAfter.get(channelId) || 0))) {
+      && (now - cachedAt < cacheTtl || now < (this.snapshotRetryAfter.get(channelId) || 0))) {
       return cachedSnapshot;
     }
 

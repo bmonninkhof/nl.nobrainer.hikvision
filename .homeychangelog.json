@@ -1,4 +1,9 @@
 {
+  "2026.9.10": {
+    "en": "Let the zoom widget select automatically detected NVR camera channels, offer configurable image refresh intervals and keep bug reports useful when one diagnostic section fails.",
+    "nl": "Laat de zoomwidget automatisch gedetecteerde NVR-camerakanalen kiezen, bied instelbare beeldverversing en houd bugrapporten bruikbaar wanneer één diagnosesectie mislukt.",
+    "de": "Ermöglicht in der Zoom-Widget die Auswahl automatisch erkannter NVR-Kamerakanäle, bietet ein einstellbares Bildaktualisierungsintervall und hält Fehlerberichte nutzbar, wenn ein Diagnoseabschnitt fehlschlägt."
+  },
   "2026.9.9": {
     "en": "Improve pairing with automatic network discovery, a dedicated connection-test step, password-manager support and standard Homey device icons. Refine mobile fullscreen, landscape, zoom and snapshot controls.",
     "nl": "Verbeter het koppelen met automatische netwerkdetectie, een aparte verbindingstest, ondersteuning voor wachtwoordmanagers en standaard Homey-apparaatpictogrammen. Verfijn volledig scherm, landscape, zoom en momentopnamen op mobiele apparaten.",
