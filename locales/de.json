@@ -114,6 +114,7 @@
     "invalid_channel": "Die Kanalnummer muss zwischen 1 und 36 liegen.",
     "invalid_port": "Der Port muss eine ganze Zahl zwischen 1 und 65535 sein.",
     "invalid_motion_hold": "Die minimale Aktivzeit muss eine ganze Zahl zwischen 1 und 300 Sekunden sein.",
+    "rtsp_only_unsupported": "Der Nur-RTSP-Modus ist nur für kompatible Hikvision-Video-Türklingeln und Türstationen verfügbar.",
     "invalid_ptz": "Der PTZ-Wert für __name__ muss zwischen -100 und 100 liegen.",
     "invalid_preset": "Die PTZ-Voreinstellung muss eine ganze Zahl zwischen 1 und 300 sein.",
     "invalid_relay": "Die Relaisnummer ist ungültig.",

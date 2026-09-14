@@ -114,6 +114,7 @@
     "invalid_channel": "Het kanaalnummer moet tussen 1 en 36 liggen.",
     "invalid_port": "De poort moet een geheel getal tussen 1 en 65535 zijn.",
     "invalid_motion_hold": "De minimale actieve tijd moet een geheel getal tussen 1 en 300 seconden zijn.",
+    "rtsp_only_unsupported": "Alleen-RTSP is uitsluitend beschikbaar voor compatibele Hikvision-videodeurbellen en deurstations.",
     "invalid_ptz": "De PTZ-waarde voor __name__ moet tussen -100 en 100 liggen.",
     "invalid_preset": "De PTZ-preset moet een geheel getal tussen 1 en 300 zijn.",
     "invalid_relay": "Het relaisnummer is ongeldig.",

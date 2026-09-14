@@ -114,6 +114,7 @@
     "invalid_channel": "The channel number must be between 1 and 36.",
     "invalid_port": "The port must be an integer between 1 and 65535.",
     "invalid_motion_hold": "The minimum active time must be an integer between 1 and 300 seconds.",
+    "rtsp_only_unsupported": "RTSP-only mode is only available for compatible Hikvision video doorbells and door stations.",
     "invalid_ptz": "The PTZ value for __name__ must be between -100 and 100.",
     "invalid_preset": "The PTZ preset must be an integer between 1 and 300.",
     "invalid_relay": "The relay number is invalid.",

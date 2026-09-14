@@ -1,4 +1,9 @@
 {
+  "2026.9.14": {
+    "en": "Improve privacy-safe RTSP diagnostics, use Homey's WebRTC proxy explicitly in Automatic mode and limit RTSP-only mode to compatible video doorbells and door stations.",
+    "nl": "Verbeter de privacyveilige RTSP-diagnostiek, gebruik Homey's WebRTC-proxy expliciet in de automatische stand en beperk Alleen-RTSP tot compatibele videodeurbellen en deurstations.",
+    "de": "Verbessert die datenschutzsichere RTSP-Diagnose, verwendet im Automatikmodus ausdrücklich Homeys WebRTC-Proxy und beschränkt den Nur-RTSP-Modus auf kompatible Video-Türklingeln und Türstationen."
+  },
   "2026.9.13": {
     "en": "Improve Hikvision NVR RTSP Digest compatibility and make camera and NVR-channel bug reports display reliably on smaller mobile screens.",
     "nl": "Verbeter de compatibiliteit van RTSP Digest-authenticatie met Hikvision-NVR's en toon bugrapporten van camera's en NVR-kanalen betrouwbaar op kleinere mobiele schermen.",

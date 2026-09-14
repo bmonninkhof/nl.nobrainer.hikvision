@@ -237,8 +237,7 @@ class HikvisionNvrChannelDevice extends Homey.Device {
         this.log(`Using H.264 fallback profile for NVR channel ${this.channelId}: ${error.message}`);
       }
       const options = { demuxer: profile.demuxer };
-      if (videoTransport === 'direct') options.disableWebRTCProxy = true;
-      if (videoTransport === 'webrtc') options.disableWebRTCProxy = false;
+      options.disableWebRTCProxy = videoTransport === 'direct';
       const video = await this.homey.videos.createVideoRTSP(options);
       video.registerVideoUrlListener(async () => ({
         url: this.requireParent().getRtspUrl(this.channelId, profile.streamId),

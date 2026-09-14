@@ -21,6 +21,7 @@ test('VIS met defecte ISAPI gebruikt de begrensde RTSP-fallback', () => {
     'utf8',
   );
   assert.match(source, /if \(!supportsRtspOnlyFallback\(cachedType\)\) throw error/);
+  assert.match(source, /requestedRtspOnly && !supportsRtspOnlyFallback\(cachedType\)/);
   assert.match(source, /const forceRtspOnly = parseBoolean\(settings\.rtsp_only\)/);
   assert.match(source, /const fallbackType = cachedType && cachedType\.toUpperCase\(\) !== 'UNKNOWN' \? cachedType : 'VIS'/);
   assert.match(source, /RTSP-only mode is enabled; all ISAPI requests are disabled/);
@@ -55,6 +56,6 @@ test('Live-videodiagnose bevat profielkeuze en RTSP-only-status', () => {
   assert.match(source, /videoProfiles: Object\.fromEntries\(this\.videoProfiles\)/);
   assert.match(source, /const preference = String\(this\.getSettings\(\)\.live_stream \|\| 'automatic'\)/);
   assert.match(source, /const videoTransport = String\(this\.getSettings\(\)\.video_transport \|\| 'automatic'\)/);
-  assert.match(source, /if \(videoTransport === 'direct'\) videoOptions\.disableWebRTCProxy = true/);
-  assert.match(source, /if \(videoTransport === 'webrtc'\) videoOptions\.disableWebRTCProxy = false/);
+  assert.match(source, /videoOptions\.disableWebRTCProxy = videoTransport === 'direct'/);
+  assert.match(source, /errors\.rtsp_only_unsupported/);
 });

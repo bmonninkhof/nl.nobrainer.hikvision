@@ -148,6 +148,13 @@ class HikvisionDevice extends Homey.Device {
 
   async connect(settings = this.getSettings()) {
     this.disconnect();
+    const cachedType = String(this.getCapabilityValue('hik_type') || '');
+    const requestedRtspOnly = parseBoolean(settings.rtsp_only);
+    if (requestedRtspOnly && !supportsRtspOnlyFallback(cachedType)) {
+      settings = { ...settings, rtsp_only: false };
+      await this.setSettings({ rtsp_only: false }).catch(this.error);
+      this.log(`RTSP-only mode ignored for unsupported device type ${cachedType || 'unknown'}`);
+    }
     const generation = this.connectionGeneration;
     const client = this.createClient(settings);
     this.client = client;
@@ -176,7 +183,6 @@ class HikvisionDevice extends Homey.Device {
       let isapiAvailable = true;
       let automaticRtspFallbackError = null;
       const forceRtspOnly = parseBoolean(settings.rtsp_only);
-      const cachedType = String(this.getCapabilityValue('hik_type') || '');
       const fallbackType = cachedType && cachedType.toUpperCase() !== 'UNKNOWN' ? cachedType : 'VIS';
       if (forceRtspOnly) {
         isapiAvailable = false;
@@ -692,6 +698,10 @@ class HikvisionDevice extends Homey.Device {
     if (!String(newSettings.address || '').trim() || !String(newSettings.username || '').trim()) {
       throw new Error(this.homey.__('pair.nosettings'));
     }
+    if (changedKeys.includes('rtsp_only') && parseBoolean(newSettings.rtsp_only)
+      && !supportsRtspOnlyFallback(this.getCapabilityValue('hik_type'))) {
+      throw new Error(this.homey.__('errors.rtsp_only_unsupported'));
+    }
     if (changedKeys.every(key => key === 'motion_hold_seconds')) return;
     await this.stopAllPtz();
     await this.connect(newSettings);
@@ -919,8 +929,14 @@ class HikvisionDevice extends Homey.Device {
     const diagnostics = readBugReportSection(
       'diagnostics',
       () => this.getDiagnostics(),
-      { success: false, status: 'section-unavailable' },
+      { status: 'optional-unavailable' },
       reportWarnings,
+      { ignoredErrorCodes: ['ENOENT'] },
+    );
+    const primaryChannelId = [...this.availableChannels.keys()][0] || 1;
+    const rtsp = await this.getRtspDiagnostics(
+      primaryChannelId,
+      this.videoProfiles.get(primaryChannelId)?.streamId,
     );
     const report = sanitizeForBugReport({
       reportType: 'Hikvision device bug report',
@@ -955,6 +971,7 @@ class HikvisionDevice extends Homey.Device {
       reportWarnings,
       experimentalDiagnostics: {
         localNvrDisplay: localDisplay,
+        rtsp,
       },
     }, privateValues);
 
@@ -1478,8 +1495,7 @@ class HikvisionDevice extends Homey.Device {
       if (!isCurrent()) return;
 
       const videoOptions = { demuxer: profile.demuxer };
-      if (videoTransport === 'direct') videoOptions.disableWebRTCProxy = true;
-      if (videoTransport === 'webrtc') videoOptions.disableWebRTCProxy = false;
+      videoOptions.disableWebRTCProxy = videoTransport === 'direct';
       const video = await this.homey.videos.createVideoRTSP(videoOptions);
       video.registerVideoUrlListener(async () => ({ url: this.getRtspUrl(channelId, profile.streamId) }));
       if (!isCurrent()) {

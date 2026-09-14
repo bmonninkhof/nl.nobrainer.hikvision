@@ -56,6 +56,8 @@ test('diagnostics retry authenticated DESCRIBE and only return safe metadata', a
     channelId: 1, streamId: 102, requester,
   });
   assert.equal(calls.length, 2);
+  assert.equal(calls[0].cseq, 1);
+  assert.equal(calls[1].cseq, 2);
   assert.equal(result.describe.status, 'available');
   assert.equal(result.describe.authentication, 'digest');
   assert.deepEqual(result.describe.codecs, [{ media: 'video', payload: 96, codec: 'H264' }]);
@@ -89,6 +91,7 @@ test('diagnostics retry Digest with a path uri for Hikvision NVR compatibility',
     channelId: 1, streamId: 102, requester,
   });
   assert.equal(calls.length, 3);
+  assert.deepEqual(calls.map(call => call.cseq), [1, 2, 3]);
   assert.equal(result.describe.status, 'available');
   assert.doesNotMatch(JSON.stringify(result), /192\.168|admin|very-secret|rtsp:\/\//);
 });

@@ -75,3 +75,17 @@ test('een defecte rapportsectie levert een waarschuwing op en blokkeert het rapp
   assert.deepEqual(result, {});
   assert.deepEqual(warnings, [{ section: 'video-profiles', errorCode: 'ENOENT' }]);
 });
+
+test('een ontbrekende optionele diagnosesectie geeft geen misleidende waarschuwing', () => {
+  const warnings = [];
+  const result = readBugReportSection('diagnostics', () => {
+    const error = new Error('Optional diagnostics are unavailable');
+    error.code = 'ENOENT';
+    throw error;
+  }, { status: 'optional-unavailable' }, warnings, {
+    ignoredErrorCodes: ['ENOENT'],
+  });
+
+  assert.deepEqual(result, { status: 'optional-unavailable' });
+  assert.deepEqual(warnings, []);
+});
