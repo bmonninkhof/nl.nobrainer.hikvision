@@ -87,11 +87,20 @@
     margin: 1rem 0;
   }
   .bug-report-output {
+    box-sizing: border-box;
+    display: block;
+    width: 100%;
     min-height: 16rem;
+    max-height: 48vh;
     font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
     font-size: 0.82rem;
     line-height: 1.35;
     resize: vertical;
+  }
+  .homey-form-fieldset { box-sizing: border-box; width: 100%; min-width: 0; }
+  .homey-subtitle { overflow-wrap: anywhere; }
+  @media (max-height: 560px) {
+    .bug-report-output { min-height: 8rem; max-height: 32vh; }
   }
 </style>
 

@@ -53,18 +53,33 @@
 </script>
 
 <style>
-  .actions { display: flex; flex-direction: column; gap: .75rem; margin: 1rem 0; }
-  #output { min-height: 16rem; font-family: ui-monospace, monospace; font-size: .82rem; }
+  .actions { display: flex; flex-direction: column; gap: .75rem; margin: 1rem 0; width: 100%; }
+  #output {
+    box-sizing: border-box;
+    display: block;
+    width: 100%;
+    min-height: 16rem;
+    max-height: 48vh;
+    font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+    font-size: .82rem;
+    line-height: 1.35;
+    resize: vertical;
+  }
+  .homey-form-fieldset { box-sizing: border-box; width: 100%; min-width: 0; }
+  .homey-subtitle { overflow-wrap: anywhere; }
+  @media (max-height: 560px) {
+    #output { min-height: 8rem; max-height: 32vh; }
+  }
 </style>
 
 <fieldset class="homey-form-fieldset">
   <legend class="homey-form-legend" id="title">Bug report</legend>
-  <p class="homey-subtitle" id="status"></p>
-  <p class="homey-subtitle" id="privacy"></p>
+  <p class="homey-subtitle" id="status">A privacy-safe bug report is being created.</p>
+  <p class="homey-subtitle" id="privacy">Passwords, usernames, addresses, snapshots and video are not included.</p>
   <div class="actions">
-    <button id="create" type="button" onclick="createReport()" class="homey-button-primary-full"></button>
-    <button id="copy" type="button" onclick="copyReport()" class="homey-button-secondary-full"></button>
-    <button id="close" type="button" onclick="Homey.done()" class="homey-button-secondary-full"></button>
+    <button id="create" type="button" onclick="createReport()" class="homey-button-primary-full">Create again</button>
+    <button id="copy" type="button" onclick="copyReport()" class="homey-button-secondary-full">Copy bug report</button>
+    <button id="close" type="button" onclick="Homey.done()" class="homey-button-secondary-full">Close</button>
   </div>
   <textarea id="output" class="homey-form-textarea" readonly></textarea>
 </fieldset>

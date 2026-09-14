@@ -62,6 +62,37 @@ test('diagnostics retry authenticated DESCRIBE and only return safe metadata', a
   assert.doesNotMatch(JSON.stringify(result), /192\.168|admin|very-secret|rtsp:\/\//);
 });
 
+test('diagnostics retry Digest with a path uri for Hikvision NVR compatibility', async () => {
+  const calls = [];
+  const requester = async options => {
+    calls.push(options);
+    if (!options.authorization) {
+      return {
+        tcpConnected: true,
+        statusCode: 401,
+        headers: { 'www-authenticate': 'Digest realm="cam", nonce="abc", qop="auth"' },
+        body: '',
+      };
+    }
+    if (/uri="\/Streaming\/Channels\/102"/.test(options.authorization)) {
+      return {
+        tcpConnected: true,
+        statusCode: 200,
+        headers: { 'content-type': 'application/sdp' },
+        body: 'm=video 0 RTP/AVP 96\r\na=rtpmap:96 H264/90000\r\n',
+      };
+    }
+    return { tcpConnected: true, statusCode: 401, headers: {}, body: '' };
+  };
+  const result = await getRtspDiagnostics({
+    host: '192.168.1.25', username: 'admin', password: 'very-secret',
+    channelId: 1, streamId: 102, requester,
+  });
+  assert.equal(calls.length, 3);
+  assert.equal(result.describe.status, 'available');
+  assert.doesNotMatch(JSON.stringify(result), /192\.168|admin|very-secret|rtsp:\/\//);
+});
+
 test('network errors are reduced to a safe error code', async () => {
   const error = Object.assign(new Error('connect failed to 192.168.1.25'), { code: 'ECONNREFUSED' });
   const result = await getRtspDiagnostics({ host: '192.168.1.25', requester: async () => { throw error; } });

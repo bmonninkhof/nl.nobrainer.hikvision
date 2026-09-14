@@ -1,4 +1,9 @@
 {
+  "2026.9.13": {
+    "en": "Improve Hikvision NVR RTSP Digest compatibility and make camera and NVR-channel bug reports display reliably on smaller mobile screens.",
+    "nl": "Verbeter de compatibiliteit van RTSP Digest-authenticatie met Hikvision-NVR's en toon bugrapporten van camera's en NVR-kanalen betrouwbaar op kleinere mobiele schermen.",
+    "de": "Verbessert die RTSP-Digest-Kompatibilität mit Hikvision-NVRs und zeigt Fehlerberichte von Kameras und NVR-Kanälen zuverlässig auf kleineren Mobilbildschirmen an."
+  },
   "2026.9.12": {
     "en": "Add a privacy-safe, read-only RTSP diagnostic to NVR channel bug reports, checking port connectivity, authentication, DESCRIBE response and advertised audio/video codecs.",
     "nl": "Voeg een privacyveilige, alleen-lezen RTSP-diagnose toe aan bugrapporten van NVR-kanalen, met controle van poortbereikbaarheid, authenticatie, DESCRIBE-antwoord en aangeboden audio- en videocodecs.",
