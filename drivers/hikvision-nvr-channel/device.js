@@ -216,13 +216,13 @@ class HikvisionNvrChannelDevice extends Homey.Device {
     if (typeof this.cameraImageTimer.unref === 'function') this.cameraImageTimer.unref();
   }
 
-  async registerCameraVideo() {
+  async registerCameraVideo(settings = this.getSettings()) {
     if (this.cameraVideoPromise) return this.cameraVideoPromise;
     this.cameraVideoPromise = (async () => {
       const parent = this.requireParent();
       if (!parent.client) throw new Error(this.homey.__('errors.parent_nvr_disconnected'));
-      const preference = String(this.getSettings().live_stream || 'automatic');
-      const videoTransport = String(this.getSettings().video_transport || 'automatic');
+      const preference = String(settings.live_stream || 'automatic');
+      const videoTransport = String(settings.video_transport || 'automatic');
       const fallbackStreamIndex = preference === 'main' ? 1 : 2;
       let profile = {
         streamId: Number(`${this.channelId}0${fallbackStreamIndex}`),
@@ -256,11 +256,11 @@ class HikvisionNvrChannelDevice extends Homey.Device {
     return this.cameraVideoPromise;
   }
 
-  async recreateCameraVideo() {
+  async recreateCameraVideo(settings = this.getSettings()) {
     if (this.cameraVideo) await this.cameraVideo.unregister().catch(this.error);
     this.cameraVideo = null;
     this.videoProfile = null;
-    if (this.connectionState) await this.registerCameraVideo();
+    if (this.connectionState) await this.registerCameraVideo(settings);
   }
 
   getChannelOptions(query = '', { ptzOnly = false } = {}) {
@@ -445,7 +445,7 @@ class HikvisionNvrChannelDevice extends Homey.Device {
       throw new Error(this.homey.__('errors.invalid_motion_hold'));
     }
     if (changedKeys.includes('live_stream') || changedKeys.includes('video_transport')) {
-      await this.recreateCameraVideo();
+      await this.recreateCameraVideo(newSettings);
     }
   }
 

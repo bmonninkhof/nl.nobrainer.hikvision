@@ -1,4 +1,9 @@
 {
+  "2026.9.16": {
+    "en": "Use the newly selected stream and playback transport immediately when an individual NVR channel's video settings change.",
+    "nl": "Gebruik de nieuw gekozen stream en afspeelmodus direct wanneer de video-instellingen van een afzonderlijk NVR-kanaal wijzigen.",
+    "de": "Verwendet den neu gewählten Stream und Wiedergabemodus sofort, wenn sich die Videoeinstellungen eines einzelnen NVR-Kanals ändern."
+  },
   "2026.9.15": {
     "en": "Expand privacy-safe RTSP diagnostics with H.264 profile, level, packetization, parameter-set, frame, media-track and bandwidth details, and report the actual playback settings of each NVR channel.",
     "nl": "Breid privacyveilige RTSP-diagnostiek uit met H.264-profiel, level, packetization, parametersets, beeld-, mediatrack- en bandbreedtegegevens en rapporteer de werkelijke afspeelinstellingen van ieder NVR-kanaal.",

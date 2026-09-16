@@ -127,6 +127,55 @@ test('NVR-kanaalbugrapport gebruikt de eigen afspeelinstellingen', () => {
   assert.match(source, /videoTransport: String\(channelSettings\.video_transport \|\| 'automatic'\)/);
 });
 
+test('gewijzigde kanaalinstellingen worden direct voor de actieve video gebruikt', async () => {
+  const calls = [];
+  const oldSettings = { live_stream: 'automatic', video_transport: 'automatic' };
+  const newSettings = { live_stream: 'substream', video_transport: 'direct' };
+  const video = {
+    registerVideoUrlListener: listener => { calls.push(['listener', listener]); },
+    unregister: async () => { calls.push(['unregister']); },
+  };
+  const context = {
+    channelId: 1,
+    connectionState: true,
+    cameraVideo: null,
+    cameraVideoPromise: null,
+    getSettings: () => oldSettings,
+    getName: () => 'Camera 1',
+    requireParent: () => ({
+      client: {
+        getPreferredStreamingProfile: async (channelId, preference) => {
+          calls.push(['profile', channelId, preference]);
+          return { streamId: 102, codec: 'H.264', demuxer: 'h264', width: 1280, height: 720 };
+        },
+      },
+      getRtspUrl: () => 'rtsp://example.invalid/Streaming/Channels/102',
+    }),
+    homey: {
+      videos: { createVideoRTSP: async options => {
+        calls.push(['video-options', options]);
+        return video;
+      } },
+    },
+    setCameraVideo: async () => { calls.push(['set-camera-video']); },
+    registerCameraVideo: ChannelDevice.prototype.registerCameraVideo,
+    recreateCameraVideo: ChannelDevice.prototype.recreateCameraVideo,
+    error: error => { throw error; },
+  };
+
+  await ChannelDevice.prototype.onSettings.call(context, {
+    newSettings,
+    changedKeys: ['live_stream', 'video_transport'],
+  });
+
+  assert.deepEqual(calls.find(call => call[0] === 'profile'), ['profile', 1, 'substream']);
+  assert.deepEqual(calls.find(call => call[0] === 'video-options'), [
+    'video-options', { demuxer: 'h264', disableWebRTCProxy: true },
+  ]);
+  assert.equal(context.videoProfile.preference, 'substream');
+  assert.equal(context.videoProfile.videoTransport, 'direct');
+});
+
 test('beide widgets zoeken apparaten in hoofd- en kanaaldriver', () => {
   for (const widget of ['camera-zoom', 'recordings']) {
     const source = fs.readFileSync(path.join(root, 'widgets', widget, 'api.js'), 'utf8');
