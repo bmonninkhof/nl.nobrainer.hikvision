@@ -117,6 +117,16 @@ test('kanaaldriver opent geen extra ISAPI- of eventverbinding', () => {
   assert.match(source, /CAMERA_IMAGE_UPDATE_INTERVAL = 30000/);
 });
 
+test('NVR-kanaalbugrapport gebruikt de eigen afspeelinstellingen', () => {
+  const source = fs.readFileSync(path.join(
+    root,
+    'drivers/hikvision-nvr-channel/device.js',
+  ), 'utf8');
+  assert.match(source, /const channelSettings = this\.getSettings\(\)/);
+  assert.match(source, /liveStream: String\(channelSettings\.live_stream \|\| 'automatic'\)/);
+  assert.match(source, /videoTransport: String\(channelSettings\.video_transport \|\| 'automatic'\)/);
+});
+
 test('beide widgets zoeken apparaten in hoofd- en kanaaldriver', () => {
   for (const widget of ['camera-zoom', 'recordings']) {
     const source = fs.readFileSync(path.join(root, 'widgets', widget, 'api.js'), 'utf8');

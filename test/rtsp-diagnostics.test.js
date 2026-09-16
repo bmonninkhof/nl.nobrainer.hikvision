@@ -11,14 +11,48 @@ const {
 } = require('../lib/rtsp-diagnostics');
 
 test('RTSP response and SDP are summarized without exposing raw data', () => {
-  const sdp = 'v=0\r\nm=video 0 RTP/AVP 96\r\na=rtpmap:96 H264/90000\r\nm=audio 0 RTP/AVP 0\r\na=rtpmap:0 PCMU/8000\r\n';
+  const sdp = [
+    'v=0',
+    'a=control:rtsp://192.168.1.25/Streaming/Channels/102',
+    'm=video 0 RTP/AVP 96',
+    'b=AS:2048',
+    'a=rtpmap:96 H264/90000',
+    'a=fmtp:96 packetization-mode=1; profile-level-id=42e01f; sprop-parameter-sets=Z0LgHtoCgPaEAAAAwAQAAAMAeR4sXUA==,aM48gA==',
+    'a=framesize:96 1280-720',
+    'a=framerate:15',
+    'a=control:trackID=1',
+    'a=recvonly',
+    'a=Media_header:MEDIAINFO=redacted;',
+    'm=audio 0 RTP/AVP 0',
+    'a=rtpmap:0 PCMU/8000/1',
+    'a=control:trackID=2',
+    '',
+  ].join('\r\n');
   const wire = Buffer.from(`RTSP/1.0 200 OK\r\nContent-Type: application/sdp\r\nContent-Length: ${Buffer.byteLength(sdp)}\r\n\r\n${sdp}`);
   const parsed = parseRtspResponse(wire);
   assert.equal(parsed.statusCode, 200);
-  assert.deepEqual(summarizeSdp(parsed.body).codecs, [
-    { media: 'video', payload: 96, codec: 'H264' },
-    { media: 'audio', payload: 0, codec: 'PCMU' },
-  ]);
+  const summary = summarizeSdp(parsed.body);
+  assert.deepEqual(summary.codecs[0], {
+    media: 'video', payload: 96, codec: 'H264', clockRate: 90000,
+    packetizationMode: 1,
+    h264Profile: {
+      profileLevelId: '42e01f', profileIdc: 66, profile: 'Baseline',
+      constraintFlags: 224, levelIdc: 31, level: 3.1,
+    },
+    parameterSets: { advertised: true, count: 2, spsPresent: true, ppsPresent: true },
+  });
+  assert.deepEqual(summary.codecs[1], {
+    media: 'audio', payload: 0, codec: 'PCMU', clockRate: 8000, channels: 1,
+  });
+  assert.deepEqual(summary.mediaSections[0], {
+    type: 'video', port: 0, protocol: 'RTP/AVP', payloads: [96], direction: 'recvonly',
+    control: { present: true, type: 'relative', trackId: 1 }, frameRate: 15,
+    frameSize: { payload: 96, width: 1280, height: 720 }, bandwidth: { AS: 2048 },
+  });
+  assert.deepEqual(summary.sessionControl, { present: true, type: 'absolute' });
+  assert.equal(summary.hikvisionMediaHeaderPresent, true);
+  assert.deepEqual(summary.keyframeInterval, { advertised: false, reason: 'not-available-in-sdp' });
+  assert.doesNotMatch(JSON.stringify(summary), /192\.168|Z0Lg|aM48|MEDIAINFO/);
 });
 
 test('Digest and Basic challenges create an authorization header', () => {
@@ -60,7 +94,9 @@ test('diagnostics retry authenticated DESCRIBE and only return safe metadata', a
   assert.equal(calls[1].cseq, 2);
   assert.equal(result.describe.status, 'available');
   assert.equal(result.describe.authentication, 'digest');
-  assert.deepEqual(result.describe.codecs, [{ media: 'video', payload: 96, codec: 'H264' }]);
+  assert.deepEqual(result.describe.codecs, [{
+    media: 'video', payload: 96, codec: 'H264', clockRate: 90000,
+  }]);
   assert.doesNotMatch(JSON.stringify(result), /192\.168|admin|very-secret|rtsp:\/\//);
 });
 

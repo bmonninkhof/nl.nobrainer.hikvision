@@ -1,4 +1,9 @@
 {
+  "2026.9.15": {
+    "en": "Expand privacy-safe RTSP diagnostics with H.264 profile, level, packetization, parameter-set, frame, media-track and bandwidth details, and report the actual playback settings of each NVR channel.",
+    "nl": "Breid privacyveilige RTSP-diagnostiek uit met H.264-profiel, level, packetization, parametersets, beeld-, mediatrack- en bandbreedtegegevens en rapporteer de werkelijke afspeelinstellingen van ieder NVR-kanaal.",
+    "de": "Erweitert die datenschutzsichere RTSP-Diagnose um H.264-Profil, Level, Paketisierung, Parametersätze, Bild-, Medienspur- und Bandbreitendaten und meldet die tatsächlichen Wiedergabeeinstellungen jedes NVR-Kanals."
+  },
   "2026.9.14": {
     "en": "Improve privacy-safe RTSP diagnostics, use Homey's WebRTC proxy explicitly in Automatic mode and limit RTSP-only mode to compatible video doorbells and door stations.",
     "nl": "Verbeter de privacyveilige RTSP-diagnostiek, gebruik Homey's WebRTC-proxy expliciet in de automatische stand en beperk Alleen-RTSP tot compatibele videodeurbellen en deurstations.",

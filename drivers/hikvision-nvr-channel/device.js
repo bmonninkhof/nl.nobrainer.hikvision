@@ -415,6 +415,14 @@ class HikvisionNvrChannelDevice extends Homey.Device {
       parentIdHash: hashPrivateValue(this.parentId),
       channelId: this.channelId,
     };
+    const channelSettings = this.getSettings();
+    report.settings = {
+      ...report.settings,
+      motionHoldSeconds: Number(channelSettings.motion_hold_seconds) || 10,
+      liveStream: String(channelSettings.live_stream || 'automatic'),
+      videoTransport: String(channelSettings.video_transport || 'automatic'),
+      rtspOnly: false,
+    };
     report.channelDiagnostics = {
       connected: this.connectionState,
       eventMonitoringEnabled: this.eventMonitoringState,
