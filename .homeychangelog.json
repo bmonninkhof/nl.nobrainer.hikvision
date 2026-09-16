@@ -1,4 +1,9 @@
 {
+  "2026.9.17": {
+    "en": "Add privacy-safe NVR channel diagnostics showing whether Homey requested the Live video URL and whether the app could provide it.",
+    "nl": "Voeg privacyveilige NVR-kanaaldiagnostiek toe die toont of Homey de Live-video-URL opvroeg en of de app die kon leveren.",
+    "de": "Datenschutzsichere NVR-Kanaldiagnose ergänzt, die zeigt, ob Homey die Live-Video-URL angefordert hat und ob die App sie bereitstellen konnte."
+  },
   "2026.9.16": {
     "en": "Use the newly selected stream and playback transport immediately when an individual NVR channel's video settings change.",
     "nl": "Gebruik de nieuw gekozen stream en afspeelmodus direct wanneer de video-instellingen van een afzonderlijk NVR-kanaal wijzigen.",

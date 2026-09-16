@@ -34,6 +34,7 @@ class HikvisionNvrChannelDevice extends Homey.Device {
     this.cameraVideo = null;
     this.cameraVideoPromise = null;
     this.videoProfile = null;
+    this.videoUrlRequests = { count: 0, lastRequestedAt: null, lastResult: null };
     this.flowSnapshotImages = new Set();
     this.flowSnapshotCleanupTimers = new Map();
     this.recordingTokens = new Map();
@@ -239,9 +240,20 @@ class HikvisionNvrChannelDevice extends Homey.Device {
       const options = { demuxer: profile.demuxer };
       options.disableWebRTCProxy = videoTransport === 'direct';
       const video = await this.homey.videos.createVideoRTSP(options);
-      video.registerVideoUrlListener(async () => ({
-        url: this.requireParent().getRtspUrl(this.channelId, profile.streamId),
-      }));
+      video.registerVideoUrlListener(async () => {
+        const requests = this.videoUrlRequests || { count: 0 };
+        requests.count = Math.min(requests.count + 1, Number.MAX_SAFE_INTEGER);
+        requests.lastRequestedAt = new Date().toISOString();
+        this.videoUrlRequests = requests;
+        try {
+          const url = this.requireParent().getRtspUrl(this.channelId, profile.streamId);
+          requests.lastResult = 'url-provided';
+          return { url };
+        } catch (error) {
+          requests.lastResult = 'url-error';
+          throw error;
+        }
+      });
       await this.setCameraVideo('camera', this.getName(), video);
       this.cameraVideo = video;
       this.videoProfile = {
@@ -260,6 +272,7 @@ class HikvisionNvrChannelDevice extends Homey.Device {
     if (this.cameraVideo) await this.cameraVideo.unregister().catch(this.error);
     this.cameraVideo = null;
     this.videoProfile = null;
+    this.videoUrlRequests = { count: 0, lastRequestedAt: null, lastResult: null };
     if (this.connectionState) await this.registerCameraVideo(settings);
   }
 
@@ -427,6 +440,7 @@ class HikvisionNvrChannelDevice extends Homey.Device {
       connected: this.connectionState,
       eventMonitoringEnabled: this.eventMonitoringState,
       videoProfile: this.videoProfile,
+      videoUrlRequests: { ...this.videoUrlRequests },
       resources: {
         cameraImages: this.cameraImage ? 1 : 0,
         cameraVideos: (this.cameraVideo ? 1 : 0) + (this.recordingVideo ? 1 : 0),

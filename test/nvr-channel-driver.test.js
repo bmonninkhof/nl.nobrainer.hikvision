@@ -140,6 +140,7 @@ test('gewijzigde kanaalinstellingen worden direct voor de actieve video gebruikt
     connectionState: true,
     cameraVideo: null,
     cameraVideoPromise: null,
+    videoUrlRequests: { count: 7, lastRequestedAt: '2026-09-15T00:00:00.000Z', lastResult: 'url-provided' },
     getSettings: () => oldSettings,
     getName: () => 'Camera 1',
     requireParent: () => ({
@@ -174,6 +175,46 @@ test('gewijzigde kanaalinstellingen worden direct voor de actieve video gebruikt
   ]);
   assert.equal(context.videoProfile.preference, 'substream');
   assert.equal(context.videoProfile.videoTransport, 'direct');
+  assert.deepEqual(context.videoUrlRequests, {
+    count: 0, lastRequestedAt: null, lastResult: null,
+  });
+  const urlListener = calls.find(call => call[0] === 'listener')[1];
+  assert.deepEqual(await urlListener(), {
+    url: 'rtsp://example.invalid/Streaming/Channels/102',
+  });
+  assert.equal(context.videoUrlRequests.count, 1);
+  assert.equal(context.videoUrlRequests.lastResult, 'url-provided');
+  assert.match(context.videoUrlRequests.lastRequestedAt, /^\d{4}-\d{2}-\d{2}T/);
+  assert.doesNotMatch(JSON.stringify(context.videoUrlRequests), /example\.invalid/);
+});
+
+test('NVR-kanaaldiagnostiek bewaart geen RTSP-URL bij een aanvraagfout', async () => {
+  let listener;
+  const context = {
+    channelId: 1,
+    cameraVideoPromise: null,
+    getSettings: () => ({ live_stream: 'substream', video_transport: 'direct' }),
+    getName: () => 'Camera 1',
+    requireParent: () => ({
+      client: {
+        getPreferredStreamingProfile: async () => ({
+          streamId: 102, codec: 'H.264', demuxer: 'h264', width: 1280, height: 720,
+        }),
+      },
+      getRtspUrl: () => { throw new Error('private RTSP URL failed'); },
+    }),
+    homey: {
+      videos: { createVideoRTSP: async () => ({
+        registerVideoUrlListener: callback => { listener = callback; },
+      }) },
+    },
+    setCameraVideo: async () => {},
+  };
+  await ChannelDevice.prototype.registerCameraVideo.call(context);
+  await assert.rejects(listener(), /private RTSP URL failed/);
+  assert.equal(context.videoUrlRequests.count, 1);
+  assert.equal(context.videoUrlRequests.lastResult, 'url-error');
+  assert.doesNotMatch(JSON.stringify(context.videoUrlRequests), /private RTSP URL/);
 });
 
 test('beide widgets zoeken apparaten in hoofd- en kanaaldriver', () => {
