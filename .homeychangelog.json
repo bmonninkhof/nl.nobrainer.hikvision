@@ -223,5 +223,10 @@
     "en": "Initial SDK v3 release with Hikvision camera and NVR support, alarm Flows, snapshots, secure Digest authentication and safe PTZ controls.",
     "nl": "Eerste SDK v3-versie met ondersteuning voor Hikvision-camera's en NVR's, alarmflows, momentopnamen, veilige Digest-authenticatie en veilige PTZ-bediening.",
     "de": "Erste SDK-v3-Version mit Unterstützung für Hikvision-Kameras und NVRs, Alarm-Flows, Schnappschüssen, sicherer Digest-Authentifizierung und sicherer PTZ-Steuerung."
+  },
+  "2026.9.20": {
+    "en": "Keep video registration and stream profile details in bug reports even when optional diagnostics fail. Report a safe error code for the failed section.",
+    "nl": "Behoud videoregistratie en streamprofiel in bugrapporten wanneer optionele diagnostiek faalt. Toon een veilige foutcode voor de ontbrekende sectie.",
+    "de": "Videoregistrierung und Streamprofil bleiben im Fehlerbericht erhalten, auch wenn optionale Diagnosen fehlschlagen. Ein sicherer Fehlercode kennzeichnet den betroffenen Abschnitt."
   }
 }
