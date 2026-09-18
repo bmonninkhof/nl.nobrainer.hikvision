@@ -47,6 +47,8 @@ test('reparatiewizard biedt een kopieerbaar privacyveilig rapport', () => {
   assert.match(device, /homeyWebRtcProxyEnabled: String\(settings\.video_transport \|\| 'automatic'\) !== 'direct'/);
   assert.match(device, /playerResult: 'not-observable-by-app'/);
   assert.match(device, /videoRegistration: \{ \.\.\.this\.videoRegistration \}/);
+  assert.match(device, /\{ status: 'partial', \.\.\.videoDiagnostics \}/);
+  assert.match(device, /reportWarnings,\s*\);/);
   assert.match(device, /this\.videoRegistration\.lastUrlRequestedAt = new Date\(\)\.toISOString\(\)/);
   assert.match(device, /await this\.connect\(newSettings, 'settings-change'\)/);
   assert.doesNotMatch(device, /settings:\s*\{\s*\.\.\.settings/);
@@ -93,4 +95,20 @@ test('een ontbrekende optionele diagnosesectie geeft geen misleidende waarschuwi
 
   assert.deepEqual(result, { status: 'optional-unavailable' });
   assert.deepEqual(warnings, []);
+});
+
+test('videogegevens blijven beschikbaar wanneer de uitgebreide diagnose faalt', () => {
+  const warnings = [];
+  const videoDiagnostics = {
+    videoProfiles: { 1: { streamId: 102, codec: 'H.264' } },
+    videoRegistration: { reason: 'settings-change', urlRequests: 4 },
+  };
+  const result = readBugReportSection('diagnostics', () => {
+    const error = new Error('Optional diagnostics are unavailable');
+    error.code = 'ENOENT';
+    throw error;
+  }, { status: 'partial', ...videoDiagnostics }, warnings);
+
+  assert.deepEqual(result, { status: 'partial', ...videoDiagnostics });
+  assert.deepEqual(warnings, [{ section: 'diagnostics', errorCode: 'ENOENT' }]);
 });

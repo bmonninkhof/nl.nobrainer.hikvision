@@ -939,12 +939,15 @@ class HikvisionDevice extends Homey.Device {
         status: 'collecting',
       };
     }
+    const videoDiagnostics = {
+      videoProfiles: Object.fromEntries(this.videoProfiles),
+      videoRegistration: { ...this.videoRegistration },
+    };
     const diagnostics = readBugReportSection(
       'diagnostics',
       () => this.getDiagnostics(),
-      { status: 'optional-unavailable' },
+      { status: 'partial', ...videoDiagnostics },
       reportWarnings,
-      { ignoredErrorCodes: ['ENOENT'] },
     );
     const primaryChannelId = [...this.availableChannels.keys()][0] || 1;
     const rtsp = await this.getRtspDiagnostics(
