@@ -17,7 +17,7 @@
       "enter_landscape": "View in landscape",
       "exit_landscape": "Exit landscape view",
       "rotate_phone": "Turn your phone sideways for landscape view.",
-      "landscape_unavailable": "Fullscreen is blocked by the Homey app on this device.",
+      "landscape_unavailable": "Full-screen viewing is not available here. Zoom remains available.",
       "image_alt": "Live camera image from __name__"
     },
     "recordings": {

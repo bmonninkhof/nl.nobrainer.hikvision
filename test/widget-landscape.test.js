@@ -12,6 +12,7 @@ test('camera widget offers an accessible landscape fullscreen control', () => {
   assert.match(widget, /id="landscape"[^>]+aria-pressed="false"/);
   assert.match(widget, /cameraCard\.requestFullscreen/);
   assert.match(widget, /cameraCard\.webkitRequestFullscreen/);
+  assert.match(widget, /fullscreenAvailable = getFullscreenElement\(\) === cameraCard/);
   assert.match(widget, /window\.screen\.orientation\.lock\('landscape'\)/);
   assert.match(widget, /Homey\.setHeight\('177\.78%'\)/);
   assert.match(widget, /landscapeFallback = true/);
@@ -20,6 +21,7 @@ test('camera widget offers an accessible landscape fullscreen control', () => {
   assert.match(widget, /body\.landscape-fallback \.fallback-exit \{ display: grid;/);
   assert.match(widget, /fallbackExitButton\.addEventListener\('click',[\s\S]*?await exitLandscape\(\)/);
   assert.match(widget, /window\.matchMedia\?\.\('\(orientation: landscape\)'\)\.matches/);
+  assert.match(widget, /if \(fullscreenAvailable\) \{\s*try \{\s*if \(window\.screen\.orientation\?\.lock\)/);
   assert.doesNotMatch(widget, /showLandscapeHint\(text\('rotate_phone'/);
   assert.match(widget, /document\.addEventListener\('fullscreenchange'/);
   assert.match(widget, /document\.addEventListener\('webkitfullscreenchange'/);

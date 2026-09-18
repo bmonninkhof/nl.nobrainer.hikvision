@@ -17,7 +17,7 @@
       "enter_landscape": "Liggend weergeven",
       "exit_landscape": "Liggende weergave sluiten",
       "rotate_phone": "Draai je telefoon voor liggende weergave.",
-      "landscape_unavailable": "Volledig scherm wordt op dit apparaat door de Homey-app geblokkeerd.",
+      "landscape_unavailable": "Schermvullend bekijken is hier niet beschikbaar. Zoomen blijft mogelijk.",
       "image_alt": "Live camerabeeld van __name__"
     },
     "recordings": {

@@ -356,24 +356,25 @@
         let fullscreenAvailable = false;
         try {
           if (cameraCard.requestFullscreen) {
-            fullscreenAvailable = true;
             await cameraCard.requestFullscreen({ navigationUI: 'hide' });
           } else if (cameraCard.webkitRequestFullscreen) {
-            fullscreenAvailable = true;
             await Promise.resolve(cameraCard.webkitRequestFullscreen());
           }
+          fullscreenAvailable = getFullscreenElement() === cameraCard;
         } catch (error) {
           fullscreenAvailable = false;
         }
-        try {
-          if (window.screen.orientation?.lock) {
-            await window.screen.orientation.lock('landscape');
-          }
-        } catch (error) {}
+        if (fullscreenAvailable) {
+          try {
+            if (window.screen.orientation?.lock) {
+              await window.screen.orientation.lock('landscape');
+            }
+          } catch (error) {}
+        }
         if (!fullscreenAvailable) {
           if (window.matchMedia?.('(orientation: landscape)').matches) {
             landscapeRequested = false;
-            showLandscapeHint(text('landscape_unavailable', 'Fullscreen is blocked by the Homey app on this device.'));
+            showLandscapeHint(text('landscape_unavailable', 'Full-screen viewing is not available here. Zoom remains available.'));
           } else {
             try {
               await Homey.setHeight('177.78%');

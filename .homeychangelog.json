@@ -1,4 +1,9 @@
 {
+  "2026.9.19": {
+    "en": "Improve privacy-safe Live video registration diagnostics and detect when Homey does not actually enter fullscreen in the camera widget. Clarify the fallback message on unsupported views.",
+    "nl": "Verbeter privacyveilige diagnostiek van Live-videoregistratie en detecteer wanneer Homey de camerawidget niet echt schermvullend opent. Verduidelijk de melding bij niet-ondersteunde weergaven.",
+    "de": "Verbessert die datenschutzsichere Diagnose der Live-Video-Registrierung und erkennt, wenn Homey das Kamera-Widget nicht wirklich im Vollbild öffnet. Präzisiert den Hinweis bei nicht unterstützten Ansichten."
+  },
   "2026.9.18": {
     "en": "Keep the zoom widget's exit button reachable in its rotated fallback view and avoid forced rotation on landscape tablets. Clarify in bug reports that handing a video URL to Homey does not verify playback.",
     "nl": "Houd de terugknop van de zoomwidget bereikbaar in de gedraaide fallbackweergave en voorkom geforceerd draaien op liggende tablets. Maak in bugrapporten duidelijk dat het doorgeven van een video-URL aan Homey de weergave niet bevestigt.",
