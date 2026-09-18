@@ -140,6 +140,26 @@
       box-shadow: 0 10px 30px rgba(0, 0, 0, .28);
       backdrop-filter: blur(12px);
     }
+    .fallback-exit {
+      position: fixed;
+      z-index: 10;
+      top: max(12px, env(safe-area-inset-top));
+      right: max(12px, env(safe-area-inset-right));
+      width: 48px;
+      height: 48px;
+      display: none;
+      border: 1px solid var(--panel-border);
+      border-radius: 12px;
+      background: var(--panel);
+      color: var(--text);
+      box-shadow: 0 10px 30px rgba(0, 0, 0, .28);
+      cursor: pointer;
+      touch-action: manipulation;
+    }
+    .fallback-exit svg { width: 24px; height: 24px; fill: none; stroke: currentColor; stroke-width: 2; }
+    .fallback-exit:focus-visible { outline: 3px solid var(--focus); outline-offset: 2px; }
+    body.landscape-fallback .fallback-exit { display: grid; place-items: center; }
+    body.landscape-fallback .landscape-control { display: none; }
     .controls-with-landscape { right: max(68px, calc(env(safe-area-inset-right) + 58px)); }
     .control {
       display: grid;
@@ -245,6 +265,9 @@
     <div id="landscape-hint" class="landscape-hint" role="status" hidden></div>
     <div id="empty-state" class="empty-state" hidden></div>
   </main>
+  <button id="fallback-exit" class="fallback-exit" type="button" hidden>
+    <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M8 8H3m0 0V3m0 5 6-6M16 8h5m0 0V3m0 5-6-6M8 16H3m0 0v5m0-5 6 6M16 16h5m0 0v5m0-5-6 6"/></svg>
+  </button>
 
   <script>
     function onHomeyReady(Homey) {
@@ -257,6 +280,7 @@
       const emptyState = document.getElementById('empty-state');
       const resetButton = document.getElementById('zoom-reset');
       const landscapeButton = document.getElementById('landscape');
+      const fallbackExitButton = document.getElementById('fallback-exit');
       const landscapeHint = document.getElementById('landscape-hint');
       const cameraCard = document.querySelector('.camera-card');
       const deviceId = Homey.getDeviceIds()[0];
@@ -302,6 +326,9 @@
           : text('enter_landscape', 'View in landscape');
         landscapeButton.setAttribute('aria-label', label);
         landscapeButton.setAttribute('title', label);
+        fallbackExitButton.hidden = !landscapeFallback;
+        fallbackExitButton.setAttribute('aria-label', text('exit_landscape', 'Exit landscape view'));
+        fallbackExitButton.setAttribute('title', text('exit_landscape', 'Exit landscape view'));
       };
       const showLandscapeHint = message => {
         clearTimeout(landscapeHintTimer);
@@ -338,23 +365,24 @@
         } catch (error) {
           fullscreenAvailable = false;
         }
-        let orientationLocked = false;
         try {
           if (window.screen.orientation?.lock) {
             await window.screen.orientation.lock('landscape');
-            orientationLocked = true;
           }
         } catch (error) {}
         if (!fullscreenAvailable) {
-          try {
-            await Homey.setHeight('177.78%');
-            landscapeFallback = true;
-          } catch (error) {
+          if (window.matchMedia?.('(orientation: landscape)').matches) {
             landscapeRequested = false;
             showLandscapeHint(text('landscape_unavailable', 'Fullscreen is blocked by the Homey app on this device.'));
+          } else {
+            try {
+              await Homey.setHeight('177.78%');
+              landscapeFallback = true;
+            } catch (error) {
+              landscapeRequested = false;
+              showLandscapeHint(text('landscape_unavailable', 'Fullscreen is blocked by the Homey app on this device.'));
+            }
           }
-        } else if (!orientationLocked) {
-          showLandscapeHint(text('rotate_phone', 'Turn your phone sideways for landscape view.'));
         }
         updateLandscapeButton();
       };
@@ -404,6 +432,16 @@
         feedback();
         if (getFullscreenElement() || landscapeRequested || landscapeFallback) await exitLandscape();
         else await enterLandscape();
+      });
+      fallbackExitButton.addEventListener('click', async () => {
+        feedback();
+        await exitLandscape();
+      });
+      document.addEventListener('keydown', event => {
+        if (event.key === 'Escape' && (landscapeRequested || landscapeFallback || getFullscreenElement())) {
+          event.preventDefault();
+          exitLandscape().catch(() => {});
+        }
       });
       const onFullscreenChange = () => {
         if (!getFullscreenElement() && !landscapeFallback) {

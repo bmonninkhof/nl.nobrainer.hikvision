@@ -125,6 +125,8 @@ test('NVR-kanaalbugrapport gebruikt de eigen afspeelinstellingen', () => {
   assert.match(source, /const channelSettings = this\.getSettings\(\)/);
   assert.match(source, /liveStream: String\(channelSettings\.live_stream \|\| 'automatic'\)/);
   assert.match(source, /videoTransport: String\(channelSettings\.video_transport \|\| 'automatic'\)/);
+  assert.match(source, /homeyWebRtcProxyEnabled: String\(channelSettings\.video_transport \|\| 'automatic'\) !== 'direct'/);
+  assert.match(source, /playerResult: 'not-observable-by-app'/);
 });
 
 test('gewijzigde kanaalinstellingen worden direct voor de actieve video gebruikt', async () => {

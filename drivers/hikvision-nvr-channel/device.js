@@ -441,6 +441,10 @@ class HikvisionNvrChannelDevice extends Homey.Device {
       eventMonitoringEnabled: this.eventMonitoringState,
       videoProfile: this.videoProfile,
       videoUrlRequests: { ...this.videoUrlRequests },
+      playbackHandoff: {
+        homeyWebRtcProxyEnabled: String(channelSettings.video_transport || 'automatic') !== 'direct',
+        playerResult: 'not-observable-by-app',
+      },
       resources: {
         cameraImages: this.cameraImage ? 1 : 0,
         cameraVideos: (this.cameraVideo ? 1 : 0) + (this.recordingVideo ? 1 : 0),

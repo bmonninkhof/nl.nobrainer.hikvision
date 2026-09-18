@@ -1,4 +1,9 @@
 {
+  "2026.9.18": {
+    "en": "Keep the zoom widget's exit button reachable in its rotated fallback view and avoid forced rotation on landscape tablets. Clarify in bug reports that handing a video URL to Homey does not verify playback.",
+    "nl": "Houd de terugknop van de zoomwidget bereikbaar in de gedraaide fallbackweergave en voorkom geforceerd draaien op liggende tablets. Maak in bugrapporten duidelijk dat het doorgeven van een video-URL aan Homey de weergave niet bevestigt.",
+    "de": "Die Zurück-Taste des Zoom-Widgets bleibt in der gedrehten Ersatzansicht erreichbar; auf Tablets im Querformat wird keine Drehung erzwungen. Fehlerberichte stellen klar, dass die Übergabe einer Video-URL an Homey die Wiedergabe nicht bestätigt."
+  },
   "2026.9.17": {
     "en": "Add privacy-safe NVR channel diagnostics showing whether Homey requested the Live video URL and whether the app could provide it.",
     "nl": "Voeg privacyveilige NVR-kanaaldiagnostiek toe die toont of Homey de Live-video-URL opvroeg en of de app die kon leveren.",

@@ -16,6 +16,11 @@ test('camera widget offers an accessible landscape fullscreen control', () => {
   assert.match(widget, /Homey\.setHeight\('177\.78%'\)/);
   assert.match(widget, /landscapeFallback = true/);
   assert.match(widget, /body\.landscape-fallback \.camera-card/);
+  assert.match(widget, /id="fallback-exit"[^>]+class="fallback-exit"/);
+  assert.match(widget, /body\.landscape-fallback \.fallback-exit \{ display: grid;/);
+  assert.match(widget, /fallbackExitButton\.addEventListener\('click',[\s\S]*?await exitLandscape\(\)/);
+  assert.match(widget, /window\.matchMedia\?\.\('\(orientation: landscape\)'\)\.matches/);
+  assert.doesNotMatch(widget, /showLandscapeHint\(text\('rotate_phone'/);
   assert.match(widget, /document\.addEventListener\('fullscreenchange'/);
   assert.match(widget, /document\.addEventListener\('webkitfullscreenchange'/);
 });

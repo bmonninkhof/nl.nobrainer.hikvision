@@ -44,6 +44,8 @@ test('reparatiewizard biedt een kopieerbaar privacyveilig rapport', () => {
   assert.match(device, /getAuthenticationDiagnostics/);
   assert.match(device, /recentEvents: \[\.\.\.this\.recentEventDiagnostics\]/);
   assert.match(device, /authMethod: normalizeAuthMethod/);
+  assert.match(device, /homeyWebRtcProxyEnabled: String\(settings\.video_transport \|\| 'automatic'\) !== 'direct'/);
+  assert.match(device, /playerResult: 'not-observable-by-app'/);
   assert.doesNotMatch(device, /settings:\s*\{\s*\.\.\.settings/);
 });
 

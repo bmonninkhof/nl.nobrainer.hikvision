@@ -966,6 +966,10 @@ class HikvisionDevice extends Homey.Device {
         videoTransport: String(settings.video_transport || 'automatic'),
         rtspOnly: parseBoolean(settings.rtsp_only),
       },
+      playbackHandoff: {
+        homeyWebRtcProxyEnabled: String(settings.video_transport || 'automatic') !== 'direct',
+        playerResult: 'not-observable-by-app',
+      },
       capabilities: capabilityValues,
       diagnostics,
       reportWarnings,
