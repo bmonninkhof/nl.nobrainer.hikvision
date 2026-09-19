@@ -127,6 +127,43 @@ test('NVR-kanaalbugrapport gebruikt de eigen afspeelinstellingen', () => {
   assert.match(source, /videoTransport: String\(channelSettings\.video_transport \|\| 'automatic'\)/);
   assert.match(source, /homeyWebRtcProxyEnabled: String\(channelSettings\.video_transport \|\| 'automatic'\) !== 'direct'/);
   assert.match(source, /playerResult: 'not-observable-by-app'/);
+  assert.match(source, /report\.playbackHandoff =/);
+  assert.match(source, /compatibilityMode: compatibilityMode \? 'iphone-homey' : 'off'/);
+});
+
+test('iPhone-compatibiliteit dwingt de H.264-substream via Homey WebRTC af', async () => {
+  const calls = [];
+  const context = {
+    channelId: 1,
+    cameraVideoPromise: null,
+    getSettings: () => ({ live_stream: 'main', video_transport: 'ios' }),
+    getName: () => 'Camera 1',
+    requireParent: () => ({
+      client: {
+        getPreferredStreamingProfile: async (channelId, preference) => {
+          calls.push(['profile', channelId, preference]);
+          return { streamId: 102, codec: 'H.264', demuxer: 'h264', width: 1280, height: 720 };
+        },
+      },
+      getRtspUrl: () => 'rtsp://example.invalid/Streaming/Channels/102',
+    }),
+    homey: {
+      videos: { createVideoRTSP: async options => {
+        calls.push(['video-options', options]);
+        return { registerVideoUrlListener: () => {} };
+      } },
+    },
+    setCameraVideo: async () => {},
+  };
+
+  await ChannelDevice.prototype.registerCameraVideo.call(context);
+  assert.deepEqual(calls[0], ['profile', 1, 'substream']);
+  assert.deepEqual(calls[1], ['video-options', { demuxer: 'h264', disableWebRTCProxy: false }]);
+  assert.equal(context.videoProfile.configuredPreference, 'main');
+  assert.equal(context.videoProfile.preference, 'substream');
+  assert.equal(context.videoProfile.compatibilityMode, 'iphone-homey');
+  assert.equal(context.videoProfile.rtspTransport, 'homey-webrtc-managed');
+  assert.equal(context.videoProfile.audioHandling, 'source-managed');
 });
 
 test('gewijzigde kanaalinstellingen worden direct voor de actieve video gebruikt', async () => {

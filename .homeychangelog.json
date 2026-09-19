@@ -1,4 +1,9 @@
 {
+  "2026.9.21": {
+    "en": "Add an isolated iPhone/Homey compatibility mode for individual NVR channels. It forces the H.264 substream through Homey's WebRTC proxy and reports the effective playback route clearly in diagnostics.",
+    "nl": "Voeg een afzonderlijke iPhone/Homey-compatibiliteitsmodus toe voor losse NVR-kanalen. Deze dwingt de H.264-substream via de WebRTC-proxy van Homey af en toont de daadwerkelijk gebruikte afspeelroute duidelijk in de diagnostiek.",
+    "de": "Fügt einen separaten iPhone/Homey-Kompatibilitätsmodus für einzelne NVR-Kanäle hinzu. Dieser erzwingt den H.264-Substream über den Homey-WebRTC-Proxy und zeigt den tatsächlich verwendeten Wiedergabeweg klar in der Diagnose."
+  },
   "2026.9.19": {
     "en": "Improve privacy-safe Live video registration diagnostics and detect when Homey does not actually enter fullscreen in the camera widget. Clarify the fallback message on unsupported views.",
     "nl": "Verbeter privacyveilige diagnostiek van Live-videoregistratie en detecteer wanneer Homey de camerawidget niet echt schermvullend opent. Verduidelijk de melding bij niet-ondersteunde weergaven.",

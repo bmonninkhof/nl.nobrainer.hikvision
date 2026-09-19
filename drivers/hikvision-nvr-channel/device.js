@@ -222,8 +222,10 @@ class HikvisionNvrChannelDevice extends Homey.Device {
     this.cameraVideoPromise = (async () => {
       const parent = this.requireParent();
       if (!parent.client) throw new Error(this.homey.__('errors.parent_nvr_disconnected'));
-      const preference = String(settings.live_stream || 'automatic');
       const videoTransport = String(settings.video_transport || 'automatic');
+      const compatibilityMode = videoTransport === 'ios';
+      const configuredPreference = String(settings.live_stream || 'automatic');
+      const preference = compatibilityMode ? 'substream' : configuredPreference;
       const fallbackStreamIndex = preference === 'main' ? 1 : 2;
       let profile = {
         streamId: Number(`${this.channelId}0${fallbackStreamIndex}`),
@@ -262,7 +264,11 @@ class HikvisionNvrChannelDevice extends Homey.Device {
         width: profile.width,
         height: profile.height,
         preference,
+        configuredPreference,
         videoTransport,
+        compatibilityMode: compatibilityMode ? 'iphone-homey' : 'off',
+        rtspTransport: compatibilityMode ? 'homey-webrtc-managed' : 'homey-managed',
+        audioHandling: 'source-managed',
       };
     })().finally(() => { this.cameraVideoPromise = null; });
     return this.cameraVideoPromise;
@@ -436,6 +442,10 @@ class HikvisionNvrChannelDevice extends Homey.Device {
       videoTransport: String(channelSettings.video_transport || 'automatic'),
       rtspOnly: false,
     };
+    report.playbackHandoff = {
+      homeyWebRtcProxyEnabled: String(channelSettings.video_transport || 'automatic') !== 'direct',
+      playerResult: 'not-observable-by-app',
+    };
     report.channelDiagnostics = {
       connected: this.connectionState,
       eventMonitoringEnabled: this.eventMonitoringState,
@@ -443,6 +453,16 @@ class HikvisionNvrChannelDevice extends Homey.Device {
       videoUrlRequests: { ...this.videoUrlRequests },
       playbackHandoff: {
         homeyWebRtcProxyEnabled: String(channelSettings.video_transport || 'automatic') !== 'direct',
+        compatibilityMode: String(channelSettings.video_transport || 'automatic') === 'ios'
+          ? 'iphone-homey'
+          : 'off',
+        effectiveStreamPreference: String(channelSettings.video_transport || 'automatic') === 'ios'
+          ? 'substream'
+          : String(channelSettings.live_stream || 'automatic'),
+        rtspTransport: String(channelSettings.video_transport || 'automatic') === 'ios'
+          ? 'homey-webrtc-managed'
+          : 'homey-managed',
+        audioHandling: 'source-managed',
         playerResult: 'not-observable-by-app',
       },
       resources: {

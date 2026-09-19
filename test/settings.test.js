@@ -41,3 +41,17 @@ test('Live-video-instellingen bieden automatische substreamkeuze en RTSP-only-mo
   assert.equal(authMethod.value, 'automatic');
   assert.deepEqual(authMethod.values.map(value => value.id), ['automatic', 'digest', 'basic']);
 });
+
+test('losse NVR-kanalen bieden een afzonderlijke iPhone/Homey-compatibiliteitsmodus', () => {
+  const driver = JSON.parse(fs.readFileSync(path.join(
+    __dirname,
+    '../drivers/hikvision-nvr-channel/driver.compose.json',
+  )));
+  const settings = driver.settings.flatMap(group => group.children || []);
+  const videoTransport = settings.find(setting => setting.id === 'video_transport');
+  assert.ok(videoTransport);
+  assert.deepEqual(
+    videoTransport.values.map(value => value.id),
+    ['automatic', 'ios', 'webrtc', 'direct'],
+  );
+});

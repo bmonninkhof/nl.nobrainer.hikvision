@@ -69,12 +69,13 @@
           "value": "automatic",
           "label": { "en": "Playback transport", "nl": "Afspeeltransport", "de": "Wiedergabetransport" },
           "hint": {
-            "en": "Keep Automatic unless video works in a browser but is black in the Homey app.",
-            "nl": "Laat op Automatisch staan, tenzij beeld in een browser werkt maar zwart is in de Homey-app.",
-            "de": "Automatisch beibehalten, außer das Video funktioniert im Browser, bleibt aber in der Homey-App schwarz."
+            "en": "Keep Automatic unless video is black in the Homey app. iPhone/Homey compatibility forces the H.264 substream through Homey's WebRTC proxy.",
+            "nl": "Laat op Automatisch staan, tenzij het beeld zwart blijft in de Homey-app. iPhone/Homey-compatibiliteit dwingt de H.264-substream via de WebRTC-proxy van Homey af.",
+            "de": "Automatisch beibehalten, außer das Bild in der Homey-App bleibt schwarz. iPhone/Homey-Kompatibilität erzwingt den H.264-Substream über den Homey-WebRTC-Proxy."
           },
           "values": [
             { "id": "automatic", "label": { "en": "Automatic (recommended)", "nl": "Automatisch (aanbevolen)", "de": "Automatisch (empfohlen)" } },
+            { "id": "ios", "label": { "en": "iPhone/Homey compatibility", "nl": "iPhone/Homey-compatibiliteit", "de": "iPhone/Homey-Kompatibilität" } },
             { "id": "webrtc", "label": { "en": "Homey WebRTC proxy", "nl": "Homey WebRTC-proxy", "de": "Homey-WebRTC-Proxy" } },
             { "id": "direct", "label": { "en": "Direct RTSP (compatibility)", "nl": "Directe RTSP (compatibiliteit)", "de": "Direktes RTSP (Kompatibilität)" } }
           ]

@@ -1,6 +1,6 @@
 {
   "id": "nl.nobrainer.hikvision",
-  "version": "2026.9.20",
+  "version": "2026.9.21",
   "compatibility": ">=12.3.0",
   "sdk": 3,
   "runtime": "nodejs",
