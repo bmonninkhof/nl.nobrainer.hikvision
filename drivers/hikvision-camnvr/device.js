@@ -47,6 +47,7 @@ const CONNECTION_RETRY_BASE = 30000;
 const CONNECTION_RETRY_MAX = 5 * 60 * 1000;
 const MAX_DIAGNOSTIC_EVENTS = 20;
 const CONNECTION_FAILURE_THRESHOLD = 3;
+const VIDEO_REGISTRATION_REFRESH_DELAY = 3000;
 const RELAY_COMMAND_COOLDOWN = 3000;
 const MAX_RELAY_DIAGNOSTICS = 20;
 const MAX_CALL_CONTROL_DIAGNOSTICS = 20;
@@ -61,6 +62,8 @@ class HikvisionDevice extends Homey.Device {
     this.cameraImages = new Map();
     this.cameraVideos = new Map();
     this.videoProfiles = new Map();
+    this.videoRegistrationRefreshTimer = null;
+    this.videoRegistrationRefreshCompleted = false;
     this.recordingTokens = new Map();
     this.selectedRecording = null;
     this.recordingVideoPromise = null;
@@ -127,6 +130,10 @@ class HikvisionDevice extends Homey.Device {
       urlRequests: 0,
       lastUrlRequestedAt: null,
       lastUrlResult: null,
+      refreshScheduledAt: null,
+      refreshedAt: null,
+      refreshCount: 0,
+      effectiveTransport: null,
     };
     this.connectionFailureCount = 0;
     this.isapiAvailable = null;
@@ -237,6 +244,10 @@ class HikvisionDevice extends Homey.Device {
           this.videoRegistration.failedAt = new Date().toISOString();
           this.videoRegistration.failure = String(error.code || error.name || 'registration-error').slice(0, 80);
           this.error('Live camera video registration failed', error);
+        });
+        this.scheduleVideoRegistrationRefresh(info.type, client, generation, {
+          rtspOnly: !isapiAvailable,
+          reason,
         });
       }
       if (isCurrent() && isapiAvailable) {
@@ -460,6 +471,8 @@ class HikvisionDevice extends Homey.Device {
     this.connectionGeneration += 1;
     if (this.initialReconnectTimer) clearTimeout(this.initialReconnectTimer);
     this.initialReconnectTimer = null;
+    if (this.videoRegistrationRefreshTimer) clearTimeout(this.videoRegistrationRefreshTimer);
+    this.videoRegistrationRefreshTimer = null;
     if (this.client) this.client.stop();
     this.client = null;
     this.connectionState = false;
@@ -487,6 +500,41 @@ class HikvisionDevice extends Homey.Device {
     this.snapshotRequests.clear();
     this.lastDoorbellPressAt.clear();
     this.resetAlarmCapabilities().catch(this.error);
+  }
+
+  scheduleVideoRegistrationRefresh(deviceType, client, generation, { rtspOnly = false, reason = 'connection' } = {}) {
+    if (reason !== 'connection' || this.videoRegistrationRefreshCompleted
+      || !isSingleChannelDevice(deviceType) || this.videoRegistrationRefreshTimer) return;
+    this.videoRegistration.refreshScheduledAt = new Date().toISOString();
+    this.videoRegistrationRefreshTimer = setTimeout(() => {
+      this.videoRegistrationRefreshTimer = null;
+      this.refreshCameraVideoRegistration(deviceType, client, generation, { rtspOnly }).catch(error => {
+        this.videoRegistration.failedAt = new Date().toISOString();
+        this.videoRegistration.failure = String(error.code || error.name || 'refresh-error').slice(0, 80);
+        this.error('Automatic live-video registration refresh failed', error);
+      });
+    }, VIDEO_REGISTRATION_REFRESH_DELAY);
+    if (typeof this.videoRegistrationRefreshTimer.unref === 'function') {
+      this.videoRegistrationRefreshTimer.unref();
+    }
+  }
+
+  async refreshCameraVideoRegistration(deviceType, client, generation, { rtspOnly = false } = {}) {
+    const isCurrent = () => this.client === client && this.connectionGeneration === generation;
+    if (!isCurrent() || this.videoRegistrationRefreshCompleted) return;
+    this.videoRegistrationRefreshCompleted = true;
+    const liveVideos = [...this.cameraVideos.entries()]
+      .filter(([channelId]) => Number.isInteger(channelId));
+    await Promise.all(liveVideos.map(([, video]) => video.unregister().catch(this.error)));
+    for (const [channelId] of liveVideos) {
+      this.cameraVideos.delete(channelId);
+      this.videoProfiles.delete(channelId);
+    }
+    if (!isCurrent()) return;
+    await this.registerCameraVideos(deviceType, client, generation, { rtspOnly });
+    this.videoRegistration.refreshedAt = new Date().toISOString();
+    this.videoRegistration.refreshCount += 1;
+    this.log('Live-video registration automatically refreshed after connection');
   }
 
   recordUnhandledEvent(event) {
@@ -1516,6 +1564,7 @@ class HikvisionDevice extends Homey.Device {
 
       const videoOptions = { demuxer: profile.demuxer };
       videoOptions.disableWebRTCProxy = videoTransport === 'direct';
+      this.videoRegistration.effectiveTransport = videoOptions.disableWebRTCProxy ? 'direct' : 'webrtc';
       const video = await this.homey.videos.createVideoRTSP(videoOptions);
       video.registerVideoUrlListener(async () => {
         this.videoRegistration.urlRequests += 1;

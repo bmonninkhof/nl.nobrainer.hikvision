@@ -102,6 +102,49 @@ test('gebeurtenisbewaking hervat alertstream en deurbelcontrole', async () => {
   assert.deepEqual(triggers, ['EventMonitoringEnabled']);
 });
 
+test('Live-video wordt na de eerste cameraverbinding eenmalig opnieuw geregistreerd', async () => {
+  const calls = [];
+  const client = {};
+  const oldVideo = { unregister: async () => { calls.push('unregister'); } };
+  const device = {
+    client,
+    connectionGeneration: 4,
+    videoRegistrationRefreshCompleted: false,
+    cameraVideos: new Map([[1, oldVideo], ['recording', { unregister: async () => calls.push('recording') }]]),
+    videoProfiles: new Map([[1, { streamId: 102 }]]),
+    videoRegistration: { refreshedAt: null, refreshCount: 0 },
+    registerCameraVideos: async (...args) => { calls.push(['register', ...args]); },
+    log: message => calls.push(message),
+    error: () => {},
+  };
+
+  await methods.refreshCameraVideoRegistration.call(device, 'IPCamera', client, 4);
+  await methods.refreshCameraVideoRegistration.call(device, 'IPCamera', client, 4);
+
+  assert.equal(device.videoRegistrationRefreshCompleted, true);
+  assert.equal(device.videoRegistration.refreshCount, 1);
+  assert.ok(device.videoRegistration.refreshedAt);
+  assert.equal(device.cameraVideos.has(1), false);
+  assert.equal(device.cameraVideos.has('recording'), true);
+  assert.equal(device.videoProfiles.has(1), false);
+  assert.deepEqual(calls.slice(0, 2), [
+    'unregister',
+    ['register', 'IPCamera', client, 4, { rtspOnly: false }],
+  ]);
+  assert.equal(calls.includes('recording'), false);
+});
+
+test('automatische videovernieuwing is beperkt tot normale enkelkanaalsverbindingen', () => {
+  const source = require('node:fs').readFileSync(
+    require('node:path').join(__dirname, '../drivers/hikvision-camnvr/device.js'),
+    'utf8',
+  );
+  assert.match(source, /reason !== 'connection'/);
+  assert.match(source, /this\.videoRegistrationRefreshCompleted/);
+  assert.match(source, /!isSingleChannelDevice\(deviceType\)/);
+  assert.match(source, /VIDEO_REGISTRATION_REFRESH_DELAY = 3000/);
+});
+
 test('deurrelais blokkeert snelle herhaling en registreert beide resultaten', async () => {
   const device = {
     client: { triggerRelay: async () => true },
