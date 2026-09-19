@@ -7,6 +7,8 @@ const {
   getRtspDiagnostics,
   parseAuthenticateHeader,
   parseRtspResponse,
+  probeRtspPlayback,
+  resolveRtspControl,
   summarizeSdp,
 } = require('../lib/rtsp-diagnostics');
 
@@ -137,4 +139,41 @@ test('network errors are reduced to a safe error code', async () => {
   const result = await getRtspDiagnostics({ host: '192.168.1.25', requester: async () => { throw error; } });
   assert.deepEqual(result.describe, { status: 'unavailable', errorCode: 'ECONNREFUSED' });
   assert.doesNotMatch(JSON.stringify(result), /192\.168/);
+});
+
+test('video control URI is resolved without exposing it in diagnostics', () => {
+  assert.equal(
+    resolveRtspControl('rtsp://camera/Streaming/Channels/102', 'm=video 0 RTP/AVP 96\r\na=control:trackID=1\r\n'),
+    'rtsp://camera/Streaming/Channels/102/trackID=1',
+  );
+});
+
+test('playback probe performs SETUP and PLAY and reports observed media safely', async () => {
+  const calls = [];
+  const socket = { destroyed: false };
+  const requester = async options => {
+    calls.push(options);
+    if (options.method === 'SETUP') {
+      return { statusCode: 200, headers: { session: 'safe-session;timeout=60' }, socket };
+    }
+    return { statusCode: 200, headers: {}, socket };
+  };
+  const result = await probeRtspPlayback({
+    socket, host: '192.168.1.25', port: 554,
+    requestUri: 'rtsp://192.168.1.25/Streaming/Channels/102',
+    requestPath: '/Streaming/Channels/102',
+    sdp: 'm=video 0 RTP/AVP 96\r\na=control:trackID=1\r\n',
+    challenge: parseAuthenticateHeader('Digest realm="cam", nonce="abc", qop="auth"'),
+    username: 'admin', password: 'very-secret', requester,
+    observer: async () => ({ status: 'media-received', packets: 4, bytes: 2048 }),
+  });
+  assert.deepEqual(calls.map(call => call.method), ['SETUP', 'PLAY']);
+  assert.deepEqual(result, {
+    readOnly: true,
+    transport: 'rtp-over-rtsp-tcp',
+    setup: { status: 'available', rtspStatus: 200 },
+    play: { status: 'available', rtspStatus: 200 },
+    media: { status: 'media-received', packets: 4, bytes: 2048 },
+  });
+  assert.doesNotMatch(JSON.stringify(result), /192\.168|admin|very-secret|safe-session|rtsp:\/\//);
 });

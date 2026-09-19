@@ -233,5 +233,13 @@
     "en": "Keep video registration and stream profile details in bug reports even when optional diagnostics fail. Report a safe error code for the failed section.",
     "nl": "Behoud videoregistratie en streamprofiel in bugrapporten wanneer optionele diagnostiek faalt. Toon een veilige foutcode voor de ontbrekende sectie.",
     "de": "Videoregistrierung und Streamprofil bleiben im Fehlerbericht erhalten, auch wenn optionale Diagnosen fehlschlagen. Ein sicherer Fehlercode kennzeichnet den betroffenen Abschnitt."
+  },
+  "2026.9.22": {
+    "en": "Improved Live video startup reliability by automatically refreshing the Homey video registration once after a camera connects. Extended video diagnostics with the effective transport and refresh status."
+  },
+  "2026.9.23": {
+    "en": "Extended privacy-safe RTSP diagnostics with a short SETUP and PLAY test to determine whether an NVR delivers actual video packets.",
+    "nl": "Uitgebreide privacyveilige RTSP-diagnostiek met een korte SETUP- en PLAY-test om vast te stellen of een NVR daadwerkelijk videopakketten levert.",
+    "de": "Erweiterte datenschutzfreundliche RTSP-Diagnose mit einem kurzen SETUP- und PLAY-Test, um festzustellen, ob ein NVR tatsächlich Videopakete liefert."
   }
 }
