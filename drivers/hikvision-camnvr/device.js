@@ -940,7 +940,7 @@ class HikvisionDevice extends Homey.Device {
     };
   }
 
-  async getBugReport() {
+  async getBugReport({ skipRtsp = false } = {}) {
     const reportWarnings = [];
     const settings = readBugReportSection('settings', () => this.getSettings(), {}, reportWarnings);
     const data = readBugReportSection('device-data', () => this.getData(), {}, reportWarnings);
@@ -998,10 +998,12 @@ class HikvisionDevice extends Homey.Device {
       reportWarnings,
     );
     const primaryChannelId = [...this.availableChannels.keys()][0] || 1;
-    const rtsp = await this.getRtspDiagnostics(
-      primaryChannelId,
-      this.videoProfiles.get(primaryChannelId)?.streamId,
-    );
+    const rtsp = skipRtsp
+      ? { readOnly: true, skipped: true, reason: 'channel-report-collects-selected-stream' }
+      : await this.getRtspDiagnostics(
+        primaryChannelId,
+        this.videoProfiles.get(primaryChannelId)?.streamId,
+      );
     const report = sanitizeForBugReport({
       reportType: 'Hikvision device bug report',
       createdAt: new Date().toISOString(),

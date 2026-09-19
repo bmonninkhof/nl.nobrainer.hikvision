@@ -5,6 +5,7 @@ const test = require('node:test');
 const {
   buildAuthorization,
   getRtspDiagnostics,
+  inspectH264Payload,
   parseAuthenticateHeader,
   parseRtspResponse,
   probeRtspPlayback,
@@ -176,4 +177,10 @@ test('playback probe performs SETUP and PLAY and reports observed media safely',
     media: { status: 'media-received', packets: 4, bytes: 2048 },
   });
   assert.doesNotMatch(JSON.stringify(result), /192\.168|admin|very-secret|safe-session|rtsp:\/\//);
+});
+
+test('H264 RTP payload inspection recognizes single NAL, STAP-A and FU-A', () => {
+  assert.deepEqual(inspectH264Payload(Buffer.from([0x67, 0x01])), [7]);
+  assert.deepEqual(inspectH264Payload(Buffer.from([0x78, 0x00, 0x02, 0x67, 0x01, 0x00, 0x02, 0x68, 0x01])), [7, 8]);
+  assert.deepEqual(inspectH264Payload(Buffer.from([0x7c, 0x85, 0x01])), [5]);
 });

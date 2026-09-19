@@ -33,7 +33,7 @@ test('reparatiewizard biedt een kopieerbaar privacyveilig rapport', () => {
   assert.match(view, /setTimeout\(createBugReport, 0\)/);
   assert.match(view, /Create again/);
   assert.match(view, /document\.execCommand\('copy'\)/);
-  assert.match(device, /async getBugReport\(\)/);
+  assert.match(device, /async getBugReport\(/);
   assert.match(fs.readFileSync(path.join(root, 'drivers/hikvision-camnvr/driver.js'), 'utf8'), /if \(bugReportPromise\) return bugReportPromise/);
   assert.match(fs.readFileSync(path.join(root, 'drivers/hikvision-camnvr/driver.js'), 'utf8'), /createMinimalBugReport/);
   assert.match(fs.readFileSync(path.join(root, 'drivers/hikvision-camnvr/driver.js'), 'utf8'), /session\.setHandler\('showView', async \(\) => true\)/);

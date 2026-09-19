@@ -637,6 +637,23 @@ test('streamingprofiel kan Hikvision-substream 102 uitlezen', async () => {
   });
 });
 
+test('streamdiagnostiek vat encoderinstellingen privacyveilig samen', async () => {
+  const client = new HikvisionClient({ host: 'camera', port: 80, username: 'admin', password: '' });
+  client.getXml = async path => {
+    assert.equal(path, '/ISAPI/Streaming/channels/102');
+    return { StreamingChannel: { Video: {
+      videoCodecType: 'H.264', H264Profile: 'Main', videoResolutionWidth: '1280',
+      videoResolutionHeight: '720', maxFrameRate: '1500', videoQualityControlType: 'VBR',
+      vbrUpperCap: '2048', fixedQuality: '60', GovLength: '30', SmartCodec: 'false', SVC: 'true',
+    } } };
+  };
+  assert.deepEqual(await client.getStreamingDiagnostics(1, 2), {
+    readOnly: true, streamId: 102, codec: 'H.264', profile: 'Main', width: 1280, height: 720,
+    frameRate: 15, bitrateControl: 'VBR', constantBitrateKbps: null, maximumBitrateKbps: 2048,
+    quality: 60, keyframeInterval: 30, smartCodec: 'false', svc: 'true',
+  });
+});
+
 test('automatische Live-video kiest eerst de H.264-substream', async () => {
   const client = new HikvisionClient({ host: 'camera', port: 80, username: 'admin', password: '' });
   const requested = [];

@@ -241,5 +241,10 @@
     "en": "Extended privacy-safe RTSP diagnostics with a short SETUP and PLAY test to determine whether an NVR delivers actual video packets.",
     "nl": "Uitgebreide privacyveilige RTSP-diagnostiek met een korte SETUP- en PLAY-test om vast te stellen of een NVR daadwerkelijk videopakketten levert.",
     "de": "Erweiterte datenschutzfreundliche RTSP-Diagnose mit einem kurzen SETUP- und PLAY-Test, um festzustellen, ob ein NVR tatsächlich Videopakete liefert."
+  },
+  "2026.9.24": {
+    "en": "Extended NVR diagnostics with encoder settings and a five-second privacy-safe analysis of bitrate, packet continuity, frames, SPS, PPS and IDR keyframes.",
+    "nl": "Uitgebreide NVR-diagnostiek met encoderinstellingen en een privacyveilige analyse van vijf seconden voor bitrate, pakketvolgorde, frames, SPS, PPS en IDR-keyframes.",
+    "de": "Erweiterte NVR-Diagnose mit Encoder-Einstellungen und einer fünfsekündigen datenschutzfreundlichen Analyse von Bitrate, Paketfolge, Frames, SPS, PPS und IDR-Keyframes."
   }
 }
